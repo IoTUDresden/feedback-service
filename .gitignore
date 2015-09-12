@@ -1,5 +1,6 @@
 .idea
 *.iml
+*.ipr
 build
 target
 .gradle

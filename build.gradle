@@ -1,10 +1,12 @@
 buildscript {
   repositories {
     mavenCentral()
+    maven { url 'http://repo.spring.io/plugins-snapshot' }
   }
 
   dependencies {
     classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE'
+    classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7-SNAPSHOT'
   }
 }
 
@@ -16,6 +18,10 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'propdeps'
+apply plugin: 'propdeps-maven'
+apply plugin: 'propdeps-idea'
+apply plugin: 'propdeps-eclipse'
 
 jar {
   baseName = 'feedback-service'
@@ -25,6 +31,7 @@ jar {
 dependencies {
   compile('org.springframework.boot:spring-boot-starter-undertow') { exclude module: 'undertow-websockets-jsr' }
   compile 'org.springframework.boot:spring-boot-starter-data-rest'
+  compile 'org.springframework.boot:spring-boot-starter-actuator'
 
   compile 'org.springframework.data:spring-data-neo4j:4.0.0.RELEASE'
   compile 'org.springframework.data:spring-data-rest-webmvc:2.4.0.RELEASE'
@@ -32,10 +39,15 @@ dependencies {
 
   compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
   compile 'com.google.guava:guava:18.0'
+  compile 'org.neo4j:neo4j:2.2.5'
+
+  optional 'org.springframework.boot:spring-boot-configuration-processor'
 
   testCompile 'org.springframework.boot:spring-boot-starter-test'
   testCompile 'junit:junit'
 }
+
+compileJava.dependsOn processResources
 
 task wrapper(type: Wrapper) {
   gradleVersion = '2.6'
