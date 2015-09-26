@@ -1,0 +1,11 @@
+server.port: 9000
+management.port: 9001
+
+spring.data.rest:
+  returnBodyOnCreate: true
+  returnBodyOnUpdate: true
+
+service.knowledge:
+  url: http://localhost:7474
+  username:
+  password:
