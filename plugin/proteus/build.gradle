@@ -1,0 +1,11 @@
+jar {
+    baseName = 'feedback-plugin-proteus'
+    version =  '1.0.0-SNAPSHOT'
+}
+
+dependencies {
+    compile project(':service-api')
+
+    compile 'org.openrdf.sesame:sesame-rio-rdfxml:2.8.6'
+    compile 'org.openrdf.sesame:sesame-rio-api:2.8.6'
+}
