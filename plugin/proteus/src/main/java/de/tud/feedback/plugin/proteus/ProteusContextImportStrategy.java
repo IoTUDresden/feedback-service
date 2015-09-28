@@ -2,7 +2,7 @@ package de.tud.feedback.plugin.proteus;
 
 import de.tud.feedback.api.context.ContextImportException;
 import de.tud.feedback.api.context.ContextImportStrategy;
-import de.tud.feedback.api.context.CypherOperations;
+import de.tud.feedback.api.context.CypherExecutor;
 import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,8 @@ class ProteusContextImportStrategy implements ContextImportStrategy {
 
     private final RDFParser parser = Rio.createParser(RDFFormat.RDFXML);
 
+    private RdfHandlerFactory handler;
+
     private String dogontoUrl;
 
     @Autowired
@@ -28,12 +30,17 @@ class ProteusContextImportStrategy implements ContextImportStrategy {
         this.dogontoUrl = dogontoUrl;
     }
 
+    @Autowired
+    public void setHandlerFactory(RdfHandlerFactory handler) {
+        this.handler = handler;
+    }
+
     @Override
-    public void importContextWith(CypherOperations operations) {
+    public void importContextWith(CypherExecutor executor) {
         try {
             final URL url = new URL(dogontoUrl);
 
-            parser.setRDFHandler(new CypherOperationsRdfHandler(operations));
+            parser.setRDFHandler(handler.basedOn(executor));
             parser.parse(url.openStream(), dogontoUrl);
 
         } catch (MalformedURLException exception) {

@@ -4,7 +4,6 @@ import de.tud.feedback.api.ComponentProvider;
 import de.tud.feedback.api.FeedbackServicePlugin;
 import de.tud.feedback.api.context.ContextImportStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 

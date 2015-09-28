@@ -1,7 +1,7 @@
 package de.tud.feedback;
 
 import de.tud.feedback.api.ComponentProvider;
-import de.tud.feedback.api.context.CypherOperations;
+import de.tud.feedback.api.context.CypherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +24,7 @@ public class FeedbackServiceApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        provider.contextImportStrategy().importContextWith(new CypherOperations() {
+        provider.contextImportStrategy().importContextWith(new CypherExecutor() {
             @Override
             public Iterable<Map<String, Object>> execute(String cypherQuery, Map<String, ?> params) {
                 return operations.query(cypherQuery, params);

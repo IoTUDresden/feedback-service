@@ -2,7 +2,7 @@ package de.tud.feedback.api.context;
 
 import java.util.Map;
 
-public interface CypherOperations {
+public interface CypherExecutor {
 
     Iterable<Map<String,Object>> execute(String cypherQuery, Map<String, ?> params);
 

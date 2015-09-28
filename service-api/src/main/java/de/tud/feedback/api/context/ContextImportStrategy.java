@@ -2,6 +2,6 @@ package de.tud.feedback.api.context;
 
 public interface ContextImportStrategy {
 
-    void importContextWith(CypherOperations operations);
+    void importContextWith(CypherExecutor operations);
 
 }
