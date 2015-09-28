@@ -37,22 +37,14 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
             return;
         }
 
-        final URI subject = (URI) subjectResource;
-
-        prepareSubject(subject);
-        handleTriplet(subject, predicate, objectValue);
-    }
-
-    private void prepareSubject(URI subject) {
-        if (!nodeExists(subject)) {
-            operations.createNode(subject, nameFor(subject));
-            flagNodeExisting(subject);
-        }
+        handleTriplet((URI) subjectResource, predicate, objectValue);
     }
 
     private void handleTriplet(URI subject, URI predicate, Value object) {
+        create(subject);
+
         if (isType(predicate)) {
-            handleType(subject, (URI) object);
+            handleType(subject, object);
 
         } else if (object instanceof Literal) {
             operations.setNodeProperty(subject, nameFor(predicate), (Literal) object);
@@ -63,10 +55,7 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
     }
 
     private void handleResource(URI subject, URI predicate, URI object) {
-        if (!nodeExists(object)) {
-            operations.createNode(object, nameFor(object));
-            flagNodeExisting(object);
-        }
+        create(object);
 
         if (!connectionExists(subject, predicate, object)) {
             operations.connectNodes(subject, predicate, object, nameFor(predicate));
@@ -74,12 +63,19 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
         }
     }
 
-    private void handleType(URI subject, URI object) {
-        String label = nameFor(object);
+    private void handleType(URI subject, Value object) {
+        String label = nameFor((URI) object);
 
         if (!nodeLabelExists(subject, label)) {
             operations.setNodeLabel(subject, label);
             flagNodeLabelExisting(subject, label);
+        }
+    }
+
+    private void create(URI node) {
+        if (!nodeExists(node)) {
+            operations.createNode(node, nameFor(node));
+            flagNodeExisting(node);
         }
     }
 
