@@ -10,6 +10,8 @@ import java.lang.annotation.*;
 @Component
 public @interface FeedbackServicePlugin {
 
-    String value();
+    String name();
+
+    Class<? extends ComponentProvider> componentsProvidedBy();
 
 }

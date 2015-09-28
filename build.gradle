@@ -8,6 +8,7 @@ subprojects {
 
   repositories {
     mavenCentral()
+    maven { url 'http://repo.spring.io/milestone' }
   }
 
   apply plugin: 'java'
@@ -15,8 +16,9 @@ subprojects {
   apply plugin: 'idea'
 
   dependencies {
-    compile 'org.springframework.data:spring-data-neo4j:4.0.0.RELEASE',
-            'com.google.guava:guava:18.0',
+    compile('org.springframework.data:spring-data-neo4j:4.0.0.RELEASE') { exclude module: "logback-classic" }
+
+    compile 'com.google.guava:guava:18.0',
             'javax.inject:javax.inject:1'
 
     testCompile 'junit:junit:4.12'

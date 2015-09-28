@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@FeedbackServicePlugin("proteus")
 @PropertySource("classpath:plugin.yml")
+@FeedbackServicePlugin(name = "proteus", componentsProvidedBy = ProteusPlugin.class)
 class ProteusPlugin implements ComponentProvider {
 
     @Autowired

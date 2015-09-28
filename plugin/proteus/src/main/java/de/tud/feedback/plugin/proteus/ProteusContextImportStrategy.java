@@ -7,7 +7,6 @@ import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -23,32 +22,25 @@ class ProteusContextImportStrategy implements ContextImportStrategy {
 
     private RdfHandlerFactory handler;
 
-    private String dogontoUrl;
-
-    @Autowired
-    public void setDogontoUrl(@Value("${dogonto.url}") String dogontoUrl) {
-        this.dogontoUrl = dogontoUrl;
-    }
-
     @Autowired
     public void setHandlerFactory(RdfHandlerFactory handler) {
         this.handler = handler;
     }
 
     @Override
-    public void importContextWith(CypherExecutor executor) {
+    public void importContextWith(CypherExecutor executor, String context) {
         try {
-            final URL url = new URL(dogontoUrl);
+            final URL contextUrl = new URL(context);
 
             parser.setRDFHandler(handler.basedOn(executor));
-            parser.parse(url.openStream(), dogontoUrl);
+            parser.parse(contextUrl.openStream(), context);
 
         } catch (MalformedURLException exception) {
             LOG.error("dogonto URL is malformed");
             throw new ContextImportException(exception);
 
         } catch (IOException exception) {
-            LOG.error("cannot read ontology from " + dogontoUrl);
+            LOG.error("cannot read ontology from " + context);
             throw new ContextImportException(exception);
 
         } catch (RDFParseException exception) {

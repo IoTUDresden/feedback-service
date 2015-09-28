@@ -1,40 +1,22 @@
 package de.tud.feedback.domain.process;
 
+import de.tud.feedback.domain.Node;
 import de.tud.feedback.domain.Workflow;
-import de.tud.feedback.knowledge.OptionalLongAttributeConverter;
-import de.tud.feedback.knowledge.OptionalStringAttributeConverter;
-import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.NodeEntity;
+import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.Relationship;
-import org.neo4j.ogm.annotation.typeconversion.Convert;
-
-import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@NodeEntity
-public class Instance {
-
-    @GraphId
-    private Long id;
+public class Instance extends Node {
 
     @Relationship(type = "instanceOf", direction = Relationship.OUTGOING)
     private Workflow workflow;
 
+    @NotBlank
     private String name;
 
-    @Convert(OptionalLongAttributeConverter.class)
-    public Optional<Long> getId() {
-        return Optional.ofNullable(id);
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Convert(OptionalStringAttributeConverter.class)
-    public Optional<String> getName() {
-        return Optional.ofNullable(name);
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
