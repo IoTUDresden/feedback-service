@@ -2,13 +2,12 @@ package de.tud.feedback.plugin.proteus;
 
 import de.tud.feedback.api.context.ContextImportException;
 import de.tud.feedback.api.context.ContextImportStrategy;
-import org.neo4j.graphdb.GraphDatabaseService;
+import de.tud.feedback.api.context.CypherOperations;
 import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -30,11 +29,11 @@ class ProteusContextImportStrategy implements ContextImportStrategy {
     }
 
     @Override
-    public void importContextWith(Neo4jOperations operations) {
+    public void importContextWith(CypherOperations operations) {
         try {
             final URL url = new URL(dogontoUrl);
 
-            parser.setRDFHandler(new Neo4jRdfHandler(operations));
+            parser.setRDFHandler(new CypherOperationsRdfHandler(operations));
             parser.parse(url.openStream(), dogontoUrl);
 
         } catch (MalformedURLException exception) {
