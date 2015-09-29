@@ -33,7 +33,7 @@ public class CypherGraphOperations implements GraphOperations {
     public void createNode(URI uri, String name) {
         executor.execute(
                         "CREATE (n {name: {name}, uri: {uri}}) \n" +
-                        "RETURN n",
+                        "RETURN ID(n) AS ID",
 
                 params().put("uri", uri.stringValue())
                         .put("name", name)
@@ -65,7 +65,7 @@ public class CypherGraphOperations implements GraphOperations {
     }
 
     private ImmutableMap.Builder<String, Object> params() {
-        return new ImmutableMap.Builder<String, Object>();
+        return new ImmutableMap.Builder<>();
     }
 
     private Object converted(Literal object) {

@@ -9,6 +9,13 @@ public class Node {
     @GraphId
     private Long id;
 
+    public Node() {
+    }
+
+    public Node(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
