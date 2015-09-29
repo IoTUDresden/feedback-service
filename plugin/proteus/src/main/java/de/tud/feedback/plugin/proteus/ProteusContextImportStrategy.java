@@ -18,8 +18,6 @@ class ProteusContextImportStrategy implements ContextImportStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProteusContextImportStrategy.class);
 
-    private final RDFParser parser = Rio.createParser(RDFFormat.RDFXML);
-
     private RdfHandlerFactory handler;
 
     @Autowired
@@ -28,9 +26,11 @@ class ProteusContextImportStrategy implements ContextImportStrategy {
     }
 
     @Override
-    public void importContextWith(CypherExecutor executor, String context) {
+    public void importContextWith(CypherExecutor executor, String context, String mimeType) {
         try {
             final URL contextUrl = new URL(context);
+            final RDFFormat format = Rio.getParserFormatForMIMEType(mimeType);
+            final RDFParser parser = Rio.createParser(format);
 
             parser.setRDFHandler(handler.basedOn(executor));
             parser.parse(contextUrl.openStream(), context);

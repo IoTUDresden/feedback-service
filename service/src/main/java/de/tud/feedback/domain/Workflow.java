@@ -2,6 +2,7 @@ package de.tud.feedback.domain;
 
 import de.tud.feedback.domain.process.Instance;
 import org.hibernate.validator.constraints.NotBlank;
+import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
 
+@NodeEntity
 public class Workflow extends Node {
 
     @Relationship(type = "instanceOf", direction = Relationship.INCOMING)

@@ -52,7 +52,7 @@ public class FeedbackServicePluginRepository implements PluginRepository, Applic
 
     private void registerPluginBy(FeedbackServicePlugin plugin) {
         plugins.put(plugin.name(), context.getBean(plugin.componentsProvidedBy()));
-        LOG.info(format("Feedback plugin '%s' registered", plugin.name()));
+        LOG.info(format("Feedback plugin %s registered", plugin.name()));
     }
 
     private FeedbackServicePlugin pluginAnnotationFor(Object bean) {

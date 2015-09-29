@@ -6,6 +6,7 @@ jar {
 dependencies {
     compile project(':service-api')
 
+    compile 'org.openrdf.sesame:sesame-rio-turtle:2.8.6'
     compile 'org.openrdf.sesame:sesame-rio-rdfxml:2.8.6'
     compile 'org.openrdf.sesame:sesame-rio-api:2.8.6'
 }

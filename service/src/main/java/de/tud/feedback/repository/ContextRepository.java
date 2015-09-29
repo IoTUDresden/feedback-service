@@ -1,6 +1,6 @@
 package de.tud.feedback.repository;
 
-import de.tud.feedback.domain.Context;
+import de.tud.feedback.domain.context.Context;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 

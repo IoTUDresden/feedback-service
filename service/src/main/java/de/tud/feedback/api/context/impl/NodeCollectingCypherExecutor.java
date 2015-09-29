@@ -1,7 +1,6 @@
 package de.tud.feedback.api.context.impl;
 
 import de.tud.feedback.api.context.CypherExecutor;
-import de.tud.feedback.domain.Node;
 import org.neo4j.ogm.session.result.Result;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 
@@ -10,13 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toList;
 
 public class NodeCollectingCypherExecutor implements CypherExecutor {
 
-    private final List<Node> nodes = newArrayList();
+    private final Set<Long> nodes = newHashSet();
 
     private final Neo4jOperations operations;
 
@@ -24,7 +22,7 @@ public class NodeCollectingCypherExecutor implements CypherExecutor {
         this.operations = operations;
     }
 
-    public List<Node> getNodes() {
+    public Set<Long> createdNodes() {
         return nodes;
     }
 
@@ -37,18 +35,15 @@ public class NodeCollectingCypherExecutor implements CypherExecutor {
         }
     }
 
-    private Collection<Node> createdNodesFor(List<Integer> ids) {
-        return ids
-                .stream()
-                .map(id -> new Node(id.longValue()))
+    private Collection<Long> createdNodesFor(List<Integer> ids) {
+        return ids.stream()
+                .map(Integer::longValue)
                 .collect(toList());
     }
 
     private List<Integer> idsWithin(Result result) {
-        List<Integer> ids = rowsFrom(result)
-                .stream()
+        List<Integer> ids = rowsFrom(result).stream()
                 .map(row -> (Integer) row.get("ID"))
-                .distinct()
                 .collect(toList());
 
         if (ids.size() != numberOfCreatedNodesFrom(result)) {

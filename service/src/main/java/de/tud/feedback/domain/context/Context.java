@@ -1,7 +1,8 @@
-package de.tud.feedback.domain;
+package de.tud.feedback.domain.context;
 
+import de.tud.feedback.domain.Node;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.URL;
+import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Set;
@@ -9,20 +10,17 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
 
+@NodeEntity
 public class Context extends Node {
 
     @NotBlank
     private String name;
 
-    @URL
-    @NotBlank
-    private String source; // TODO sources
-
     @NotBlank
     private String plugin;
 
-    @Relationship(type = "partOf", direction = Relationship.INCOMING)
-    private Set<Node> nodes = newHashSet();
+    @Relationship(type = "importedFor", direction = Relationship.INCOMING)
+    private Set<ContextImport> imports = newHashSet();
 
     public String getName() {
         return name;
@@ -40,23 +38,15 @@ public class Context extends Node {
         this.plugin = plugin;
     }
 
-    public String getSource() {
-        return source;
+    public Set<ContextImport> getImports() {
+        return imports;
     }
 
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public Set<Node> getNodes() {
-        return nodes;
-    }
-
-    public void setNodes(Set<Node> nodes) {
+    public void setImports(Set<ContextImport> imports) {
         try {
-            this.nodes = checkNotNull(nodes);
+            this.imports = checkNotNull(imports);
         } catch (NullPointerException exception) {
-            this.nodes = newHashSet();
+            this.imports = newHashSet();
         }
     }
 

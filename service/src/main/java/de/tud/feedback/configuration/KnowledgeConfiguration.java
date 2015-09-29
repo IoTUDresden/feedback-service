@@ -16,7 +16,6 @@ import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.server.Neo4jServer;
 import org.springframework.data.neo4j.server.RemoteServer;
-import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @EnableNeo4jRepositories(basePackageClasses = {WorkflowRepository.class})
@@ -43,11 +42,6 @@ class KnowledgeConfiguration extends Neo4jConfiguration {
         return new SessionFactory(
                 Workflow.class.getPackage().getName(),
                 Instance.class.getPackage().getName());
-    }
-
-    @Bean
-    PlatformTransactionManager knowledgeTransactionManager() throws Exception {
-        return transactionManager();
     }
 
     @ConfigurationProperties(prefix = "service.knowledge")
