@@ -14,14 +14,17 @@ public class CypherGraphOperations implements GraphOperations {
 
     public CypherGraphOperations(CypherExecutor executor) {
         this.executor = executor;
+
+        executor.execute("CREATE CONSTRAINT ON (n:UriBased) ASSERT n.uri IS UNIQUE", params().build());
     }
 
     @Override
-    public void connectNodes(URI subject, URI predicate, Value object, String name) {
+    public void mergeConnection(URI subject, URI predicate, Value object, String name) {
         executor.execute(format(
-                        "MATCH (s {uri: {subjectUri}}), (o {uri: {objectUri}}) \n" +
-                        "CREATE (s)-[p:%s {uri: {predicateUri}}]->(o) \n" +
-                        "RETURN s, p, o", name),
+                        "MERGE (s:UriBased { uri: {subjectUri} }) " +
+                        "MERGE (o:UriBased { uri: {objectUri} }) " +
+                        "CREATE UNIQUE (s)-[p:%s { uri: {predicateUri} }]->(o)" +
+                        "RETURN ID(s), p, ID(o)", name),
 
                 params().put("subjectUri", subject.stringValue())
                         .put("predicateUri", predicate.stringValue())
@@ -30,10 +33,11 @@ public class CypherGraphOperations implements GraphOperations {
     }
 
     @Override
-    public void createNode(URI uri, String name) {
+    public void mergeNode(URI uri, String name) {
         executor.execute(
-                        "CREATE (n {name: {name}, uri: {uri}}) \n" +
-                        "RETURN ID(n) AS ID",
+                        "MERGE (n:UriBased { uri: {uri} }) " +
+                        "SET n.name = {name} " +
+                        "RETURN ID(n)",
 
                 params().put("uri", uri.stringValue())
                         .put("name", name)
@@ -41,22 +45,22 @@ public class CypherGraphOperations implements GraphOperations {
     }
 
     @Override
-    public void setNodeLabel(URI uri, String label) {
+    public void setLabel(URI uri, String label) {
         executor.execute(format(
-                        "MATCH (n {uri: {uri}}) \n" +
-                        "SET n :%s \n" +
-                        "RETURN n", label),
+                        "MERGE (n:UriBased { uri: {uri} }) " +
+                        "SET n :UriBased:%s " +
+                        "RETURN (n)", label),
 
                 params().put("uri", uri.stringValue())
                         .build());
     }
 
     @Override
-    public void setNodeProperty(URI uri, String name, Literal value) {
+    public void setProperty(URI uri, String name, Literal value) {
         executor.execute(format(
-                        "MATCH (n {uri: {uri}}) \n" +
-                        "SET n.%s = {value} \n" +
-                        "RETURN n", name),
+                        "MERGE (n:UriBased { uri: {uri} }) " +
+                        "SET n.%s = {value} " +
+                        "RETURN ID(n)", name),
 
                 params().put("uri", uri.stringValue())
                         .put("value", converted(value))

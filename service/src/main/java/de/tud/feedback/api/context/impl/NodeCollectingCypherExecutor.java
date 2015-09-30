@@ -2,22 +2,27 @@ package de.tud.feedback.api.context.impl;
 
 import de.tud.feedback.api.context.CypherExecutor;
 import org.neo4j.ogm.session.result.Result;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toList;
 
+@Component
 public class NodeCollectingCypherExecutor implements CypherExecutor {
 
     private final Set<Long> nodes = newHashSet();
 
     private final Neo4jOperations operations;
 
+    @Autowired
     public NodeCollectingCypherExecutor(Neo4jOperations operations) {
         this.operations = operations;
     }
@@ -42,9 +47,11 @@ public class NodeCollectingCypherExecutor implements CypherExecutor {
     }
 
     private List<Integer> idsWithin(Result result) {
-        List<Integer> ids = rowsFrom(result).stream()
-                .map(row -> (Integer) row.get("ID"))
-                .collect(toList());
+        List<Integer> ids = newArrayList();
+
+        rowsFrom(result).forEach(row ->
+                row.keySet().stream().filter(key -> key.startsWith("ID(")).forEach(idKey ->
+                        ids.add((Integer) row.get(idKey))));
 
         if (ids.size() != numberOfCreatedNodesFrom(result)) {
             throw new RuntimeException("You should return the ID for every generated node.");

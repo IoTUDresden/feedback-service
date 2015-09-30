@@ -6,4 +6,6 @@ public interface ContextService {
 
     void importFrom(Context context);
 
+    void preProcess(Context context);
+
 }

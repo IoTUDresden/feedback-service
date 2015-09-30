@@ -7,47 +7,41 @@ import de.tud.feedback.domain.Node;
 import de.tud.feedback.domain.context.Context;
 import de.tud.feedback.domain.context.ContextImport;
 import de.tud.feedback.repository.ContextImportRepository;
+import de.tud.feedback.repository.ContextRepository;
 import de.tud.feedback.repository.PluginRepository;
 import de.tud.feedback.service.ContextService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Provider;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.partition;
 import static com.google.common.collect.Sets.intersection;
-import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @Service
 public class PluginContextService implements ContextService {
 
-    private static final String ORPHANED_NODE_IDS_QUERY = "START n = NODE(*) WHERE NOT n-[*..2]->() RETURN ID(n) AS ID";
-
     private static final Logger LOG = LoggerFactory.getLogger(PluginContextService.class);
 
-    private final ContextImportRepository contextImports;
+    private ContextImportRepository imports;
 
-    private final PluginRepository plugins;
+    private ContextRepository contexts;
 
-    private final Neo4jOperations neo4j;
+    private PluginRepository plugins;
 
-    @Autowired
-    public PluginContextService(
-            ContextImportRepository contextImports,
-            PluginRepository plugins,
-            Neo4jOperations neo4j) {
+    private Provider<NodeCollectingCypherExecutor> executorProvider;
 
-        this.contextImports = contextImports;
-        this.plugins = plugins;
-        this.neo4j = neo4j;
+    @PostConstruct
+    public void initConstraints() {
+        contexts.createUniqueConstraint();
     }
 
     @Async
@@ -60,37 +54,61 @@ public class PluginContextService implements ContextService {
         });
     }
 
+    @Override
+    public void preProcess(Context context) {
+        context.setUniqueId(context.getPlugin() + context.getName());
+    }
+
     private void importContextFrom(ContextImport contextImport) {
         final String plugin = contextImport.getContext().getPlugin();
         final ContextImportStrategy strategy = plugins.findOne(plugin).contextImportStrategy();
-        final NodeCollectingCypherExecutor executor = new NodeCollectingCypherExecutor(neo4j);
+        final NodeCollectingCypherExecutor executor = executorProvider.get();
 
-        LOG.info("Importing {} with {} ...", contextImport.getSource(), plugin);
+        LOG.info("Import {} with {} ...", contextImport.getSource(), plugin);
 
         strategy.importContextWith(executor, contextImport.getSource(), contextImport.getMime());
-        partition(entranceNodesFrom(executor.createdNodes()), 10)
-                .forEach(nodes -> {
-                    contextImport.getEntranceNodes().addAll(nodes);
-                    contextImports.save(contextImport); });
+        partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
+            contextImport.getEntranceNodes().addAll(nodes);
+            imports.save(contextImport); });
 
-        LOG.info("Import of {} done", contextImport.getSource());
+        LOG.info("Import {} done", contextImport.getSource());
     }
 
     private List<Node> entranceNodesFrom(Set<Long> createdNotes) {
-        return intersection(orphanedNodeIds(), createdNotes)
-                        .stream()
-                        .map(id -> {
-                            Node node = new Node();
-                            node.setId(id);
-                            return node; })
-                        .collect(toList());
+        return intersection(createdNotes, orphanedNodes())
+                .stream()
+                .map(id -> {
+                    Node node = new Node();
+                    node.setId(id);
+                    return node;
+                }).collect(toList());
     }
 
-    private Set<Long> orphanedNodeIds() {
-        return newArrayList(neo4j.query(ORPHANED_NODE_IDS_QUERY, emptyMap()).queryResults())
+    private Set<Long> orphanedNodes() {
+        return contexts.findOrphanedNodeIds()
                 .stream()
-                .map(row -> ((Integer) row.get("ID")).longValue())
+                .map(Integer::longValue)
                 .collect(toSet());
+    }
+
+    @Autowired
+    public void setContextImportRepository(ContextImportRepository repository) {
+        imports = repository;
+    }
+
+    @Autowired
+    public void setContextRepository(ContextRepository repository) {
+        contexts = repository;
+    }
+
+    @Autowired
+    public void setPluginRepository(PluginRepository repository) {
+        plugins = repository;
+    }
+
+    @Autowired
+    public void setCypherExecutorProvider(Provider<NodeCollectingCypherExecutor> provider) {
+        executorProvider = provider;
     }
 
 }

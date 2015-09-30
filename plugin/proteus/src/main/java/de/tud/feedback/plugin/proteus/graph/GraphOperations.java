@@ -6,12 +6,12 @@ import org.openrdf.model.Value;
 
 public interface GraphOperations {
 
-    void createNode(URI uri, String name);
+    void mergeNode(URI uri, String name);
 
-    void connectNodes(URI subject, URI predicate, Value object, String name);
+    void mergeConnection(URI subject, URI predicate, Value object, String name);
 
-    void setNodeLabel(URI uri, String label);
+    void setLabel(URI uri, String label);
 
-    void setNodeProperty(URI uri, String name, Literal value);
+    void setProperty(URI uri, String name, Literal value);
 
 }
