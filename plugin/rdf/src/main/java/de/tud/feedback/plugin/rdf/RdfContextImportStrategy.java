@@ -1,4 +1,4 @@
-package de.tud.feedback.plugin.proteus;
+package de.tud.feedback.plugin.rdf;
 
 import de.tud.feedback.api.context.ContextImportException;
 import de.tud.feedback.api.context.ContextImportStrategy;
@@ -7,16 +7,16 @@ import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 @Component
-class ProteusContextImportStrategy implements ContextImportStrategy {
+public class RdfContextImportStrategy implements ContextImportStrategy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProteusContextImportStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RdfContextImportStrategy.class);
 
     private RdfHandlerFactory handler;
 
@@ -26,29 +26,29 @@ class ProteusContextImportStrategy implements ContextImportStrategy {
     }
 
     @Override
-    public void importContextWith(CypherExecutor executor, String context, String mimeType) {
+    public void importContextWith(CypherExecutor executor, Resource resource, String mimeType) {
         try {
-            final URL contextUrl = new URL(context);
+            final String resourceUri = resource.getURI().toString();
             final RDFFormat format = Rio.getParserFormatForMIMEType(mimeType);
             final RDFParser parser = Rio.createParser(format);
 
             parser.setRDFHandler(handler.basedOn(executor));
-            parser.parse(contextUrl.openStream(), context);
+            parser.parse(resource.getInputStream(), resourceUri);
 
         } catch (MalformedURLException exception) {
-            LOG.error("dogonto URL is malformed");
+            LOG.error("resource URL is malformed");
             throw new ContextImportException(exception);
 
         } catch (IOException exception) {
-            LOG.error("cannot read ontology from " + context);
+            LOG.error("cannot read RDF");
             throw new ContextImportException(exception);
 
         } catch (RDFParseException exception) {
-            LOG.error("ontology is malformed");
+            LOG.error("RDF is malformed");
             throw new ContextImportException(exception);
 
         } catch (RDFHandlerException exception) {
-            LOG.error("ontology import failed due to the handler");
+            LOG.error("RDF import failed");
             throw new ContextImportException(exception);
         }
     }

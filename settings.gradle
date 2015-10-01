@@ -2,3 +2,4 @@ include ':service'
 include ':service-api'
 
 include ':plugin/proteus'
+include ':plugin/rdf'

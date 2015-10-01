@@ -1,0 +1,8 @@
+= Process Feedback Project
+
+include::../../service/src/asciidoc/index.adoc[]
+include::../../service-api/src/asciidoc/index.adoc[]
+
+== Plugins
+include::../../plugin/rdf/src/asciidoc/index.adoc[]
+include::../../plugin/proteus/src/asciidoc/index.adoc[]

@@ -1,0 +1,22 @@
+== Service
+
+[[app-listing]]
+[source]
+----
+POST http://localhost:9000/context
+Content-Type: application/json
+
+{
+"name": "DogOnt Context",
+"plugin": "proteus",
+"imports": [{
+"source": "classpath:ontology/dogont.owl",
+"mime": "application/rdf+xml",
+"name": "Ontology"
+},{
+"source": "classpath:ontology/instances.ttl",
+"mime": "application/x-turtle",
+"name": "Instances"
+}]
+}
+----

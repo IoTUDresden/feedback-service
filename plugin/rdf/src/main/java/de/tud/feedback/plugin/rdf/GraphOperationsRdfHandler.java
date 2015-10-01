@@ -1,4 +1,4 @@
-package de.tud.feedback.plugin.proteus.graph;
+package de.tud.feedback.plugin.rdf;
 
 import com.google.common.base.Strings;
 import org.openrdf.model.*;

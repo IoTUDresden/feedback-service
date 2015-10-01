@@ -1,7 +1,6 @@
-package de.tud.feedback.plugin.proteus.graph;
+package de.tud.feedback.plugin.rdf;
 
 import de.tud.feedback.api.context.CypherExecutor;
-import de.tud.feedback.plugin.proteus.RdfHandlerFactory;
 import org.openrdf.rio.RDFHandler;
 import org.springframework.stereotype.Component;
 

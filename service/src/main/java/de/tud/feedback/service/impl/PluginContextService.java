@@ -1,8 +1,8 @@
 package de.tud.feedback.service.impl;
 
+import de.tud.feedback.NodeCollectingCypherExecutor;
 import de.tud.feedback.annotation.GraphTransactional;
 import de.tud.feedback.api.context.ContextImportStrategy;
-import de.tud.feedback.api.context.impl.NodeCollectingCypherExecutor;
 import de.tud.feedback.domain.Node;
 import de.tud.feedback.domain.context.Context;
 import de.tud.feedback.domain.context.ContextImport;
@@ -13,6 +13,8 @@ import de.tud.feedback.service.ContextService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,8 @@ public class PluginContextService implements ContextService {
     private PluginRepository plugins;
 
     private Provider<NodeCollectingCypherExecutor> executorProvider;
+
+    private ResourceLoader resources;
 
     @PostConstruct
     public void initConstraints() {
@@ -66,7 +70,7 @@ public class PluginContextService implements ContextService {
 
         LOG.info("Import {} with {} ...", contextImport.getSource(), plugin);
 
-        strategy.importContextWith(executor, contextImport.getSource(), contextImport.getMime());
+        strategy.importContextWith(executor, resourceFrom(contextImport), contextImport.getMime());
         partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
             contextImport.getEntranceNodes().addAll(nodes);
             imports.save(contextImport); });
@@ -91,6 +95,10 @@ public class PluginContextService implements ContextService {
                 .collect(toSet());
     }
 
+    private Resource resourceFrom(ContextImport contextImport) {
+        return resources.getResource(contextImport.getSource());
+    }
+
     @Autowired
     public void setContextImportRepository(ContextImportRepository repository) {
         imports = repository;
@@ -109,6 +117,11 @@ public class PluginContextService implements ContextService {
     @Autowired
     public void setCypherExecutorProvider(Provider<NodeCollectingCypherExecutor> provider) {
         executorProvider = provider;
+    }
+
+    @Autowired
+    public void setResources(ResourceLoader resources) {
+        this.resources = resources;
     }
 
 }

@@ -1,5 +1,6 @@
 package de.tud.feedback.domain.context;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.tud.feedback.domain.Node;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
@@ -23,9 +24,11 @@ public class ContextImport extends Node {
     @NotBlank
     private String name;
 
+    @JsonIgnore
     @Relationship(type = "createdBy", direction = Relationship.INCOMING)
     private Set<Node> entranceNodes = newHashSet();
 
+    @JsonIgnore
     @Relationship(type = "importedFor", direction = Relationship.OUTGOING)
     private Context context;
 

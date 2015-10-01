@@ -1,10 +1,10 @@
-package de.tud.feedback.plugin.proteus.graph;
+package de.tud.feedback.plugin.rdf;
 
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 
-public interface GraphOperations {
+interface GraphOperations {
 
     void mergeNode(URI uri, String name);
 

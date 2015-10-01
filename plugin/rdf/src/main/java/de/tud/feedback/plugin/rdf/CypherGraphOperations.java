@@ -1,4 +1,4 @@
-package de.tud.feedback.plugin.proteus.graph;
+package de.tud.feedback.plugin.rdf;
 
 import com.google.common.collect.ImmutableMap;
 import de.tud.feedback.api.context.CypherExecutor;
@@ -8,7 +8,7 @@ import org.openrdf.model.Value;
 
 import static java.lang.String.format;
 
-public class CypherGraphOperations implements GraphOperations {
+class CypherGraphOperations implements GraphOperations {
 
     private final CypherExecutor executor;
 

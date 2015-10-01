@@ -1,28 +1,23 @@
-buildscript {
-  dependencies {
-    classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE'
-  }
-}
-
 apply plugin: 'spring-boot'
 
 jar {
-  baseName = 'feedback-service'
-  version =  '1.0.0-SNAPSHOT'
+    baseName = 'feedback-service'
+    version = '1.0.0-SNAPSHOT'
 }
 
 dependencies {
-  compile project(':service-api')
+    compile project(':service-api')
 
-  compile('org.springframework.boot:spring-boot-starter-undertow') { exclude module: 'undertow-websockets-jsr' }
+    compile('org.springframework.data:spring-data-neo4j:4.0.0.RELEASE') { exclude module: "logback-classic" }
+    compile('org.springframework.boot:spring-boot-starter-undertow') { exclude module: 'undertow-websockets-jsr' }
 
-  compile 'org.springframework.boot:spring-boot-starter-data-rest',
-          'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-data-rest',
+            'org.springframework.boot:spring-boot-starter-actuator'
 
-  compile 'org.springframework.data:spring-data-rest-webmvc:2.4.0.RELEASE',
-          'org.springframework.data:spring-data-rest-hal-browser:2.4.0.RELEASE'
+    compile 'org.springframework.data:spring-data-rest-webmvc:2.4.0.RELEASE',
+            'org.springframework.data:spring-data-rest-hal-browser:2.4.0.RELEASE'
 
-  compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
 
-  testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 }

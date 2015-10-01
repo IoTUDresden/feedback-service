@@ -1,11 +1,28 @@
-subprojects {
-    buildscript {
-        repositories {
-            mavenCentral()
-            maven { url 'http://repo.spring.io/plugins-snapshot' }
-        }
+buildscript {
+    repositories {
+        maven { url 'http://repo.spring.io/plugins-snapshot' }
+        jcenter()
     }
 
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.0.M5'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.0'
+    }
+}
+
+apply plugin: 'org.asciidoctor.gradle.asciidoctor'
+
+asciidoctor {
+    options = [
+            doctype: 'book',
+            attributes: [
+                    'source-highlighter': 'coderay',
+                    toc: 'left'
+            ]
+    ]
+}
+
+allprojects {
     repositories {
         mavenCentral()
         maven { url 'http://repo.spring.io/milestone' }
@@ -16,9 +33,8 @@ subprojects {
     apply plugin: 'idea'
 
     dependencies {
-        compile('org.springframework.data:spring-data-neo4j:4.0.0.RELEASE') { exclude module: "logback-classic" }
-
-        compile 'com.google.guava:guava:18.0',
+        compile 'org.springframework.boot:spring-boot-starter-web:1.3.0.M5',
+                'com.google.guava:guava:18.0',
                 'javax.inject:javax.inject:1'
 
         testCompile 'junit:junit:4.12'
@@ -27,7 +43,6 @@ subprojects {
 
 project(':service') {
     dependencies {
-        // TODO from properties
         compile project(':plugin/proteus')
     }
 }
