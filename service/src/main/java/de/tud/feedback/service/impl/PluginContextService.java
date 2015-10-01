@@ -65,7 +65,7 @@ public class PluginContextService implements ContextService {
 
     private void importContextFrom(ContextImport contextImport) {
         final String plugin = contextImport.getContext().getPlugin();
-        final ContextImportStrategy strategy = plugins.findOne(plugin).contextImportStrategy();
+        final ContextImportStrategy strategy = plugins.findOne(plugin).contextImportStrategy().get();
         final NodeCollectingCypherExecutor executor = executorProvider.get();
 
         LOG.info("Import {} with {} ...", contextImport.getSource(), plugin);

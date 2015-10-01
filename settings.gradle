@@ -3,3 +3,4 @@ include ':service-api'
 
 include ':plugin/proteus'
 include ':plugin/rdf'
+include ':plugin/openhab'

@@ -1,6 +1,7 @@
-package de.tud.feedback.plugin.rdf;
+package de.tud.feedback.plugin.rdf.impl;
 
 import com.google.common.base.Strings;
+import de.tud.feedback.api.graph.GraphOperations;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFHandlerException;
@@ -22,16 +23,16 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
         Value object = statement.getObject();
 
         if (subject instanceof BNode)
-            subject = uriFor((BNode) subject);
+            subject = uriOf((BNode) subject);
 
         if (object instanceof BNode)
-            object = uriFor((BNode) object);
+            object = uriOf((BNode) object);
 
         handleTriplet((URI) subject, statement.getPredicate(), object);
     }
 
     private void handleTriplet(URI subject, URI predicate, Value object) {
-        operations.mergeNode(subject, nameFor(subject));
+        operations.mergeNode(uriOf(subject), nameFor(subject));
 
         if (isType(predicate)) {
             handleType(subject, predicate, object);
@@ -45,24 +46,28 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
     }
 
     private void handleProperty(URI node, String name, Literal value) {
-        operations.setProperty(node, name, value);
+        operations.setProperty(uriOf(node), name, converted(value));
     }
 
     private void handleResource(URI subject, URI predicate, URI object) {
-        operations.mergeNode(object, nameFor(object));
-        operations.mergeConnection(subject, predicate, object, nameFor(predicate));
+        operations.mergeNode(uriOf(object), nameFor(object));
+        operations.mergeConnection(uriOf(subject), uriOf(predicate), uriOf(object), nameFor(predicate));
     }
 
     private void handleType(URI subject, URI predicate, Value object) {
-        operations.setLabel(subject, nameFor((URI) object));
-        operations.mergeConnection(subject, predicate, object, nameFor(predicate));
+        operations.setLabel(uriOf(subject), nameFor((URI) object));
+        operations.mergeConnection(uriOf(subject), uriOf(predicate), uriOf(object), nameFor(predicate));
     }
 
     private boolean isType(URI predicate) {
         return predicate.stringValue().equals(TYPE_URI);
     }
 
-    private URI uriFor(BNode node) {
+    private String uriOf(Value value) {
+        return value.stringValue();
+    }
+
+    private URI uriOf(BNode node) {
         return new URIImpl("blank://" + node.getID());
     }
 
@@ -73,6 +78,34 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
                     .replaceAll("[^\\pL\\pN\\p{Pc}]", "_");
         } else {
             return uri.getLocalName();
+        }
+    }
+
+    private Object converted(Literal object) {
+        URI type = object.getDatatype();
+
+        if (object.getDatatype() == null) {
+            return object.stringValue();
+        }
+
+        String localName = type.getLocalName();
+
+        if (localName.toLowerCase().contains("integer") || localName.equals("long")) {
+            return object.longValue();
+        } else if (localName.toLowerCase().contains("short")) {
+            return object.shortValue();
+        } else if (localName.equals("byte")) {
+            return object.byteValue();
+        } else if (localName.equals("char")) {
+            return object.byteValue();
+        } else if (localName.equals("float")) {
+            return object.floatValue();
+        } else if (localName.equals("double")) {
+            return object.doubleValue();
+        } else if (localName.equals("boolean")) {
+            return object.booleanValue();
+        } else {
+            return object.stringValue();
         }
     }
 

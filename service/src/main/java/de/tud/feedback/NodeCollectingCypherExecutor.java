@@ -1,6 +1,6 @@
 package de.tud.feedback;
 
-import de.tud.feedback.api.context.CypherExecutor;
+import de.tud.feedback.api.graph.CypherExecutor;
 import org.neo4j.ogm.session.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;

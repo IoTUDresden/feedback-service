@@ -7,7 +7,7 @@ POST http://localhost:9000/context
 Content-Type: application/json
 
 {
-"name": "DogOnt Context",
+"name": "Zuhause",
 "plugin": "proteus",
 "imports": [{
 "source": "classpath:ontology/dogont.owl",

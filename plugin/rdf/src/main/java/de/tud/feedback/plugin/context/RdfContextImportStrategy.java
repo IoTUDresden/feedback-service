@@ -1,8 +1,9 @@
-package de.tud.feedback.plugin.rdf;
+package de.tud.feedback.plugin.context;
 
 import de.tud.feedback.api.context.ContextImportException;
 import de.tud.feedback.api.context.ContextImportStrategy;
-import de.tud.feedback.api.context.CypherExecutor;
+import de.tud.feedback.api.graph.CypherExecutor;
+import de.tud.feedback.plugin.rdf.RdfHandlerFactory;
 import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

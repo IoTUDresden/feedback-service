@@ -1,5 +1,6 @@
-package de.tud.feedback.api;
+package de.tud.feedback.api.annotations;
 
+import de.tud.feedback.api.ComponentProvider;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;

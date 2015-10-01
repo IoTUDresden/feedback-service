@@ -1,7 +1,7 @@
 package de.tud.feedback.repository.impl;
 
 import de.tud.feedback.api.ComponentProvider;
-import de.tud.feedback.api.FeedbackServicePlugin;
+import de.tud.feedback.api.annotations.FeedbackServicePlugin;
 import de.tud.feedback.repository.PluginRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

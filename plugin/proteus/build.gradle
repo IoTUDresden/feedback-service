@@ -6,4 +6,5 @@ jar {
 dependencies {
     compile project(':service-api')
     compile project(':plugin/rdf')
+    compile project(':plugin/openhab')
 }
