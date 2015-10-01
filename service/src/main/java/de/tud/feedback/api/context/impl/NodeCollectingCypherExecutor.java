@@ -53,8 +53,11 @@ public class NodeCollectingCypherExecutor implements CypherExecutor {
                 row.keySet().stream().filter(key -> key.startsWith("ID(")).forEach(idKey ->
                         ids.add((Integer) row.get(idKey))));
 
-        if (ids.size() != numberOfCreatedNodesFrom(result)) {
-            throw new RuntimeException("You should return the ID for every generated node.");
+        // Due to the merge operation, there might be more creations reported, than actually made.
+        // This is not a problem, since we're collecting IDs of created nodes in a set.
+        // But too few reported creations can lead to untracked IDs.
+        if (ids.size() < numberOfCreatedNodesFrom(result)) {
+            throw new RuntimeException("More generated nodes than reported");
         }
 
         return ids;

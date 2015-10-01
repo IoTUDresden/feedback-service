@@ -2,15 +2,12 @@ package de.tud.feedback.plugin.proteus.graph;
 
 import com.google.common.base.Strings;
 import org.openrdf.model.*;
-import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
 class GraphOperationsRdfHandler extends RDFHandlerBase {
 
     private static final String TYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-
-    private static final URI INDIVIDUAL = new URIImpl("http://www.w3.org/2002/07/owl#namedindividual");
 
     private final GraphOperations operations;
 

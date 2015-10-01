@@ -2,6 +2,7 @@
 *.iml
 *.ipr
 *.iws
+catalog-v*.xml
 build
 target
 .gradle

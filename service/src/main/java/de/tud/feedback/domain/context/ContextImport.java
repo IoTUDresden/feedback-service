@@ -20,6 +20,9 @@ public class ContextImport extends Node {
     @NotBlank
     private String mime;
 
+    @NotBlank
+    private String name;
+
     @Relationship(type = "createdBy", direction = Relationship.INCOMING)
     private Set<Node> entranceNodes = newHashSet();
 
@@ -56,6 +59,14 @@ public class ContextImport extends Node {
 
     public void setEntranceNodes(Set<Node> entranceNodes) {
         this.entranceNodes = entranceNodes;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }
