@@ -2,6 +2,7 @@ package de.tud.feedback.plugin.proteus.graph;
 
 import com.google.common.base.Strings;
 import org.openrdf.model.*;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
@@ -17,15 +18,16 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
 
     @Override
     public void handleStatement(Statement statement) throws RDFHandlerException {
-        final Resource subjectResource = statement.getSubject();
-        final Value objectValue = statement.getObject();
-        final URI predicate = statement.getPredicate();
+        Resource subject = statement.getSubject();
+        Value object = statement.getObject();
 
-        if (subjectResource instanceof BNode || objectValue instanceof BNode) {
-            return;
-        }
+        if (subject instanceof BNode)
+            subject = uriFor((BNode) subject);
 
-        handleTriplet((URI) subjectResource, predicate, objectValue);
+        if (object instanceof BNode)
+            object = uriFor((BNode) object);
+
+        handleTriplet((URI) subject, statement.getPredicate(), object);
     }
 
     private void handleTriplet(URI subject, URI predicate, Value object) {
@@ -58,6 +60,10 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
 
     private boolean isType(URI predicate) {
         return predicate.stringValue().equals(TYPE_URI);
+    }
+
+    private URI uriFor(BNode node) {
+        return new URIImpl("blank://" + node.getID());
     }
 
     private String nameFor(URI uri) {
