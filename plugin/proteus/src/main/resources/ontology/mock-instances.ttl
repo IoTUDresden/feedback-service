@@ -1,0 +1,31 @@
+# baseURI: http://openhab-semantic/0.1/instance
+# imports: http://elite.polito.it/ontologies/dogont.owl
+
+@prefix dogont: <http://elite.polito.it/ontologies/dogont.owl#> .
+@prefix instance: <http://openhab-semantic/0.1/instance#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://openhab-semantic/0.1/instance>
+  rdf:type owl:Ontology ;
+  owl:imports <http://elite.polito.it/ontologies/dogont.owl> ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+instance:Function_Weather_Temperature
+  rdf:type dogont:TemperatureMeasurementFunctionality ;
+.
+instance:State_Weather_Temperature
+  rdf:type dogont:TemperatureState ;
+  dogont:hasStateValue [
+      rdf:type dogont:TemperatureStateValue ;
+      dogont:realStateValue "0"^^xsd:string ;
+      dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius> ;
+    ] ;
+.
+instance:yahooweather_weather_035553af_temperature
+  rdf:type dogont:SingleTemperatureSensor ;
+  dogont:hasFunctionality instance:Function_Weather_Temperature ;
+  dogont:hasState instance:State_Weather_Temperature ;
+.

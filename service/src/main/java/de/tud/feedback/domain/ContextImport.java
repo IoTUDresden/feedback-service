@@ -1,7 +1,6 @@
-package de.tud.feedback.domain.context;
+package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.tud.feedback.domain.Node;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -70,6 +69,11 @@ public class ContextImport extends Node {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
 }

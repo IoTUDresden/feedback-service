@@ -4,6 +4,6 @@ import de.tud.feedback.api.graph.CypherExecutor;
 
 public interface ContextUpdateStrategy {
 
-    void updateContextWith(CypherExecutor executor);
+    void beginContextUpdatesWith(CypherExecutor executor, Long contextId);
 
 }

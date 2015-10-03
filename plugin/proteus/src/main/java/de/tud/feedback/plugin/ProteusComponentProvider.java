@@ -4,28 +4,26 @@ import de.tud.feedback.api.ComponentProvider;
 import de.tud.feedback.api.annotations.FeedbackServicePlugin;
 import de.tud.feedback.api.context.ContextImportStrategy;
 import de.tud.feedback.api.context.ContextUpdateStrategy;
-import de.tud.feedback.plugin.context.OpenHabContextUpdateStrategy;
+import de.tud.feedback.plugin.context.ProteusContextUpdateStrategy;
 import de.tud.feedback.plugin.context.RdfContextImportStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.inject.Provider;
 
 @FeedbackServicePlugin(name = "proteus", componentsProvidedBy = ProteusComponentProvider.class)
 public class ProteusComponentProvider implements ComponentProvider {
 
     @Autowired
-    Provider<RdfContextImportStrategy> contextImportStrategy;
+    RdfContextImportStrategy contextImportStrategy;
 
     @Autowired
-    Provider<OpenHabContextUpdateStrategy> contextUpdateStrategy;
+    ProteusContextUpdateStrategy contextUpdateStrategy;
 
     @Override
-    public Provider<? extends ContextImportStrategy> contextImportStrategy() {
+    public ContextImportStrategy contextImportStrategy() {
         return contextImportStrategy;
     }
 
     @Override
-    public Provider<? extends ContextUpdateStrategy> contextUpdateStrategy() {
+    public ContextUpdateStrategy contextUpdateStrategy() {
         return contextUpdateStrategy;
     }
 

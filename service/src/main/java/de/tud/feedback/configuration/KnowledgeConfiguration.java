@@ -2,7 +2,7 @@ package de.tud.feedback.configuration;
 
 import com.google.common.base.Strings;
 import de.tud.feedback.domain.Workflow;
-import de.tud.feedback.domain.process.Instance;
+import de.tud.feedback.domain.WorkflowInstance;
 import de.tud.feedback.repository.WorkflowRepository;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.URL;
@@ -41,7 +41,7 @@ class KnowledgeConfiguration extends Neo4jConfiguration {
     public SessionFactory getSessionFactory() {
         return new SessionFactory(
                 Workflow.class.getPackage().getName(),
-                Instance.class.getPackage().getName());
+                WorkflowInstance.class.getPackage().getName());
     }
 
     @ConfigurationProperties(prefix = "service.knowledge")

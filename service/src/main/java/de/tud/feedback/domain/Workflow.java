@@ -1,6 +1,5 @@
 package de.tud.feedback.domain;
 
-import de.tud.feedback.domain.process.Instance;
 import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
@@ -14,7 +13,7 @@ import static com.google.common.collect.Sets.newHashSet;
 public class Workflow extends Node {
 
     @Relationship(type = "instanceOf", direction = Relationship.INCOMING)
-    private Set<Instance> instances = newHashSet();
+    private Set<WorkflowInstance> instances = newHashSet();
 
     @NotBlank
     private String name;
@@ -27,11 +26,11 @@ public class Workflow extends Node {
         this.name = name;
     }
 
-    public Set<Instance> getInstances() {
+    public Set<WorkflowInstance> getInstances() {
         return instances;
     }
 
-    public void setInstances(Set<Instance> instances) {
+    public void setInstances(Set<WorkflowInstance> instances) {
         try {
             this.instances = checkNotNull(instances);
         } catch (NullPointerException exception) {

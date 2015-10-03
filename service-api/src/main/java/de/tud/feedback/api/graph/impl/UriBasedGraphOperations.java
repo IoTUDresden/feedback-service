@@ -57,12 +57,11 @@ public class UriBasedGraphOperations implements GraphOperations {
     public void setProperty(String uri, String name, Object value) {
         executor.execute(format(
                         "MERGE (n:UriBased { uri: {uri} }) " +
-                                "SET n.%s = {value} " +
-                                "RETURN ID(n)", name),
+                        "SET n.%s = {value} " +
+                        "RETURN ID(n)", name),
 
                 params().put("uri", uri)
                         .put("value", value)
-                        .put("name", name)
                         .build());
     }
 

@@ -1,21 +1,19 @@
 package de.tud.feedback.service.impl;
 
-import de.tud.feedback.NodeCollectingCypherExecutor;
 import de.tud.feedback.annotation.GraphTransactional;
+import de.tud.feedback.annotation.Loggable;
 import de.tud.feedback.api.context.ContextImportStrategy;
+import de.tud.feedback.domain.Context;
+import de.tud.feedback.domain.ContextImport;
 import de.tud.feedback.domain.Node;
-import de.tud.feedback.domain.context.Context;
-import de.tud.feedback.domain.context.ContextImport;
+import de.tud.feedback.graph.NodeCollectingCypherExecutor;
 import de.tud.feedback.repository.ContextImportRepository;
 import de.tud.feedback.repository.ContextRepository;
 import de.tud.feedback.repository.PluginRepository;
 import de.tud.feedback.service.ContextService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -30,8 +28,6 @@ import static java.util.stream.Collectors.toSet;
 
 @Service
 public class PluginContextService implements ContextService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PluginContextService.class);
 
     private ContextImportRepository imports;
 
@@ -48,8 +44,8 @@ public class PluginContextService implements ContextService {
         contexts.createUniqueConstraint();
     }
 
-    @Async
     @Override
+    @Loggable
     @GraphTransactional
     public void importFrom(Context context) {
         context.getImports().forEach(contextImport -> {
@@ -65,17 +61,14 @@ public class PluginContextService implements ContextService {
 
     private void importContextFrom(ContextImport contextImport) {
         final String plugin = contextImport.getContext().getPlugin();
-        final ContextImportStrategy strategy = plugins.findOne(plugin).contextImportStrategy().get();
+        final ContextImportStrategy strategy = plugins.findOne(plugin).contextImportStrategy();
         final NodeCollectingCypherExecutor executor = executorProvider.get();
-
-        LOG.info("Import {} with {} ...", contextImport.getSource(), plugin);
 
         strategy.importContextWith(executor, resourceFrom(contextImport), contextImport.getMime());
         partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
             contextImport.getEntranceNodes().addAll(nodes);
-            imports.save(contextImport); });
-
-        LOG.info("Import {} done", contextImport.getSource());
+            imports.save(contextImport);
+        });
     }
 
     private List<Node> entranceNodesFrom(Set<Long> createdNotes) {

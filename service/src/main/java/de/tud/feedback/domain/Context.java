@@ -1,7 +1,6 @@
-package de.tud.feedback.domain.context;
+package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.tud.feedback.domain.Node;
 import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
@@ -10,6 +9,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.String.format;
 
 @NodeEntity
 public class Context extends Node {
@@ -56,6 +56,11 @@ public class Context extends Node {
 
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
+    }
+
+    @Override
+    public String toString() {
+        return format("%s, imports = %s", name, imports);
     }
 
 }

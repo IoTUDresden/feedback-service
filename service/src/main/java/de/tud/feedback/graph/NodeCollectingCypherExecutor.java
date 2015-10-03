@@ -1,4 +1,4 @@
-package de.tud.feedback;
+package de.tud.feedback.graph;
 
 import de.tud.feedback.api.graph.CypherExecutor;
 import org.neo4j.ogm.session.result.Result;
