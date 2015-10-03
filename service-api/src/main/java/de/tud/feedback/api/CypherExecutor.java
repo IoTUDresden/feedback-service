@@ -1,4 +1,4 @@
-package de.tud.feedback.api.graph;
+package de.tud.feedback.api;
 
 import java.util.Map;
 

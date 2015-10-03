@@ -2,7 +2,7 @@ package de.tud.feedback.service.impl;
 
 import de.tud.feedback.annotation.GraphTransactional;
 import de.tud.feedback.annotation.Loggable;
-import de.tud.feedback.api.context.ContextImportStrategy;
+import de.tud.feedback.api.context.ContextImporter;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.ContextImport;
 import de.tud.feedback.domain.Node;
@@ -61,10 +61,10 @@ public class PluginContextService implements ContextService {
 
     private void importContextFrom(ContextImport contextImport) {
         final String plugin = contextImport.getContext().getPlugin();
-        final ContextImportStrategy strategy = plugins.findOne(plugin).contextImportStrategy();
         final NodeCollectingCypherExecutor executor = executorProvider.get();
+        final ContextImporter importer = plugins.findOne(plugin).getContextImporter(executor);
 
-        strategy.importContextWith(executor, resourceFrom(contextImport), contextImport.getMime());
+        importer.importContextFrom(resourceFrom(contextImport), contextImport.getMime());
         partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
             contextImport.getEntranceNodes().addAll(nodes);
             imports.save(contextImport);

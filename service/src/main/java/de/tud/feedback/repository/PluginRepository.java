@@ -1,12 +1,11 @@
 package de.tud.feedback.repository;
 
-import de.tud.feedback.api.ComponentProvider;
+import de.tud.feedback.api.FeedbackPlugin;
 
 public interface PluginRepository {
 
+    FeedbackPlugin findOne(String name);
 
-    ComponentProvider findOne(String plugin);
-
-    boolean exists(String plugin);
+    void register();
 
 }

@@ -1,7 +1,5 @@
 package de.tud.feedback.plugin;
 
-import de.tud.feedback.api.context.RealityChangeHandler;
-import de.tud.feedback.plugin.openhab.OpenHabWebSocketHandler;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,9 +15,9 @@ public class OpenHabBridge {
         this.port = port;
     }*/
 
-    public void connect(RealityChangeHandler updateConsumer) {
+    /*public void connect(RealityChangeHandler updateConsumer) {
         OpenHabWebSocketHandler handler = new OpenHabWebSocketHandler(updateConsumer);
         // TODO
-    }
+    }*/
 
 }

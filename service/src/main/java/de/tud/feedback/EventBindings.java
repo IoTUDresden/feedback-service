@@ -2,9 +2,11 @@ package de.tud.feedback;
 
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.event.ContextImportsFinishedEvent;
+import de.tud.feedback.repository.PluginRepository;
 import de.tud.feedback.service.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.event.AfterCreateEvent;
 import org.springframework.data.rest.core.event.BeforeCreateEvent;
@@ -21,6 +23,9 @@ public class EventBindings {
     private ContextService contexts;
 
     @Autowired
+    private PluginRepository plugins;
+
+    @Autowired
     private ApplicationEventPublisher publisher;
 
     @EventListener(condition = EVENT_CONTAINS_CONTEXT)
@@ -33,6 +38,11 @@ public class EventBindings {
     public void importContextSourcesAfterContextCreation(AfterCreateEvent event) {
         contexts.importFrom((Context) event.getSource());
         publisher.publishEvent(ContextImportsFinishedEvent.with(event.getSource()));
+    }
+
+    @EventListener
+    public void registerPlugins(ContextRefreshedEvent event) {
+        plugins.register();
     }
 
 }

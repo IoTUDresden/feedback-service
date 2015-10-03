@@ -1,5 +1,4 @@
 server.port: 9000
-management.port: 9001
 
 spring:
   main.showBanner: false

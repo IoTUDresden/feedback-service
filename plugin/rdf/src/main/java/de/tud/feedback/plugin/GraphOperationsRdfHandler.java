@@ -1,7 +1,7 @@
-package de.tud.feedback.plugin.rdf.impl;
+package de.tud.feedback.plugin;
 
 import com.google.common.base.Strings;
-import de.tud.feedback.api.graph.GraphOperations;
+import de.tud.feedback.api.GraphOperations;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFHandlerException;
@@ -32,7 +32,7 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
     }
 
     private void handleTriplet(URI subject, URI predicate, Value object) {
-        operations.mergeNode(uriOf(subject), nameFor(subject));
+        operations.createNode(uriOf(subject));
 
         if (isType(predicate)) {
             handleType(subject, predicate, object);
@@ -46,17 +46,17 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
     }
 
     private void handleProperty(URI node, String name, Literal value) {
-        operations.setProperty(uriOf(node), name, converted(value));
+        operations.setNodeProperty(uriOf(node), name, converted(value));
     }
 
     private void handleResource(URI subject, URI predicate, URI object) {
-        operations.mergeNode(uriOf(object), nameFor(object));
-        operations.mergeConnection(uriOf(subject), uriOf(predicate), uriOf(object), nameFor(predicate));
+        operations.createNode(uriOf(object));
+        operations.createConnection(uriOf(predicate), nameFor(predicate), uriOf(subject), uriOf(object));
     }
 
     private void handleType(URI subject, URI predicate, Value object) {
-        operations.setLabel(uriOf(subject), nameFor((URI) object));
-        operations.mergeConnection(uriOf(subject), uriOf(predicate), uriOf(object), nameFor(predicate));
+        operations.setAdditionalLabel(uriOf(subject), nameFor((URI) object));
+        operations.createConnection(uriOf(predicate), nameFor(predicate), uriOf(subject), uriOf(object));
     }
 
     private boolean isType(URI predicate) {

@@ -1,39 +1,33 @@
 package de.tud.feedback.plugin.context;
 
 import de.tud.feedback.api.context.ContextImportException;
-import de.tud.feedback.api.context.ContextImportStrategy;
-import de.tud.feedback.api.graph.CypherExecutor;
-import de.tud.feedback.plugin.rdf.RdfHandlerFactory;
+import de.tud.feedback.api.context.ContextImporter;
 import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-@Component
-public class RdfContextImportStrategy implements ContextImportStrategy {
+public class RdfContextImporter implements ContextImporter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RdfContextImportStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RdfContextImporter.class);
 
-    private RdfHandlerFactory handler;
+    private final RDFHandler handler;
 
-    @Autowired
-    public void setHandlerFactory(RdfHandlerFactory handler) {
+    public RdfContextImporter(RDFHandler handler) {
         this.handler = handler;
     }
 
     @Override
-    public void importContextWith(CypherExecutor executor, Resource resource, String mimeType) {
+    public void importContextFrom(Resource resource, String mimeType) {
         try {
             final String resourceUri = resource.getURI().toString();
             final RDFFormat format = Rio.getParserFormatForMIMEType(mimeType);
             final RDFParser parser = Rio.createParser(format);
 
-            parser.setRDFHandler(handler.basedOn(executor));
+            parser.setRDFHandler(handler);
             parser.parse(resource.getInputStream(), resourceUri);
 
         } catch (MalformedURLException exception) {
