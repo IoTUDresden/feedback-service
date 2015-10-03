@@ -1,4 +1,4 @@
-package de.tud.feedback.api;
+package de.tud.feedback.api.impl;
 
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;

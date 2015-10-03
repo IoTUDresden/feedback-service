@@ -31,7 +31,7 @@ public class LoggableAspect {
 
         logger.info(format("Starting %s(%s)", method, argumentsFrom(point)));
         result = point.proceed();
-        logger.info(format("Finishing %s(...) after %sms", method, timeGoneBySince(begin)));
+        logger.info(format("Finished %s(...) after %sms", method, timeGoneBySince(begin)));
 
         return result;
     }

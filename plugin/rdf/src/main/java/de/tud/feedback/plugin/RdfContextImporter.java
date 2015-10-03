@@ -1,7 +1,7 @@
-package de.tud.feedback.plugin.context;
+package de.tud.feedback.plugin;
 
-import de.tud.feedback.api.context.ContextImportException;
-import de.tud.feedback.api.context.ContextImporter;
+import de.tud.feedback.api.ContextImportException;
+import de.tud.feedback.api.ContextImporter;
 import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

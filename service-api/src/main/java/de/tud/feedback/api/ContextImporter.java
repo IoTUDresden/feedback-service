@@ -1,4 +1,4 @@
-package de.tud.feedback.api.context;
+package de.tud.feedback.api;
 
 import org.springframework.core.io.Resource;
 

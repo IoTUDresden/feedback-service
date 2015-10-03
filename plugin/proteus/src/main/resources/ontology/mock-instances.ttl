@@ -13,6 +13,10 @@
   owl:imports <http://elite.polito.it/ontologies/dogont.owl> ;
   owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
 .
+instance:Garten
+  rdf:type dogont:Garden ;
+  rdfs:label "Garten"^^xsd:string ;
+.
 instance:Function_Weather_Temperature
   rdf:type dogont:TemperatureMeasurementFunctionality ;
 .
@@ -28,4 +32,5 @@ instance:yahooweather_weather_035553af_temperature
   rdf:type dogont:SingleTemperatureSensor ;
   dogont:hasFunctionality instance:Function_Weather_Temperature ;
   dogont:hasState instance:State_Weather_Temperature ;
+  dogont:isIn instance:Garten ;
 .

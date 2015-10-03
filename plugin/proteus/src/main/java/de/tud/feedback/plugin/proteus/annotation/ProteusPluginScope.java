@@ -1,4 +1,4 @@
-package de.tud.feedback.plugin.annotation;
+package de.tud.feedback.plugin.proteus.annotation;
 
 import de.tud.feedback.plugin.ProteusFeedbackPlugin;
 import org.springframework.context.annotation.Scope;

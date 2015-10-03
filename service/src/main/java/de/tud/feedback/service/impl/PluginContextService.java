@@ -2,7 +2,7 @@ package de.tud.feedback.service.impl;
 
 import de.tud.feedback.annotation.GraphTransactional;
 import de.tud.feedback.annotation.Loggable;
-import de.tud.feedback.api.context.ContextImporter;
+import de.tud.feedback.api.ContextImporter;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.ContextImport;
 import de.tud.feedback.domain.Node;

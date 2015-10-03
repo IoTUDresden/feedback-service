@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
 "name": "Zuhause",
-"plugin": "proteus",
+"plugin": "Proteus",
 "imports": [{
 "source": "classpath:ontology/dogont.owl",
 "mime": "application/rdf+xml",

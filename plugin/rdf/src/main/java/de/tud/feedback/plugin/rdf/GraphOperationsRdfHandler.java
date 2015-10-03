@@ -1,4 +1,4 @@
-package de.tud.feedback.plugin;
+package de.tud.feedback.plugin.rdf;
 
 import com.google.common.base.Strings;
 import de.tud.feedback.api.GraphOperations;
@@ -7,7 +7,7 @@ import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
-class GraphOperationsRdfHandler extends RDFHandlerBase {
+public class GraphOperationsRdfHandler extends RDFHandlerBase {
 
     private static final String TYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 
@@ -32,7 +32,7 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
     }
 
     private void handleTriplet(URI subject, URI predicate, Value object) {
-        operations.createNode(uriOf(subject));
+        create(subject);
 
         if (isType(predicate)) {
             handleType(subject, predicate, object);
@@ -50,13 +50,18 @@ class GraphOperationsRdfHandler extends RDFHandlerBase {
     }
 
     private void handleResource(URI subject, URI predicate, URI object) {
-        operations.createNode(uriOf(object));
+        create(object);
         operations.createConnection(uriOf(predicate), nameFor(predicate), uriOf(subject), uriOf(object));
     }
 
     private void handleType(URI subject, URI predicate, Value object) {
         operations.setAdditionalLabel(uriOf(subject), nameFor((URI) object));
         operations.createConnection(uriOf(predicate), nameFor(predicate), uriOf(subject), uriOf(object));
+    }
+
+    private void create(URI node) {
+        operations.createNode(uriOf(node));
+        operations.setNodeProperty(uriOf(node), "name", nameFor(node));
     }
 
     private boolean isType(URI predicate) {

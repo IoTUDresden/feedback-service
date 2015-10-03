@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 @SpringBootApplication
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class FeedbackServiceApplication {
+public class FeedbackService {
 
     public static void main(String[] args) {
-        SpringApplication.run(FeedbackServiceApplication.class, args);
+        SpringApplication.run(FeedbackService.class, args);
     }
 
 }

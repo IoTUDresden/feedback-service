@@ -1,4 +1,4 @@
-package de.tud.feedback.api.context;
+package de.tud.feedback.api;
 
 public class ContextImportException extends RuntimeException {
 
