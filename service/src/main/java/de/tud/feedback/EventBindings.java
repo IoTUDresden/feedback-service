@@ -21,7 +21,7 @@ public class EventBindings {
     @EventListener(condition = "#root.event.source instanceof T(de.tud.feedback.domain.Context)")
     public void importContextSourcesAfterContextCreation(AfterCreateEvent event) {
         contexts.importAllOf((Context) event.getSource());
-        contexts.beginUpdates();
+        contexts.beginContextUpdates();
     }
 
     @EventListener(condition = "#root.event.source instanceof T(de.tud.feedback.domain.WorkflowInstance)")

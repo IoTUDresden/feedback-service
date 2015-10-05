@@ -10,6 +10,7 @@ import de.tud.feedback.domain.ContextImport;
 import de.tud.feedback.domain.ContextNode;
 import de.tud.feedback.loop.Monitor;
 import de.tud.feedback.repository.ContextImportRepository;
+import de.tud.feedback.repository.ContextRepository;
 import de.tud.feedback.service.ContextService;
 import de.tud.feedback.service.KnowledgeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class PluginContextService implements ContextService {
 
     private KnowledgeService knowledge;
 
+    private ContextRepository contexts;
+
     private Monitor monitor;
 
     @Override
@@ -53,8 +56,15 @@ public class PluginContextService implements ContextService {
     @Override
     @LogInvocation
     @PostConstruct
-    public void beginUpdates() {
-        monitor.start();
+    public void beginContextUpdates() {
+        long numberOfContexts = contexts.count();
+
+        if (numberOfContexts > 1) {
+            throw new RuntimeException("Multiple contexts are not supported yet");
+
+        } else if (numberOfContexts > 0) {
+            monitor.start();
+        }
     }
 
     private void importContextFrom(ContextImport contextImport) {
@@ -78,7 +88,7 @@ public class PluginContextService implements ContextService {
     }
 
     @Autowired
-    public void setContextImportRepository(ContextImportRepository repository) {
+    public void setContextImports(ContextImportRepository repository) {
         imports = repository;
     }
 
@@ -105,6 +115,11 @@ public class PluginContextService implements ContextService {
     @Autowired
     public void setMonitor(Monitor monitor) {
         this.monitor = monitor;
+    }
+
+    @Autowired
+    public void setContexts(ContextRepository contexts) {
+        this.contexts = contexts;
     }
 
 }

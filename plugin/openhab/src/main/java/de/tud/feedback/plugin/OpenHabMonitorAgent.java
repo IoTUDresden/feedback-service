@@ -3,11 +3,13 @@ package de.tud.feedback.plugin;
 import de.tud.feedback.api.ContextUpdater;
 import de.tud.feedback.api.MonitorAgent;
 import de.tud.feedback.api.annotation.LogInvocation;
-import org.springframework.web.socket.*;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.client.WebSocketConnectionManager;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-public class OpenHabMonitorAgent extends AbstractWebSocketHandler implements MonitorAgent {
+public class OpenHabMonitorAgent extends TextWebSocketHandler implements MonitorAgent {
 
     private final String host;
 
@@ -24,43 +26,23 @@ public class OpenHabMonitorAgent extends AbstractWebSocketHandler implements Mon
     @LogInvocation
     public void start(ContextUpdater updater) {
         this.updater = updater;
-        new StandardWebSocketClient()
-                .doHandshake(this, "ws://{host}:{port}/rest/items/?Accept=application/json", host, port);
+
+        final StandardWebSocketClient client = new StandardWebSocketClient();
+        final WebSocketConnectionManager manager = new WebSocketConnectionManager(client, this,
+                "ws://{host}:{port}/rest/items/?Accept=application/json&" +
+                        "X-Atmosphere-Transport=websocket&" +
+                        "X-Atmosphere-Framework=2.0&" +
+                        "X-atmo-protocol=true&" +
+                        "X-Atmosphere-tracking-id=42&" +
+                        "X-Cache-Date=0",
+                host, port);
+
+        manager.start();
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         super.handleTextMessage(session, message);
-    }
-
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        super.afterConnectionClosed(session, status);
-    }
-
-    @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        super.handleTransportError(session, exception);
-    }
-
-    @Override
-    protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
-        super.handlePongMessage(session, message);
-    }
-
-    @Override
-    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
-        super.handleBinaryMessage(session, message);
-    }
-
-    @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        super.handleMessage(session, message);
-    }
-
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        super.afterConnectionEstablished(session);
     }
 
 }
