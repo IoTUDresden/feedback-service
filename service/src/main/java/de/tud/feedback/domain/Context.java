@@ -1,7 +1,7 @@
 package de.tud.feedback.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
+import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -12,7 +12,10 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
 @NodeEntity
-public class Context extends Node {
+public class Context {
+
+    @GraphId
+    private Long id;
 
     @NotBlank
     private String name;
@@ -20,11 +23,16 @@ public class Context extends Node {
     @NotBlank
     private String plugin;
 
-    @JsonIgnore
-    private String uniqueId;
-
     @Relationship(type = "importedFor", direction = Relationship.INCOMING)
     private List<ContextImport> imports = newArrayList();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -52,10 +60,6 @@ public class Context extends Node {
         } catch (NullPointerException exception) {
             this.imports = newArrayList();
         }
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
     }
 
     @Override

@@ -6,7 +6,4 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "import", path = "import", exported = false)
 public interface ContextImportRepository extends CrudRepository<ContextImport, Long> {
-
-
-
 }

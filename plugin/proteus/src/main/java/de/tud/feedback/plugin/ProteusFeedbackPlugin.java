@@ -14,7 +14,7 @@ import java.util.Collection;
 @Component
 public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
-    public static final String NAME = "Proteus";
+    public static final String NAME = "proteus";
 
     @Autowired RdfContextImporterFactoryBean contextImporterFactoryBean;
 
@@ -43,7 +43,8 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     }
 
     @Override
-    public Collection<MonitorAgent> getMonitorAgents() {
+    public Collection<MonitorAgent> getMonitorAgentsFor(Long contextId) {
+        dogOntContextUpdaterFactoryBean.setContext(contextId);
         return ImmutableList.<MonitorAgent>builder()
                 .add(openHabMonitorAgentProvider.get())
                 .build();

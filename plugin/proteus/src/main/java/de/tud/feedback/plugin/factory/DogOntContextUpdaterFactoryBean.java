@@ -9,12 +9,18 @@ public class DogOntContextUpdaterFactoryBean extends AbstractFactoryBean<DogOntC
 
     private CypherExecutor executor;
 
+    private Long context;
+
     public static DogOntContextUpdaterFactoryBean build() {
         return new DogOntContextUpdaterFactoryBean();
     }
 
     public void setExecutor(CypherExecutor executor) {
         this.executor = executor;
+    }
+
+    public void setContext(Long context) {
+        this.context = context;
     }
 
     @Override

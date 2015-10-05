@@ -13,7 +13,4 @@ public interface ContextRepository extends GraphRepository<Context> {
     @Query("START n = NODE(*) WHERE NOT n-[*..2]->() RETURN ID(n) AS ID")
     Set<Integer> findOrphanedNodeIds();
 
-    @Query("CREATE CONSTRAINT ON (c:Context) ASSERT c.uniqueId IS UNIQUE")
-    void createUniqueConstraint();
-
 }

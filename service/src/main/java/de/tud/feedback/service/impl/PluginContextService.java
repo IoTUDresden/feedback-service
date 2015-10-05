@@ -1,11 +1,12 @@
 package de.tud.feedback.service.impl;
 
 import de.tud.feedback.annotation.GraphTransactional;
-import de.tud.feedback.annotation.Loggable;
+import de.tud.feedback.annotation.LogDuration;
+import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.api.ContextImporter;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.ContextImport;
-import de.tud.feedback.domain.Node;
+import de.tud.feedback.domain.ContextNode;
 import de.tud.feedback.graph.NodeCollectingCypherExecutor;
 import de.tud.feedback.repository.ContextImportRepository;
 import de.tud.feedback.repository.ContextRepository;
@@ -16,7 +17,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Provider;
 import java.util.List;
 import java.util.Set;
@@ -39,15 +39,16 @@ public class PluginContextService implements ContextService {
 
     private ResourceLoader resources;
 
-    @PostConstruct
-    public void initConstraints() {
-        contexts.createUniqueConstraint();
+    @Override
+    @LogInvocation
+    public void beginUpdatesOnExistingContexts() {
+        contexts.findAll().forEach(this::beginUpdatesOn);
     }
 
     @Override
-    @Loggable
+    @LogDuration
     @GraphTransactional
-    public void importFrom(Context context) {
+    public void importAllOf(Context context) {
         context.getImports().forEach(contextImport -> {
             contextImport.setContext(context);
             importContextFrom(contextImport);
@@ -55,8 +56,9 @@ public class PluginContextService implements ContextService {
     }
 
     @Override
-    public void preProcess(Context context) {
-        context.setUniqueId(context.getPlugin() + context.getName());
+    @LogInvocation
+    public void beginUpdatesOn(Context context) {
+        // TODO
     }
 
     private void importContextFrom(ContextImport contextImport) {
@@ -71,11 +73,11 @@ public class PluginContextService implements ContextService {
         });
     }
 
-    private List<Node> entranceNodesFrom(Set<Long> createdNotes) {
+    private List<ContextNode> entranceNodesFrom(Set<Long> createdNotes) {
         return intersection(createdNotes, orphanedNodes())
                 .stream()
                 .map(id -> {
-                    Node node = new Node();
+                    ContextNode node = new ContextNode();
                     node.setId(id);
                     return node;
                 }).collect(toList());

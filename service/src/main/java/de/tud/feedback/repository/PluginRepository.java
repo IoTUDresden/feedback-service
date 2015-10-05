@@ -6,6 +6,4 @@ public interface PluginRepository {
 
     FeedbackPlugin findOne(String name);
 
-    void register();
-
 }

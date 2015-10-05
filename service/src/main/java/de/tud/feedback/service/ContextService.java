@@ -4,8 +4,10 @@ import de.tud.feedback.domain.Context;
 
 public interface ContextService {
 
-    void preProcess(Context context);
+    void importAllOf(Context context);
 
-    void importFrom(Context context);
+    void beginUpdatesOn(Context context);
+
+    void beginUpdatesOnExistingContexts();
 
 }

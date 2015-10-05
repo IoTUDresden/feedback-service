@@ -1,8 +1,10 @@
 package de.tud.feedback.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.NodeEntity;
 
-public class Node {
+@NodeEntity
+public class ContextNode {
 
     @GraphId
     private Long id;

@@ -8,6 +8,7 @@ import de.tud.feedback.plugin.proteus.annotation.ProteusPluginScope;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 import static de.tud.feedback.api.impl.ConversationalScope.createScopeConfigurerFor;
 
@@ -18,7 +19,7 @@ public class ProteusConfiguration {
     @ProteusPluginScope
     RdfContextImporterFactoryBean rdfContextImporterFactoryBean() {
         return RdfContextImporterFactoryBean.build()
-                .setNodeLabel(ProteusFeedbackPlugin.NAME)
+                .setNodeLabel(StringUtils.capitalize(ProteusFeedbackPlugin.NAME))
                 .setNodeIdentifier("uri");
     }
 

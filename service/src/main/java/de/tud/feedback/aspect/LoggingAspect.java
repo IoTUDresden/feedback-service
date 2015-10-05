@@ -1,8 +1,10 @@
 package de.tud.feedback.aspect;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
@@ -16,24 +18,31 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 @Aspect
 @Component
-public class LoggableAspect {
+public class LoggingAspect {
 
-    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.annotation.Loggable)")
-    public void loggableMethods() {}
+    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.annotation.LogDuration)")
+    public void durationLoggedMethods() {}
 
-    @Around("loggableMethods()")
-    public Object logInvocation(ProceedingJoinPoint point) throws Throwable {
+    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.annotation.LogInvocation)")
+    public void invocationLoggedMethods() {}
+
+    @Around("durationLoggedMethods()")
+    public Object logDuration(ProceedingJoinPoint point) throws Throwable {
         final String method = methodFrom(point);
         final Logger logger = getLogger(classFrom(point));
         final Long begin = currentTimeMillis();
         final Object result;
-
 
         logger.info(format("Starting %s(%s)", method, argumentsFrom(point)));
         result = point.proceed();
         logger.info(format("Finished %s(...) after %sms", method, timeGoneBySince(begin)));
 
         return result;
+    }
+
+    @Before("invocationLoggedMethods()")
+    public void logInvocation(JoinPoint point) {
+        getLogger(classFrom(point)).info(format("Invoking %s(%s)", methodFrom(point), argumentsFrom(point)));
     }
 
     private String timeGoneBySince(long begin) {
@@ -44,15 +53,15 @@ public class LoggableAspect {
         return currentTimeMillis() - begin;
     }
 
-    private String argumentsFrom(ProceedingJoinPoint point) {
+    private String argumentsFrom(JoinPoint point) {
         return Arrays.toString(point.getArgs());
     }
 
-    private String methodFrom(ProceedingJoinPoint point) {
+    private String methodFrom(JoinPoint point) {
         return MethodSignature.class.cast(point.getSignature()).getMethod().getName();
     }
 
-    private Class classFrom(ProceedingJoinPoint point) {
+    private Class classFrom(JoinPoint point) {
         return MethodSignature.class.cast(point.getSignature()).getDeclaringType();
     }
 
