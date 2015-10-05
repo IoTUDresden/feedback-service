@@ -10,6 +10,6 @@ public interface FeedbackPlugin {
 
     ContextUpdater getContextUpdater(CypherExecutor executor);
 
-    Collection<MonitorAgent> getMonitorAgentsFor(Long contextId);
+    Collection<MonitorAgent> getMonitorAgents();
 
 }

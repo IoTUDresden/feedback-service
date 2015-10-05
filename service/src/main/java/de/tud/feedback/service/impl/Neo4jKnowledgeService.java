@@ -7,6 +7,12 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 public class Neo4jKnowledgeService implements KnowledgeService {
@@ -15,8 +21,19 @@ public class Neo4jKnowledgeService implements KnowledgeService {
 
     @PostConstruct
     public void initialize() {
-        operations.query("CREATE CONSTRAINT ON (c:Workflow) ASSERT c.name IS UNIQUE", params().build());
-        operations.query("CREATE CONSTRAINT ON (c:Context)  ASSERT c.name IS UNIQUE", params().build());
+        q("CREATE CONSTRAINT ON (c:Workflow) ASSERT c.name IS UNIQUE");
+        q("CREATE CONSTRAINT ON (c:Context)  ASSERT c.name IS UNIQUE");
+    }
+
+    @Override
+    public Set<Long> findOrphanedNodes() {
+        return q("START n = NODE(*) WHERE NOT n-[*..2]->() RETURN ID(n) AS ID").stream()
+                .map(row -> Long.getLong("ID"))
+                .collect(toSet());
+    }
+
+    private Collection<Map<String, Object>> q(String query) {
+        return newArrayList(operations.query(query, params().build()).queryResults());
     }
 
     private ImmutableMap.Builder<String, Object> params() {

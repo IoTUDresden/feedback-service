@@ -17,4 +17,10 @@ public class ContextNode {
         this.id = id;
     }
 
+    public static ContextNode fromId(Long id) {
+        ContextNode node = new ContextNode();
+        node.setId(id);
+        return node;
+    }
+
 }

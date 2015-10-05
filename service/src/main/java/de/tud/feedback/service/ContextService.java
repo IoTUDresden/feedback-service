@@ -6,6 +6,6 @@ public interface ContextService {
 
     void importAllOf(Context context);
 
-    void beginUpdatesOn(Context context);
+    void beginUpdates();
 
 }

@@ -3,6 +3,8 @@ package de.tud.feedback.graph;
 import de.tud.feedback.api.CypherExecutor;
 import org.neo4j.ogm.session.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toList;
 
 @Component
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class NodeCollectingCypherExecutor implements CypherExecutor {
 
     private final Set<Long> nodes = newHashSet();
@@ -32,12 +35,14 @@ public class NodeCollectingCypherExecutor implements CypherExecutor {
     }
 
     @Override
-    public void execute(String cypherQuery, Map<String, ?> params) {
+    public Iterable<Map<String, Object>> execute(String cypherQuery, Map<String, ?> params) {
         Result result = operations.query(cypherQuery, params);
 
         if (hasCreatedNodes(result)) {
             nodes.addAll(createdNodesFor(idsWithin(result)));
         }
+
+        return result.queryResults();
     }
 
     private Collection<Long> createdNodesFor(List<Integer> ids) {

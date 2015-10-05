@@ -1,53 +1,44 @@
 package de.tud.feedback.service.impl;
 
 import de.tud.feedback.annotation.GraphTransactional;
-import de.tud.feedback.annotation.LogDuration;
-import de.tud.feedback.annotation.LogInvocation;
-import de.tud.feedback.api.ContextImporter;
+import de.tud.feedback.api.CypherExecutor;
 import de.tud.feedback.api.FeedbackPlugin;
+import de.tud.feedback.api.annotation.LogDuration;
+import de.tud.feedback.api.annotation.LogInvocation;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.ContextImport;
 import de.tud.feedback.domain.ContextNode;
-import de.tud.feedback.graph.NodeCollectingCypherExecutor;
-import de.tud.feedback.graph.SimpleCypherExecutor;
+import de.tud.feedback.loop.Monitor;
 import de.tud.feedback.repository.ContextImportRepository;
-import de.tud.feedback.repository.ContextRepository;
-import de.tud.feedback.repository.PluginRepository;
 import de.tud.feedback.service.ContextService;
+import de.tud.feedback.service.KnowledgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Provider;
 import java.util.List;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.partition;
 import static com.google.common.collect.Sets.intersection;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 @Service
 public class PluginContextService implements ContextService {
 
     private ContextImportRepository imports;
 
-    private ContextRepository contexts;
+    private FeedbackPlugin plugin;
 
-    private PluginRepository plugins;
-
-    private Provider<NodeCollectingCypherExecutor> collectingExecutor;
-
-    private Provider<SimpleCypherExecutor> simpleExecutor;
+    private CypherExecutor executor;
 
     private ResourceLoader resources;
 
-    @PostConstruct
-    public void initialize() {
-        contexts.findAll().forEach(this::beginUpdatesOn);
-    }
+    private KnowledgeService knowledge;
+
+    private Monitor monitor;
 
     @Override
     @LogDuration
@@ -61,18 +52,15 @@ public class PluginContextService implements ContextService {
 
     @Override
     @LogInvocation
-    public void beginUpdatesOn(Context context) {
-        final FeedbackPlugin plugin = plugins.findOne(context.getPlugin());
-        plugin.getMonitorAgentsFor(context.getId()).forEach(agent ->
-                agent.start(plugin.getContextUpdater(simpleExecutor.get())));
+    @PostConstruct
+    public void beginUpdates() {
+        monitor.start();
     }
 
     private void importContextFrom(ContextImport contextImport) {
-        final String plugin = contextImport.getContext().getPlugin();
-        final NodeCollectingCypherExecutor executor = collectingExecutor.get();
-        final ContextImporter importer = plugins.findOne(plugin).getContextImporter(executor);
+        plugin.getContextImporter(executor)
+                .importContextFrom(resourceFrom(contextImport), contextImport.getMime());
 
-        importer.importContextFrom(resourceFrom(contextImport), contextImport.getMime());
         partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
             contextImport.getEntranceNodes().addAll(nodes);
             imports.save(contextImport);
@@ -80,20 +68,9 @@ public class PluginContextService implements ContextService {
     }
 
     private List<ContextNode> entranceNodesFrom(Set<Long> createdNotes) {
-        return intersection(createdNotes, orphanedNodes())
-                .stream()
-                .map(id -> {
-                    ContextNode node = new ContextNode();
-                    node.setId(id);
-                    return node;
-                }).collect(toList());
-    }
-
-    private Set<Long> orphanedNodes() {
-        return contexts.findOrphanedNodeIds()
-                .stream()
-                .map(Integer::longValue)
-                .collect(toSet());
+        return intersection(createdNotes, knowledge.findOrphanedNodes()).stream()
+                .map(ContextNode::fromId)
+                .collect(toList());
     }
 
     private Resource resourceFrom(ContextImport contextImport) {
@@ -106,28 +83,28 @@ public class PluginContextService implements ContextService {
     }
 
     @Autowired
-    public void setContextRepository(ContextRepository repository) {
-        contexts = repository;
+    public void setPlugin(FeedbackPlugin plugin) {
+        this.plugin = plugin;
     }
 
     @Autowired
-    public void setPluginRepository(PluginRepository repository) {
-        plugins = repository;
-    }
-
-    @Autowired
-    public void setCypherExecutorProvider(Provider<NodeCollectingCypherExecutor> provider) {
-        collectingExecutor = provider;
-    }
-
-    @Autowired
-    public void setSimpleExecutor(Provider<SimpleCypherExecutor> provider) {
-        simpleExecutor = provider;
+    public void setExecutor(CypherExecutor executor) {
+        this.executor = executor;
     }
 
     @Autowired
     public void setResources(ResourceLoader resources) {
         this.resources = resources;
+    }
+
+    @Autowired
+    public void setKnowledge(KnowledgeService knowledge) {
+        this.knowledge = knowledge;
+    }
+
+    @Autowired
+    public void setMonitor(Monitor monitor) {
+        this.monitor = monitor;
     }
 
 }

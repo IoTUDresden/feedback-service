@@ -5,15 +5,21 @@ import de.tud.feedback.api.CypherExecutor;
 
 public class DogOntContextUpdater implements ContextUpdater {
 
-    private final CypherExecutor executor;
+    private CypherExecutor executor;
 
     public DogOntContextUpdater(CypherExecutor executor) {
         this.executor = executor;
+        // TODO fetch related item IDs
     }
 
     @Override
-    public void updateContext(Long contextId, String itemId, Object state) {
+    public void update(String itemId, Object state) {
         // TODO
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 
 }

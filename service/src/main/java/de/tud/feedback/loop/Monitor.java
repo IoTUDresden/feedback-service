@@ -1,9 +1,7 @@
 package de.tud.feedback.loop;
 
-import de.tud.feedback.api.annotations.WorkflowExecutionScope;
-import org.springframework.stereotype.Component;
+public interface Monitor {
 
-@Component
-@WorkflowExecutionScope
-public class Monitor {
+    void start();
+
 }

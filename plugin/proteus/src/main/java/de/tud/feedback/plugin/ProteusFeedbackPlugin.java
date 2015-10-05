@@ -1,9 +1,7 @@
 package de.tud.feedback.plugin;
 
-import com.google.common.collect.ImmutableList;
 import de.tud.feedback.api.*;
 import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
-import de.tud.feedback.plugin.factory.OpenHabMonitorAgentFactoryBean;
 import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,43 +9,38 @@ import org.springframework.stereotype.Component;
 import javax.inject.Provider;
 import java.util.Collection;
 
+import static java.util.Collections.singletonList;
+
 @Component
 public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     public static final String NAME = "proteus";
 
-    @Autowired RdfContextImporterFactoryBean contextImporterFactoryBean;
+    @Autowired Provider<RdfContextImporter> importerProvider;
 
-    @Autowired
-    OpenHabMonitorAgentFactoryBean openHabMonitorAgentFactoryBean;
+    @Autowired Provider<DogOntContextUpdater> updaterProvider;
 
-    @Autowired
-    DogOntContextUpdaterFactoryBean dogOntContextUpdaterFactoryBean;
+    @Autowired RdfContextImporterFactoryBean importerFactory;
 
-    @Autowired Provider<RdfContextImporter> contextImporterProvider;
+    @Autowired DogOntContextUpdaterFactoryBean updaterFactory;
 
-    @Autowired Provider<OpenHabMonitorAgent> openHabMonitorAgentProvider;
-
-    @Autowired Provider<DogOntContextUpdater> dogOntContextUpdaterProvider;
+    @Autowired OpenHabMonitorAgent monitorAgent;
 
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
-        contextImporterFactoryBean.setExecutor(executor);
-        return contextImporterProvider.get();
+        importerFactory.setExecutor(executor);
+        return importerProvider.get();
     }
 
     @Override
     public ContextUpdater getContextUpdater(CypherExecutor executor) {
-        dogOntContextUpdaterFactoryBean.setExecutor(executor);
-        return dogOntContextUpdaterProvider.get();
+        updaterFactory.setExecutor(executor);
+        return updaterProvider.get();
     }
 
     @Override
-    public Collection<MonitorAgent> getMonitorAgentsFor(Long contextId) {
-        dogOntContextUpdaterFactoryBean.setContext(contextId);
-        return ImmutableList.<MonitorAgent>builder()
-                .add(openHabMonitorAgentProvider.get())
-                .build();
+    public Collection<MonitorAgent> getMonitorAgents() {
+        return singletonList(monitorAgent);
     }
 
     @Override

@@ -4,6 +4,4 @@ public interface MonitorAgent {
 
     void start(ContextUpdater updater);
 
-    void stop();
-
 }

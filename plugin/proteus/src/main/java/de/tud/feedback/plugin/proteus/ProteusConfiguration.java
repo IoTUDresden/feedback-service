@@ -4,19 +4,21 @@ import de.tud.feedback.plugin.ProteusFeedbackPlugin;
 import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
 import de.tud.feedback.plugin.factory.OpenHabMonitorAgentFactoryBean;
 import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
-import de.tud.feedback.plugin.proteus.annotation.ProteusPluginScope;
-import org.springframework.beans.factory.config.CustomScopeConfigurer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
-import static de.tud.feedback.api.impl.ConversationalScope.createScopeConfigurerFor;
-
 @Configuration
 public class ProteusConfiguration {
 
+    @Value("${openHab.host:localhost}")
+    private String openHabHost;
+
+    @Value("${openHab.port:8080}")
+    private int openHabPort;
+
     @Bean
-    @ProteusPluginScope
     RdfContextImporterFactoryBean rdfContextImporterFactoryBean() {
         return RdfContextImporterFactoryBean.build()
                 .setNodeLabel(StringUtils.capitalize(ProteusFeedbackPlugin.NAME))
@@ -24,22 +26,15 @@ public class ProteusConfiguration {
     }
 
     @Bean
-    @ProteusPluginScope
     OpenHabMonitorAgentFactoryBean openHabMonitorAgentFactoryBean() {
         return OpenHabMonitorAgentFactoryBean.build()
-                .setHost("localhost")
-                .setPort(8080);
+                .setHost(openHabHost)
+                .setPort(openHabPort);
     }
 
     @Bean
-    @ProteusPluginScope
     DogOntContextUpdaterFactoryBean dogOntContextUpdaterFactoryBean() {
         return DogOntContextUpdaterFactoryBean.build();
-    }
-
-    @Bean
-    static CustomScopeConfigurer proteusScopeConfigurer() {
-        return createScopeConfigurerFor(ProteusFeedbackPlugin.NAME);
     }
 
 }

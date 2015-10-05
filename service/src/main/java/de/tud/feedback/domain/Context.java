@@ -20,9 +20,6 @@ public class Context {
     @NotBlank
     private String name;
 
-    @NotBlank
-    private String plugin;
-
     @Relationship(type = "importedFor", direction = Relationship.INCOMING)
     private List<ContextImport> imports = newArrayList();
 
@@ -40,14 +37,6 @@ public class Context {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getPlugin() {
-        return plugin;
-    }
-
-    public void setPlugin(String plugin) {
-        this.plugin = plugin;
     }
 
     public List<ContextImport> getImports() {

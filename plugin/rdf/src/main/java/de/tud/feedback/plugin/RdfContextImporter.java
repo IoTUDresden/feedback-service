@@ -1,6 +1,5 @@
 package de.tud.feedback.plugin;
 
-import de.tud.feedback.api.ContextImportException;
 import de.tud.feedback.api.ContextImporter;
 import org.openrdf.rio.*;
 import org.slf4j.Logger;
@@ -32,19 +31,19 @@ public class RdfContextImporter implements ContextImporter {
 
         } catch (MalformedURLException exception) {
             LOG.error("resource URL is malformed");
-            throw new ContextImportException(exception);
+            throw new RuntimeException(exception);
 
         } catch (IOException exception) {
             LOG.error("cannot read RDF");
-            throw new ContextImportException(exception);
+            throw new RuntimeException(exception);
 
         } catch (RDFParseException exception) {
             LOG.error("RDF is malformed");
-            throw new ContextImportException(exception);
+            throw new RuntimeException(exception);
 
         } catch (RDFHandlerException exception) {
             LOG.error("RDF import failed");
-            throw new ContextImportException(exception);
+            throw new RuntimeException(exception);
         }
     }
 
