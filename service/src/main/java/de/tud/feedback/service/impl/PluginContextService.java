@@ -4,10 +4,12 @@ import de.tud.feedback.annotation.GraphTransactional;
 import de.tud.feedback.annotation.LogDuration;
 import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.api.ContextImporter;
+import de.tud.feedback.api.FeedbackPlugin;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.ContextImport;
 import de.tud.feedback.domain.ContextNode;
 import de.tud.feedback.graph.NodeCollectingCypherExecutor;
+import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.repository.ContextImportRepository;
 import de.tud.feedback.repository.ContextRepository;
 import de.tud.feedback.repository.PluginRepository;
@@ -17,6 +19,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Provider;
 import java.util.List;
 import java.util.Set;
@@ -35,13 +38,14 @@ public class PluginContextService implements ContextService {
 
     private PluginRepository plugins;
 
-    private Provider<NodeCollectingCypherExecutor> executorProvider;
+    private Provider<NodeCollectingCypherExecutor> collectingExecutor;
+
+    private Provider<SimpleCypherExecutor> simpleExecutor;
 
     private ResourceLoader resources;
 
-    @Override
-    @LogInvocation
-    public void beginUpdatesOnExistingContexts() {
+    @PostConstruct
+    public void initialize() {
         contexts.findAll().forEach(this::beginUpdatesOn);
     }
 
@@ -58,12 +62,14 @@ public class PluginContextService implements ContextService {
     @Override
     @LogInvocation
     public void beginUpdatesOn(Context context) {
-        // TODO
+        final FeedbackPlugin plugin = plugins.findOne(context.getPlugin());
+        plugin.getMonitorAgentsFor(context.getId()).forEach(agent ->
+                agent.start(plugin.getContextUpdater(simpleExecutor.get())));
     }
 
     private void importContextFrom(ContextImport contextImport) {
         final String plugin = contextImport.getContext().getPlugin();
-        final NodeCollectingCypherExecutor executor = executorProvider.get();
+        final NodeCollectingCypherExecutor executor = collectingExecutor.get();
         final ContextImporter importer = plugins.findOne(plugin).getContextImporter(executor);
 
         importer.importContextFrom(resourceFrom(contextImport), contextImport.getMime());
@@ -111,7 +117,12 @@ public class PluginContextService implements ContextService {
 
     @Autowired
     public void setCypherExecutorProvider(Provider<NodeCollectingCypherExecutor> provider) {
-        executorProvider = provider;
+        collectingExecutor = provider;
+    }
+
+    @Autowired
+    public void setSimpleExecutor(Provider<SimpleCypherExecutor> provider) {
+        simpleExecutor = provider;
     }
 
     @Autowired

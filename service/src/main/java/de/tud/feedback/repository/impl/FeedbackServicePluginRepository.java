@@ -1,6 +1,5 @@
 package de.tud.feedback.repository.impl;
 
-import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.api.FeedbackPlugin;
 import de.tud.feedback.repository.PluginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +29,13 @@ public class FeedbackServicePluginRepository implements PluginRepository {
         return plugins.get(name);
     }
 
-    @LogInvocation
     @PostConstruct
     public void initialize() {
         plugins.clear();
-        pluginBeans().forEach(this::initialize);
+        pluginBeans().forEach(this::add);
     }
 
-    private void initialize(FeedbackPlugin plugin) {
+    private void add(FeedbackPlugin plugin) {
         plugins.put(plugin.name(), plugin);
     }
 

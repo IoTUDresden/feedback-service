@@ -8,6 +8,4 @@ public interface ContextService {
 
     void beginUpdatesOn(Context context);
 
-    void beginUpdatesOnExistingContexts();
-
 }
