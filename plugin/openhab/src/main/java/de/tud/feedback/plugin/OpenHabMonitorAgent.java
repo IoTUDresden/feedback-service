@@ -1,87 +1,59 @@
 package de.tud.feedback.plugin;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.tud.feedback.api.ContextUpdater;
 import de.tud.feedback.api.MonitorAgent;
 import de.tud.feedback.api.annotation.LogInvocation;
-import de.tud.feedback.plugin.openhab.OpenHabItem;
-import de.tud.feedback.plugin.openhab.OpenHabMessage;
+import de.tud.feedback.plugin.openhab.OpenHabService;
+import de.tud.feedback.plugin.openhab.domain.OpenHabItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.client.WebSocketConnectionManager;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 
-public class OpenHabMonitorAgent extends TextWebSocketHandler implements MonitorAgent {
+public class OpenHabMonitorAgent implements MonitorAgent {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenHabMonitorAgent.class);
 
-    private static final String ADDRESS = "ws://{host}:{port}/rest/items/?" +
-            "Accept=application/json&X-Atmosphere-Transport=websocket&X-Atmosphere-Framework=2.2.1";
-
-    private final ObjectMapper mapper = new ObjectMapper();
-
-    private final WebSocketConnectionManager manager;
-
     private final Map<String, String> cache = newHashMap();
+
+    private final OpenHabService service;
 
     private Double numberStateChangeDelta = 0.01;
 
+    private Integer pollingSeconds = 2;
+
     private ContextUpdater updater;
 
-    private String messageBuffer = "";
-
-    public OpenHabMonitorAgent(String host, Integer port) {
-        manager = new WebSocketConnectionManager(new StandardWebSocketClient(), this, ADDRESS, host, port);
+    public OpenHabMonitorAgent(OpenHabService service) {
+        this.service = service;
     }
 
-    public void setNumberStateChangeDelta(Double delta) {
-        numberStateChangeDelta = delta;
+    @Override
+    public void use(ContextUpdater updater) {
+        this.updater = updater;
     }
 
     @Override
     @LogInvocation
-    public void start(ContextUpdater updater) {
-        this.updater = updater;
-        manager.start();
-    }
-
-    @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        try {
-            messageBuffer += message.getPayload();
-            mapper.readValue(messageBuffer, OpenHabMessage.class).getItems().stream().forEach(this::handleItem);
-            messageBuffer = "";
-
-        } catch (JsonMappingException exception) {
-            // no need to handle partial message explicitly
-
-        } catch (Exception exception) {
-            LOG.warn("Message dumped due to " + exception.getMessage());
-            messageBuffer = "";
+    @SuppressWarnings("InfiniteLoopStatement")
+    public void run() {
+        while (true) {
+            processOpenHabItems();
+            postponeNextRequest();
         }
     }
 
-    private void handleNumberItem(OpenHabItem item) {
-        if (!cacheContains(item)) {
-            cache(item);
-            update(item);
+    private void processOpenHabItems() {
+        service.getAllItems().getItems().stream().forEach(this::handleItem);
+    }
 
-        } else {
-            final String cachedState = cached(item);
-            final String currentState = item.getState();
-
-            if (!cachedState.equals(currentState) && isSignificantChange(currentState, cachedState)) {
-                cache(item);
-                update(item);
-            }
+    private void postponeNextRequest() {
+        try {
+            Thread.sleep(1000L * pollingSeconds);
+        } catch (InterruptedException exception) {
+            LOG.info(exception.getMessage());
         }
     }
 
@@ -103,6 +75,22 @@ public class OpenHabMonitorAgent extends TextWebSocketHandler implements Monitor
         }
     }
 
+    private void handleNumberItem(OpenHabItem item) {
+        if (!cacheContains(item)) {
+            cache(item);
+            update(item);
+
+        } else {
+            final String cachedState = cached(item);
+            final String currentState = item.getState();
+
+            if (!cachedState.equals(currentState) && isSignificantChange(currentState, cachedState)) {
+                cache(item);
+                update(item);
+            }
+        }
+    }
+
     private String cached(OpenHabItem item) {
         return cache.get(item.getLink());
     }
@@ -121,6 +109,14 @@ public class OpenHabMonitorAgent extends TextWebSocketHandler implements Monitor
 
     private boolean isSignificantChange(String currentState, String cachedState) {
         return Math.abs(Double.valueOf(currentState) - Double.valueOf(cachedState)) > numberStateChangeDelta;
+    }
+
+    public void setNumberStateChangeDelta(Double delta) {
+        numberStateChangeDelta = delta;
+    }
+
+    public void setPollingSeconds(Integer seconds) {
+        this.pollingSeconds = seconds;
     }
 
 }

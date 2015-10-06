@@ -1,7 +1,12 @@
 package de.tud.feedback.plugin.factory;
 
 import de.tud.feedback.plugin.OpenHabMonitorAgent;
+import de.tud.feedback.plugin.openhab.OpenHabService;
+import feign.Feign;
+import feign.jackson.JacksonDecoder;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+
+import static java.lang.String.format;
 
 public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabMonitorAgent> {
 
@@ -9,10 +14,17 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
 
     private Integer port;
 
-    private Double numberStateChangeDelta;
+    private Double numberStateChangeDelta = 0.01;
+
+    private Integer pollingSeconds = 2;
 
     public static OpenHabMonitorAgentFactoryBean build() {
         return new OpenHabMonitorAgentFactoryBean();
+    }
+
+    public OpenHabMonitorAgentFactoryBean setPollingSeconds(Integer pollingSeconds) {
+        this.pollingSeconds = pollingSeconds;
+        return this;
     }
 
     public OpenHabMonitorAgentFactoryBean setHost(String host) {
@@ -37,8 +49,14 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
 
     @Override
     protected OpenHabMonitorAgent createInstance() throws Exception {
-        OpenHabMonitorAgent agent = new OpenHabMonitorAgent(host, port);
+        OpenHabMonitorAgent agent = new OpenHabMonitorAgent(
+                Feign.builder()
+                        .decoder(new JacksonDecoder())
+                        .target(OpenHabService.class, format("http://%s:%s", host, port)));
+
         agent.setNumberStateChangeDelta(numberStateChangeDelta);
+        agent.setPollingSeconds(pollingSeconds);
+
         return agent;
     }
 

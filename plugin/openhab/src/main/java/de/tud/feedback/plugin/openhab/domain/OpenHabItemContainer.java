@@ -1,10 +1,10 @@
-package de.tud.feedback.plugin.openhab;
+package de.tud.feedback.plugin.openhab.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Collection;
 
-public class OpenHabMessage {
+public class OpenHabItemContainer {
 
     @JsonProperty("item")
     private Collection<OpenHabItem> items;

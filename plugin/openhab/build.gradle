@@ -6,5 +6,6 @@ jar {
 dependencies {
     compile project(':service-api')
 
-    compile 'org.atmosphere:wasync:2.1.2'
+    compile 'com.netflix.feign:feign-core:8.10.0',
+            'com.netflix.feign:feign-jackson:8.10.0'
 }

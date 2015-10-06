@@ -32,7 +32,8 @@ public class Neo4jKnowledgeService implements KnowledgeService {
     @Override
     public Set<Long> findOrphanedNodes() {
         return q("START n = NODE(*) WHERE NOT n-[*..2]->() RETURN ID(n) AS ID").stream()
-                .map(row -> Long.getLong("ID"))
+                .map(row -> String.valueOf(row.get("ID")))
+                .map(Long::valueOf)
                 .collect(toSet());
     }
 

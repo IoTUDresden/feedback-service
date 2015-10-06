@@ -1,7 +1,7 @@
 package de.tud.feedback.api;
 
-public interface MonitorAgent {
+public interface MonitorAgent extends Runnable {
 
-    void start(ContextUpdater updater);
+    void use(ContextUpdater updater);
 
 }

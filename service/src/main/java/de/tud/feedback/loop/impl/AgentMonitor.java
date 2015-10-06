@@ -6,6 +6,7 @@ import de.tud.feedback.api.FeedbackPlugin;
 import de.tud.feedback.api.MonitorAgent;
 import de.tud.feedback.loop.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -17,9 +18,12 @@ public class AgentMonitor implements Monitor {
 
     private CypherExecutor executor;
 
+    private TaskExecutor tasks;
+
     @Autowired
-    public AgentMonitor(FeedbackPlugin plugin) {
+    public AgentMonitor(FeedbackPlugin plugin, TaskExecutor tasks) {
         this.plugin = plugin;
+        this.tasks = tasks;
     }
 
     @Override
@@ -27,7 +31,10 @@ public class AgentMonitor implements Monitor {
         final Collection<MonitorAgent> agents = plugin.getMonitorAgents();
         final ContextUpdater updater = plugin.getContextUpdater(executor);
 
-        agents.forEach(agent -> agent.start(updater));
+        agents.forEach(agent -> {
+            agent.use(updater);
+            tasks.execute(agent);
+        });
     }
 
     @Autowired
