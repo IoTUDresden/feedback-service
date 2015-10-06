@@ -28,11 +28,11 @@ public class ContextImport {
     private String name;
 
     @JsonIgnore
-    @Relationship(type = "createdBy", direction = Relationship.INCOMING)
-    private Set<ContextNode> entranceNodes = newHashSet();
+    @Relationship(type = "within", direction = Relationship.INCOMING)
+    private Set<ContextNode> contextNodes = newHashSet();
 
     @JsonIgnore
-    @Relationship(type = "importedFor", direction = Relationship.OUTGOING)
+    @Relationship(type = "for", direction = Relationship.OUTGOING)
     private Context context;
 
     public Long getId() {
@@ -67,12 +67,12 @@ public class ContextImport {
         this.source = source;
     }
 
-    public Set<ContextNode> getEntranceNodes() {
-        return entranceNodes;
+    public Set<ContextNode> getContextNodes() {
+        return contextNodes;
     }
 
-    public void setEntranceNodes(Set<ContextNode> entranceNodes) {
-        this.entranceNodes = entranceNodes;
+    public void setContextNodes(Set<ContextNode> contextNodes) {
+        this.contextNodes = contextNodes;
     }
 
     public String getName() {

@@ -8,7 +8,7 @@ public interface FeedbackPlugin {
 
     ContextImporter contextImporter(CypherExecutor executor);
 
-    ContextUpdater contextUpdaterFor(ContextReference context, CypherExecutor executor);
+    ContextUpdater contextUpdater(CypherExecutor executor);
 
     Collection<MonitorAgent> monitorAgents();
 

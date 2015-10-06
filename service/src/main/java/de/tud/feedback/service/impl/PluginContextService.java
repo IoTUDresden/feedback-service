@@ -1,13 +1,13 @@
 package de.tud.feedback.service.impl;
 
 import de.tud.feedback.annotation.GraphTransactional;
-import de.tud.feedback.api.CypherExecutor;
 import de.tud.feedback.api.FeedbackPlugin;
 import de.tud.feedback.api.annotation.LogDuration;
 import de.tud.feedback.api.annotation.LogInvocation;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.ContextImport;
 import de.tud.feedback.domain.ContextNode;
+import de.tud.feedback.graph.CollectingCypherExecutor;
 import de.tud.feedback.loop.Monitor;
 import de.tud.feedback.repository.ContextImportRepository;
 import de.tud.feedback.repository.ContextRepository;
@@ -35,7 +35,7 @@ public class PluginContextService implements ContextService {
 
     private FeedbackPlugin plugin;
 
-    private Provider<CypherExecutor> executorProvider;
+    private Provider<CollectingCypherExecutor> executorProvider;
 
     private ResourceLoader resources;
 
@@ -64,13 +64,13 @@ public class PluginContextService implements ContextService {
     }
 
     private void importContextFrom(ContextImport contextImport) {
-        final CypherExecutor executor = executorProvider.get();
+        final CollectingCypherExecutor executor = executorProvider.get();
 
         plugin.contextImporter(executor)
                 .importContextFrom(resourceFrom(contextImport), contextImport.getMime());
 
         partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
-            contextImport.getEntranceNodes().addAll(nodes);
+            contextImport.getContextNodes().addAll(nodes);
             imports.save(contextImport);
         });
     }
@@ -96,7 +96,7 @@ public class PluginContextService implements ContextService {
     }
 
     @Autowired
-    public void setExecutorProvider(Provider<CypherExecutor> provider) {
+    public void setExecutorProvider(Provider<CollectingCypherExecutor> provider) {
         this.executorProvider = provider;
     }
 

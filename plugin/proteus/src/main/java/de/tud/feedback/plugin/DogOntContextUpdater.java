@@ -4,11 +4,10 @@ import de.tud.feedback.api.ContextReference;
 import de.tud.feedback.api.ContextUpdater;
 import de.tud.feedback.api.CypherExecutor;
 
-import java.util.Collection;
+import java.util.Map;
 
-import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static de.tud.feedback.Utils.params;
-import static java.util.stream.Collectors.toSet;
 
 public class DogOntContextUpdater implements ContextUpdater {
 
@@ -16,9 +15,7 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     private ContextReference ref;
 
-    private Collection<String> context;
-
-    private final Collection<String> batch = newArrayList();
+    private Map<String, Long> context = newHashMap();
 
     public DogOntContextUpdater(CypherExecutor executor) {
         this.executor = executor;
@@ -26,34 +23,41 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     @Override
     public void update(String item, Object state) {
-        if (context == null) {
-            context = itemsWithinContext();
-        }
+        if (context.isEmpty())
+            buildContext();
 
-        if (context.contains(item)) {
+        if (context.containsKey(item)) {
 
         }
     }
 
-    private Collection<String> itemsWithinContext() {
-        return newArrayList(executor.execute(
+    private void buildContext() {
+        executor.execute(
                         "MATCH (c:Context { name: {name} })-[*1..5]-(i:Proteus { namespace: {namespace} }) " +
-                        "RETURN i.name AS name",
+                        "RETURN i.name AS name, ID(i) AS id",
 
                 params().put("name", ref.getName())
                         .put("namespace", ref.getItemNamespace())
-                        .build()))
+                        .build())
 
-                .stream()
-                .map(row -> row.get("name"))
-                .map(Object::toString)
-                .collect(toSet());
+                .forEach(this::putIntoContext);
+    }
+
+    private void putIntoContext(Map<String, Object> row) {
+
+        // FIXME alles Scheiße
+        // Instanz in Kontext erkennen:
+        //
+        //      (:Context { name: {name} })<-[:for]-(:ContextImport)<-[:within]-(item)-[:hasState]->(state)-[:hasStateValue]->(value)
+        //
+        // => Namespacing kann wieder raus
+        // => ContextReference ist obsolete
+
     }
 
     @Override
-    public ContextUpdater on(ContextReference context) {
+    public void operateOn(ContextReference context) {
         ref = context;
-        return this;
     }
 
     @Override

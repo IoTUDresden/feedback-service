@@ -1,6 +1,6 @@
-package de.tud.feedback.graph;
+package de.tud.feedback.graph.impl;
 
-import de.tud.feedback.api.CypherExecutor;
+import de.tud.feedback.graph.CollectingCypherExecutor;
 import org.neo4j.ogm.session.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -18,17 +18,18 @@ import static java.util.stream.Collectors.toList;
 
 @Component
 @Scope("prototype")
-public class NodeCollectingCypherExecutor implements CypherExecutor {
+public class Neo4jCollectingCypherExecutor implements CollectingCypherExecutor {
 
     private final Set<Long> nodes = newHashSet();
 
     private final Neo4jOperations operations;
 
     @Autowired
-    public NodeCollectingCypherExecutor(Neo4jOperations operations) {
+    public Neo4jCollectingCypherExecutor(Neo4jOperations operations) {
         this.operations = operations;
     }
 
+    @Override
     public Set<Long> createdNodes() {
         return nodes;
     }

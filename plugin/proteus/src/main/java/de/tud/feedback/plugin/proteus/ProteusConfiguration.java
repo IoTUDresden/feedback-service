@@ -1,7 +1,6 @@
 package de.tud.feedback.plugin.proteus;
 
 import de.tud.feedback.plugin.ProteusFeedbackPlugin;
-import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
 import de.tud.feedback.plugin.factory.OpenHabMonitorAgentFactoryBean;
 import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,11 +30,6 @@ public class ProteusConfiguration {
                 .setNumberStateChangeDelta(delta)
                 .setHost(host)
                 .setPort(port);
-    }
-
-    @Bean
-    DogOntContextUpdaterFactoryBean dogOntContextUpdaterFactoryBean() {
-        return DogOntContextUpdaterFactoryBean.build();
     }
 
 }

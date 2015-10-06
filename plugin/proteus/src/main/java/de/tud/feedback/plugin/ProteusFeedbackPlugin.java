@@ -1,7 +1,6 @@
 package de.tud.feedback.plugin;
 
 import de.tud.feedback.api.*;
-import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
 import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,8 +21,6 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired RdfContextImporterFactoryBean importerFactory;
 
-    @Autowired DogOntContextUpdaterFactoryBean updaterFactory;
-
     @Autowired OpenHabMonitorAgent monitorAgent;
 
     @Override
@@ -33,9 +30,8 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     }
 
     @Override
-    public ContextUpdater contextUpdaterFor(ContextReference context, CypherExecutor executor) {
-        updaterFactory.setExecutor(executor);
-        return updaterProvider.get().on(context);
+    public ContextUpdater contextUpdater(CypherExecutor executor) {
+        return new DogOntContextUpdater(executor);
     }
 
     @Override
