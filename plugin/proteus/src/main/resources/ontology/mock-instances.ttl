@@ -28,9 +28,10 @@ instance:State_Weather_Temperature
       dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius> ;
     ] ;
 .
-instance:yahooweather_weather_035553af_temperature
+instance:Weather_Temperature
   rdf:type dogont:SingleTemperatureSensor ;
   dogont:hasFunctionality instance:Function_Weather_Temperature ;
   dogont:hasState instance:State_Weather_Temperature ;
   dogont:isIn instance:Garten ;
 .
+

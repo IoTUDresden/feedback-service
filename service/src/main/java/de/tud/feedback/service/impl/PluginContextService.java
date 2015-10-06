@@ -19,6 +19,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Provider;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class PluginContextService implements ContextService {
 
     private FeedbackPlugin plugin;
 
-    private CypherExecutor executor;
+    private Provider<CypherExecutor> executorProvider;
 
     private ResourceLoader resources;
 
@@ -68,6 +69,8 @@ public class PluginContextService implements ContextService {
     }
 
     private void importContextFrom(ContextImport contextImport) {
+        final CypherExecutor executor = executorProvider.get();
+
         plugin.getContextImporter(executor)
                 .importContextFrom(resourceFrom(contextImport), contextImport.getMime());
 
@@ -98,8 +101,8 @@ public class PluginContextService implements ContextService {
     }
 
     @Autowired
-    public void setExecutor(CypherExecutor executor) {
-        this.executor = executor;
+    public void setExecutorProvider(Provider<CypherExecutor> provider) {
+        this.executorProvider = provider;
     }
 
     @Autowired

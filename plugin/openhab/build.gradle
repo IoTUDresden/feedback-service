@@ -6,5 +6,5 @@ jar {
 dependencies {
     compile project(':service-api')
 
-    compile 'org.springframework.boot:spring-boot-starter-websocket'
+    compile 'org.atmosphere:wasync:2.1.2'
 }

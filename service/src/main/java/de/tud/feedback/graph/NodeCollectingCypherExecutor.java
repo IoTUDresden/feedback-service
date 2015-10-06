@@ -4,7 +4,6 @@ import de.tud.feedback.api.CypherExecutor;
 import org.neo4j.ogm.session.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toList;
 
 @Component
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope("prototype")
 public class NodeCollectingCypherExecutor implements CypherExecutor {
 
     private final Set<Long> nodes = newHashSet();

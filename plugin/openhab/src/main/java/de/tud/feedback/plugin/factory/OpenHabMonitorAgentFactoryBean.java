@@ -9,6 +9,8 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
 
     private Integer port;
 
+    private Double numberStateChangeDelta;
+
     public static OpenHabMonitorAgentFactoryBean build() {
         return new OpenHabMonitorAgentFactoryBean();
     }
@@ -23,6 +25,11 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
         return this;
     }
 
+    public OpenHabMonitorAgentFactoryBean setNumberStateChangeDelta(Double numberStateChangeDelta) {
+        this.numberStateChangeDelta = numberStateChangeDelta;
+        return this;
+    }
+
     @Override
     public Class<?> getObjectType() {
         return OpenHabMonitorAgent.class;
@@ -30,7 +37,9 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
 
     @Override
     protected OpenHabMonitorAgent createInstance() throws Exception {
-        return new OpenHabMonitorAgent(host, port);
+        OpenHabMonitorAgent agent = new OpenHabMonitorAgent(host, port);
+        agent.setNumberStateChangeDelta(numberStateChangeDelta);
+        return agent;
     }
 
     @Override

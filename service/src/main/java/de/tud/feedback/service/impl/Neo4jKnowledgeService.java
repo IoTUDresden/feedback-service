@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -21,8 +22,11 @@ public class Neo4jKnowledgeService implements KnowledgeService {
 
     @PostConstruct
     public void initialize() {
-        q("CREATE CONSTRAINT ON (c:Workflow) ASSERT c.name IS UNIQUE");
-        q("CREATE CONSTRAINT ON (c:Context)  ASSERT c.name IS UNIQUE");
+        uniqueNameConstraintOn("Workflow", "Context", "ContextImport");
+    }
+
+    private void uniqueNameConstraintOn(String... labels) {
+        newArrayList(labels).forEach(label -> q(format("CREATE CONSTRAINT ON (c:%s) ASSERT c.name IS UNIQUE", label)));
     }
 
     @Override

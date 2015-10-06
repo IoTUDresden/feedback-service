@@ -12,12 +12,6 @@ import org.springframework.util.StringUtils;
 @Configuration
 public class ProteusConfiguration {
 
-    @Value("${openHab.host:localhost}")
-    private String openHabHost;
-
-    @Value("${openHab.port:8080}")
-    private int openHabPort;
-
     @Bean
     RdfContextImporterFactoryBean rdfContextImporterFactoryBean() {
         return RdfContextImporterFactoryBean.build()
@@ -26,10 +20,15 @@ public class ProteusConfiguration {
     }
 
     @Bean
-    OpenHabMonitorAgentFactoryBean openHabMonitorAgentFactoryBean() {
+    OpenHabMonitorAgentFactoryBean openHabMonitorAgentFactoryBean(
+            @Value("${openHab.host:localhost}") String host,
+            @Value("${openHab.port:8080}") int port,
+            @Value("${openHab.delta:0.01}") Double delta
+    ) {
         return OpenHabMonitorAgentFactoryBean.build()
-                .setHost(openHabHost)
-                .setPort(openHabPort);
+                .setNumberStateChangeDelta(delta)
+                .setHost(host)
+                .setPort(port);
     }
 
     @Bean
