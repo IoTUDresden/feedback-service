@@ -1,9 +1,9 @@
 package de.tud.feedback.api.impl;
 
-import com.google.common.collect.ImmutableMap;
 import de.tud.feedback.api.CypherExecutor;
 import de.tud.feedback.api.GraphOperations;
 
+import static de.tud.feedback.Utils.params;
 import static java.lang.String.format;
 
 public class LabelBasedGraphOperations implements GraphOperations {
@@ -22,6 +22,10 @@ public class LabelBasedGraphOperations implements GraphOperations {
         executor.execute(
                 format("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE", label, identifier),
                 params().build());
+
+        executor.execute(
+                format("CREATE INDEX ON :%s(namespace)", label),
+                params().build());
     }
 
     @Override
@@ -39,12 +43,13 @@ public class LabelBasedGraphOperations implements GraphOperations {
     }
 
     @Override
-    public void createNode(String id) {
+    public void createNode(String id, String namespace) {
         executor.execute(
-                        format("MERGE (n:%s { %s: {id} }) ", label, identifier) +
+                        format("MERGE (n:%s { %s: {id}, namespace: {namespace} }) ", label, identifier) +
                                "RETURN ID(n)",
 
                 params().put("id", id)
+                        .put("namespace", namespace)
                         .build());
     }
 
@@ -69,10 +74,6 @@ public class LabelBasedGraphOperations implements GraphOperations {
                 params().put("id", id)
                         .put("value", value)
                         .build());
-    }
-
-    private ImmutableMap.Builder<String, Object> params() {
-        return new ImmutableMap.Builder<>();
     }
 
 }

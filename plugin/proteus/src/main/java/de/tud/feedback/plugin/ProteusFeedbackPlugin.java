@@ -27,19 +27,19 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     @Autowired OpenHabMonitorAgent monitorAgent;
 
     @Override
-    public ContextImporter getContextImporter(CypherExecutor executor) {
+    public ContextImporter contextImporter(CypherExecutor executor) {
         importerFactory.setExecutor(executor);
         return importerProvider.get();
     }
 
     @Override
-    public ContextUpdater getContextUpdater(CypherExecutor executor) {
+    public ContextUpdater contextUpdaterFor(ContextReference context, CypherExecutor executor) {
         updaterFactory.setExecutor(executor);
-        return updaterProvider.get();
+        return updaterProvider.get().on(context);
     }
 
     @Override
-    public Collection<MonitorAgent> getMonitorAgents() {
+    public Collection<MonitorAgent> monitorAgents() {
         return singletonList(monitorAgent);
     }
 

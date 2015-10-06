@@ -2,7 +2,7 @@ package de.tud.feedback.api;
 
 public interface GraphOperations {
 
-    void createNode(String id);
+    void createNode(String id, String namespace);
 
     void createConnection(String id, String type, String startId, String endId);
 

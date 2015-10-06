@@ -6,10 +6,10 @@ public interface FeedbackPlugin {
 
     String name();
 
-    ContextImporter getContextImporter(CypherExecutor executor);
+    ContextImporter contextImporter(CypherExecutor executor);
 
-    ContextUpdater getContextUpdater(CypherExecutor executor);
+    ContextUpdater contextUpdaterFor(ContextReference context, CypherExecutor executor);
 
-    Collection<MonitorAgent> getMonitorAgents();
+    Collection<MonitorAgent> monitorAgents();
 
 }

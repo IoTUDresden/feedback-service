@@ -1,6 +1,5 @@
 package de.tud.feedback.service.impl;
 
-import com.google.common.collect.ImmutableMap;
 import de.tud.feedback.service.KnowledgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -12,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static de.tud.feedback.Utils.params;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
 
@@ -39,10 +39,6 @@ public class Neo4jKnowledgeService implements KnowledgeService {
 
     private Collection<Map<String, Object>> q(String query) {
         return newArrayList(operations.query(query, params().build()).queryResults());
-    }
-
-    private ImmutableMap.Builder<String, Object> params() {
-        return new ImmutableMap.Builder<>();
     }
 
     @Autowired

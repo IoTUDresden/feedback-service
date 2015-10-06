@@ -23,6 +23,7 @@ import javax.inject.Provider;
 import java.util.List;
 import java.util.Set;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.partition;
 import static com.google.common.collect.Sets.intersection;
 import static java.util.stream.Collectors.toList;
@@ -42,7 +43,7 @@ public class PluginContextService implements ContextService {
 
     private ContextRepository contexts;
 
-    private Monitor monitor;
+    private Provider<Monitor> monitor;
 
     @Override
     @LogDuration
@@ -58,20 +59,14 @@ public class PluginContextService implements ContextService {
     @LogInvocation
     @PostConstruct
     public void beginContextUpdates() {
-        long numberOfContexts = contexts.count();
-
-        if (numberOfContexts > 1) {
-            throw new RuntimeException("Multiple contexts are not supported yet");
-
-        } else if (numberOfContexts > 0) {
-            monitor.start();
-        }
+        newArrayList(contexts.findAll())
+                .forEach(context -> monitor.get().start(context));
     }
 
     private void importContextFrom(ContextImport contextImport) {
         final CypherExecutor executor = executorProvider.get();
 
-        plugin.getContextImporter(executor)
+        plugin.contextImporter(executor)
                 .importContextFrom(resourceFrom(contextImport), contextImport.getMime());
 
         partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
@@ -116,8 +111,8 @@ public class PluginContextService implements ContextService {
     }
 
     @Autowired
-    public void setMonitor(Monitor monitor) {
-        this.monitor = monitor;
+    public void setMonitorProvider(Provider<Monitor> provider) {
+        monitor = provider;
     }
 
     @Autowired
