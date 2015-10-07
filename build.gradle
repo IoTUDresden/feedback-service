@@ -6,20 +6,7 @@ buildscript {
 
     dependencies {
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.0.M5'
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.0'
     }
-}
-
-apply plugin: 'org.asciidoctor.gradle.asciidoctor'
-
-asciidoctor {
-    options = [
-            doctype: 'book',
-            attributes: [
-                    'source-highlighter': 'coderay',
-                    toc: 'left'
-            ]
-    ]
 }
 
 allprojects {

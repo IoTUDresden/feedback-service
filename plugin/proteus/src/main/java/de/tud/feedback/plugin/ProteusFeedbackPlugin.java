@@ -17,8 +17,6 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<RdfContextImporter> importerProvider;
 
-    @Autowired Provider<DogOntContextUpdater> updaterProvider;
-
     @Autowired RdfContextImporterFactoryBean importerFactory;
 
     @Autowired OpenHabMonitorAgent monitorAgent;
