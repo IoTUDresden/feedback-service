@@ -63,7 +63,7 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     @Override
     public void workWith(NamedNode context) {
-        this.contextName = context.name();
+        this.contextName = context.getName();
     }
 
     @Override
