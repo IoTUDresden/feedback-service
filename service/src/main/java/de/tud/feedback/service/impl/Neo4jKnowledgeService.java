@@ -20,7 +20,7 @@ public class Neo4jKnowledgeService implements KnowledgeService {
 
     @PostConstruct
     public void initialize() {
-        uniqueNameConstraintOn("Workflow", "Context", "ContextImport");
+        uniqueNameConstraintOn("Workflow", "Context");
     }
 
     private void uniqueNameConstraintOn(String... labels) {
