@@ -1,6 +1,6 @@
 package de.tud.feedback.plugin;
 
-import de.tud.feedback.api.*;
+import de.tud.feedback.*;
 import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

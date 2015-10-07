@@ -20,10 +20,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Component
 public class LoggingAspect {
 
-    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.api.annotation.LogDuration)")
+    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.annotation.LogDuration)")
     public void durationLoggedMethods() {}
 
-    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.api.annotation.LogInvocation)")
+    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.annotation.LogInvocation)")
     public void invocationLoggedMethods() {}
 
     @Around("durationLoggedMethods()")

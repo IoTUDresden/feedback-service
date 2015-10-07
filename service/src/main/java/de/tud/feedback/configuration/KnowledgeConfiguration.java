@@ -12,10 +12,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
+import org.springframework.data.neo4j.conversion.MetaDataDrivenConversionService;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.server.Neo4jServer;
 import org.springframework.data.neo4j.server.RemoteServer;
+
+import java.io.IOException;
 
 @Configuration
 @EnableNeo4jRepositories(basePackageClasses = {WorkflowRepository.class})
@@ -23,10 +30,8 @@ import org.springframework.data.neo4j.server.RemoteServer;
 class KnowledgeConfiguration extends Neo4jConfiguration {
 
     @Autowired
-    @SuppressWarnings("SpringJavaAutowiringInspection")
     ServerProperties server;
 
-    @Bean
     @Override
     public Neo4jServer neo4jServer() {
         if (server.hasAuthentication()) {
@@ -36,12 +41,37 @@ class KnowledgeConfiguration extends Neo4jConfiguration {
         }
     }
 
-    @Bean
     @Override
     public SessionFactory getSessionFactory() {
         return new SessionFactory(
                 Workflow.class.getPackage().getName(),
                 WorkflowInstance.class.getPackage().getName());
+    }
+
+    @Bean
+    public ConversionService conversionService(final ResourceLoader loader) {
+        MetaDataDrivenConversionService conversionService
+                = new MetaDataDrivenConversionService(getSessionFactory().metaData());
+
+        conversionService.addConverter(new Converter<String, Resource>() {
+            @Override
+            public Resource convert(String source) {
+                return loader.getResource(source);
+            }
+        });
+
+        conversionService.addConverter(new Converter<Resource, String>() {
+            @Override
+            public String convert(Resource source) {
+                try {
+                    return source.getURI().toString();
+                } catch (IOException e) {
+                    return null;
+                }
+            }
+        });
+
+        return conversionService;
     }
 
     @ConfigurationProperties(prefix = "service.knowledge")

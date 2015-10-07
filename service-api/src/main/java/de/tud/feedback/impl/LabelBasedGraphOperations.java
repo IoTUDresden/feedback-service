@@ -1,7 +1,7 @@
-package de.tud.feedback.api.impl;
+package de.tud.feedback.impl;
 
-import de.tud.feedback.api.CypherExecutor;
-import de.tud.feedback.api.GraphOperations;
+import de.tud.feedback.CypherExecutor;
+import de.tud.feedback.GraphOperations;
 
 import static de.tud.feedback.Utils.params;
 import static java.lang.String.format;

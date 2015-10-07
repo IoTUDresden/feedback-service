@@ -1,6 +1,6 @@
 package de.tud.feedback.plugin.openhab;
 
-import de.tud.feedback.api.ContextUpdater;
+import de.tud.feedback.ContextUpdater;
 
 import java.util.Map;
 

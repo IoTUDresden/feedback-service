@@ -1,7 +1,7 @@
 package de.tud.feedback.plugin.factory;
 
-import de.tud.feedback.api.CypherExecutor;
-import de.tud.feedback.api.impl.LabelBasedGraphOperations;
+import de.tud.feedback.CypherExecutor;
+import de.tud.feedback.impl.LabelBasedGraphOperations;
 import de.tud.feedback.plugin.RdfContextImporter;
 import de.tud.feedback.plugin.rdf.GraphOperationsRdfHandler;
 import org.springframework.beans.factory.config.AbstractFactoryBean;

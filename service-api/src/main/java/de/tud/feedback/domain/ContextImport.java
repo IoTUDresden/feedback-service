@@ -2,11 +2,13 @@ package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.URL;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
+import org.springframework.core.io.Resource;
 
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -17,9 +19,9 @@ public class ContextImport {
     @GraphId
     private Long id;
 
-    @URL
-    @NotBlank
-    private String source;
+    @NotNull
+    @Convert(graphPropertyType = String.class)
+    private Resource source;
 
     @NotBlank
     private String mime;
@@ -59,11 +61,11 @@ public class ContextImport {
         this.mime = mime;
     }
 
-    public String getSource() {
+    public Resource getSource() {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(Resource source) {
         this.source = source;
     }
 

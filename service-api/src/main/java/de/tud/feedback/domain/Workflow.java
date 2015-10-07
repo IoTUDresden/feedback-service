@@ -1,11 +1,14 @@
 package de.tud.feedback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.URL;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
+import org.springframework.core.io.Resource;
 
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -26,12 +29,15 @@ public class Workflow {
     @Relationship(type = "runsWithin", direction = Relationship.OUTGOING)
     private Context context;
 
-    @URL
-    @NotBlank
-    private String source;
+    @NotNull
+    @Convert(graphPropertyType = String.class)
+    private Resource source;
 
     @NotBlank
     private String mime;
+
+    @JsonIgnore
+    private Resource resource;
 
     public Long getId() {
         return id;
@@ -69,11 +75,11 @@ public class Workflow {
         this.context = context;
     }
 
-    public String getSource() {
+    public Resource getSource() {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(Resource source) {
         this.source = source;
     }
 
@@ -83,6 +89,14 @@ public class Workflow {
 
     public void setMime(String mime) {
         this.mime = mime;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
 }

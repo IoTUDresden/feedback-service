@@ -1,9 +1,9 @@
 package de.tud.feedback.service.impl;
 
+import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.annotation.GraphTransactional;
-import de.tud.feedback.api.FeedbackPlugin;
-import de.tud.feedback.api.annotation.LogDuration;
-import de.tud.feedback.api.annotation.LogInvocation;
+import de.tud.feedback.annotation.LogDuration;
+import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.ContextImport;
 import de.tud.feedback.domain.ContextNode;
@@ -13,8 +13,6 @@ import de.tud.feedback.repository.ContextImportRepository;
 import de.tud.feedback.repository.ContextRepository;
 import de.tud.feedback.service.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +33,6 @@ public class PluginContextService implements ContextService {
     private FeedbackPlugin plugin;
 
     private Provider<CollectingCypherExecutor> executorProvider;
-
-    private ResourceLoader resources;
 
     private ContextRepository contexts;
 
@@ -64,9 +60,7 @@ public class PluginContextService implements ContextService {
     private void importContextFrom(ContextImport contextImport) {
         final CollectingCypherExecutor executor = executorProvider.get();
 
-        plugin.contextImporter(executor)
-                .importContextFrom(resourceFrom(contextImport), contextImport.getMime());
-
+        plugin.contextImporter(executor).importContextFrom(contextImport);
         partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
             contextImport.getContextNodes().addAll(nodes);
             imports.save(contextImport);
@@ -77,10 +71,6 @@ public class PluginContextService implements ContextService {
         return createdNotes.stream()
                 .map(ContextNode::fromId)
                 .collect(toList());
-    }
-
-    private Resource resourceFrom(ContextImport contextImport) {
-        return resources.getResource(contextImport.getSource());
     }
 
     @Autowired
@@ -96,11 +86,6 @@ public class PluginContextService implements ContextService {
     @Autowired
     public void setExecutorProvider(Provider<CollectingCypherExecutor> provider) {
         this.executorProvider = provider;
-    }
-
-    @Autowired
-    public void setResources(ResourceLoader resources) {
-        this.resources = resources;
     }
 
     @Autowired

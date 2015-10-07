@@ -1,6 +1,7 @@
 package de.tud.feedback.plugin;
 
-import de.tud.feedback.api.ContextImporter;
+import de.tud.feedback.ContextImporter;
+import de.tud.feedback.domain.ContextImport;
 import org.openrdf.rio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +21,14 @@ public class RdfContextImporter implements ContextImporter {
     }
 
     @Override
-    public void importContextFrom(Resource resource, String mimeType) {
+    public void importContextFrom(ContextImport contextImport) {
         try {
-            final String resourceUri = resource.getURI().toString();
-            final RDFFormat format = Rio.getParserFormatForMIMEType(mimeType);
+            final RDFFormat format = Rio.getParserFormatForMIMEType(contextImport.getMime());
             final RDFParser parser = Rio.createParser(format);
+            final Resource resource = contextImport.getSource();
 
             parser.setRDFHandler(handler);
-            parser.parse(resource.getInputStream(), resourceUri);
+            parser.parse(resource.getInputStream(), resource.getURI().toString());
 
         } catch (MalformedURLException exception) {
             LOG.error("resource URL is malformed");

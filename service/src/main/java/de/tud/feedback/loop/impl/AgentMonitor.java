@@ -1,7 +1,7 @@
 package de.tud.feedback.loop.impl;
 
-import de.tud.feedback.api.ContextUpdater;
-import de.tud.feedback.api.FeedbackPlugin;
+import de.tud.feedback.ContextUpdater;
+import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.Monitor;

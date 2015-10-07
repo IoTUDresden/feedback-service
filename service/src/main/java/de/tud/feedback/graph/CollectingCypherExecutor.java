@@ -1,6 +1,6 @@
 package de.tud.feedback.graph;
 
-import de.tud.feedback.api.CypherExecutor;
+import de.tud.feedback.CypherExecutor;
 
 import java.util.Set;
 

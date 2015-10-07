@@ -1,7 +1,7 @@
 package de.tud.feedback.plugin.rdf;
 
 import com.google.common.base.Strings;
-import de.tud.feedback.api.GraphOperations;
+import de.tud.feedback.GraphOperations;
 import org.openrdf.model.*;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFHandlerException;

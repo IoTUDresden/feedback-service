@@ -1,8 +1,8 @@
 package de.tud.feedback.plugin;
 
-import de.tud.feedback.api.ContextUpdater;
-import de.tud.feedback.api.CypherExecutor;
-import de.tud.feedback.api.NamedNode;
+import de.tud.feedback.ContextUpdater;
+import de.tud.feedback.CypherExecutor;
+import de.tud.feedback.domain.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     private String contextName;
 
-    private Map<String, Integer> context;
+    private Map<String, Integer> itemValues;
 
     public DogOntContextUpdater(CypherExecutor executor) {
         this.executor = executor;
@@ -28,17 +28,17 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     @Override
     public void update(String item, Object state) {
-        if (context == null)
-            context = createContext();
+        if (itemValues == null)
+            itemValues = resolveItemValues();
 
-        if (context.containsKey(item)) {
+        if (itemValues.containsKey(item)) {
             executor.execute(
                     "MATCH (v) " +
                     "WHERE ID(v) = {id} " +
                     "SET v.realStateValue = {value} " +
                     "RETURN v",
 
-                    params().put("id", context.get(item))
+                    params().put("id", itemValues.get(item))
                             .put("value", state)
                             .build());
 
@@ -46,7 +46,7 @@ public class DogOntContextUpdater implements ContextUpdater {
         }
     }
 
-    private Map<String, Integer> createContext() {
+    private Map<String, Integer> resolveItemValues() {
         return executor.execute(
                 "MATCH (c:Context)<-[:for]-(:ContextImport)<-[:within]-(i)-[:hasState]->(s)-[:hasStateValue]->(v) " +
                 "WHERE c.name = {contextName} " +
@@ -62,7 +62,7 @@ public class DogOntContextUpdater implements ContextUpdater {
     }
 
     @Override
-    public void workWith(NamedNode context) {
+    public void workWith(Context context) {
         this.contextName = context.getName();
     }
 

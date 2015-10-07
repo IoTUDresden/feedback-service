@@ -1,4 +1,4 @@
-package de.tud.feedback.api;
+package de.tud.feedback;
 
 public interface MonitorAgent extends Runnable {
 

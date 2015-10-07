@@ -1,6 +1,5 @@
 package de.tud.feedback.domain;
 
-import de.tud.feedback.api.NamedNode;
 import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -13,7 +12,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
 @NodeEntity
-public class Context implements NamedNode {
+public class Context {
 
     @GraphId
     private Long id;
@@ -32,7 +31,6 @@ public class Context implements NamedNode {
         this.id = id;
     }
 
-    @Override
     public String getName() {
         return name;
     }
