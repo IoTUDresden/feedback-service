@@ -13,25 +13,25 @@
   owl:imports <http://elite.polito.it/ontologies/dogont.owl> ;
   owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
 .
-instance:Garten
-  rdf:type dogont:Garden ;
-  rdfs:label "Garten"^^xsd:string ;
+instance:Wohnzimmer
+  rdf:type dogont:LivingRoom ;
+  rdfs:label "Wohnzimmer"^^xsd:string ;
 .
-instance:Function_Weather_Temperature
+instance:Function_Temperature_GF_Living
   rdf:type dogont:TemperatureMeasurementFunctionality ;
 .
-instance:State_Weather_Temperature
+instance:State_Temperature_GF_Living
   rdf:type dogont:TemperatureState ;
   dogont:hasStateValue [
       rdf:type dogont:TemperatureStateValue ;
-      dogont:realStateValue "0"^^xsd:string ;
+      dogont:realStateValue "20"^^xsd:string ;
       dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius> ;
     ] ;
 .
-instance:Weather_Temperature
+instance:Temperature_GF_Living
   rdf:type dogont:SingleTemperatureSensor ;
-  dogont:hasFunctionality instance:Function_Weather_Temperature ;
-  dogont:hasState instance:State_Weather_Temperature ;
-  dogont:isIn instance:Garten ;
+  dogont:hasFunctionality instance:Function_Temperature_GF_Living ;
+  dogont:hasState instance:State_Temperature_GF_Living ;
+  dogont:isIn instance:Wohnzimmer ;
 .
 

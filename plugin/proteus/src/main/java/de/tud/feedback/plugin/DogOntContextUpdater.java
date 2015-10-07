@@ -1,21 +1,26 @@
 package de.tud.feedback.plugin;
 
-import de.tud.feedback.api.ContextReference;
 import de.tud.feedback.api.ContextUpdater;
 import de.tud.feedback.api.CypherExecutor;
+import de.tud.feedback.api.NamedNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
 import static de.tud.feedback.Utils.params;
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toMap;
 
 public class DogOntContextUpdater implements ContextUpdater {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DogOntContextUpdater.class);
+
     private CypherExecutor executor;
 
-    private ContextReference ref;
+    private String contextName;
 
-    private Map<String, Long> context = newHashMap();
+    private Map<String, Integer> context;
 
     public DogOntContextUpdater(CypherExecutor executor) {
         this.executor = executor;
@@ -23,41 +28,42 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     @Override
     public void update(String item, Object state) {
-        if (context.isEmpty())
-            buildContext();
+        if (context == null)
+            context = createContext();
 
         if (context.containsKey(item)) {
+            executor.execute(
+                    "MATCH (v) " +
+                    "WHERE ID(v) = {id} " +
+                    "SET v.realStateValue = {value} " +
+                    "RETURN v",
 
+                    params().put("id", context.get(item))
+                            .put("value", state)
+                            .build());
+
+            LOG.debug(format("SET %s = %s", item, state));
         }
     }
 
-    private void buildContext() {
-        executor.execute(
-                        "MATCH (c:Context { name: {name} })-[*1..5]-(i:Proteus { namespace: {namespace} }) " +
-                        "RETURN i.name AS name, ID(i) AS id",
+    private Map<String, Integer> createContext() {
+        return executor.execute(
+                "MATCH (c:Context)<-[:for]-(:ContextImport)<-[:within]-(i)-[:hasState]->(s)-[:hasStateValue]->(v) " +
+                "WHERE c.name = {contextName} " +
+                "RETURN i.name AS item, ID(v) AS valueId",
 
-                params().put("name", ref.getName())
-                        .put("namespace", ref.getItemNamespace())
+                params().put("contextName", contextName)
                         .build())
 
-                .forEach(this::putIntoContext);
-    }
-
-    private void putIntoContext(Map<String, Object> row) {
-
-        // FIXME alles Scheiße
-        // Instanz in Kontext erkennen:
-        //
-        //      (:Context { name: {name} })<-[:for]-(:ContextImport)<-[:within]-(item)-[:hasState]->(state)-[:hasStateValue]->(value)
-        //
-        // => Namespacing kann wieder raus
-        // => ContextReference ist obsolete
-
+                .stream()
+                .collect(toMap(
+                        e -> (String) e.get("item"),
+                        e -> (Integer) e.get("valueId")));
     }
 
     @Override
-    public void operateOn(ContextReference context) {
-        ref = context;
+    public void workWith(NamedNode context) {
+        this.contextName = context.name();
     }
 
     @Override

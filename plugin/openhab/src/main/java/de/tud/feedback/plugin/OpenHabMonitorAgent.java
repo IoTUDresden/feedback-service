@@ -14,9 +14,9 @@ public class OpenHabMonitorAgent implements MonitorAgent {
 
     private final OpenHabService service;
 
-    private Integer pollingSeconds = 2;
+    private final ItemUpdateHandler handler;
 
-    private ItemUpdateHandler handler;
+    private Integer pollingSeconds = 2;
 
     public OpenHabMonitorAgent(OpenHabService service, ItemUpdateHandler handler) {
         this.service = service;
@@ -33,11 +33,6 @@ public class OpenHabMonitorAgent implements MonitorAgent {
         }
     }
 
-    @Override
-    public void use(ContextUpdater updater) {
-        handler.use(updater);
-    }
-
     private void processOpenHabItems() {
         service.getAllItems().getItems().stream().forEach(handler::handle);
     }
@@ -46,12 +41,17 @@ public class OpenHabMonitorAgent implements MonitorAgent {
         try {
             Thread.sleep(1000L * pollingSeconds);
         } catch (InterruptedException exception) {
-            LOG.info(exception.getMessage());
+            LOG.debug(exception.getMessage());
         }
     }
 
     public void setPollingSeconds(Integer seconds) {
         this.pollingSeconds = seconds;
+    }
+
+    @Override
+    public void workWith(ContextUpdater updater) {
+        handler.setUpdater(updater);
     }
 
 }

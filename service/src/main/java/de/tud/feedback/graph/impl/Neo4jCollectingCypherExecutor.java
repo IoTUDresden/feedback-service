@@ -35,14 +35,14 @@ public class Neo4jCollectingCypherExecutor implements CollectingCypherExecutor {
     }
 
     @Override
-    public Iterable<Map<String, Object>> execute(String cypherQuery, Map<String, ?> params) {
+    public Collection<Map<String, Object>> execute(String cypherQuery, Map<String, ?> params) {
         Result result = operations.query(cypherQuery, params);
 
         if (hasCreatedNodes(result)) {
             nodes.addAll(createdNodesFor(idsWithin(result)));
         }
 
-        return result.queryResults();
+        return rowsFrom(result);
     }
 
     private Collection<Long> createdNodesFor(List<Integer> ids) {

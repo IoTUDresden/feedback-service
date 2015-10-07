@@ -4,6 +4,6 @@ public interface ContextUpdater {
 
     void update(String itemId, Object state);
 
-    void operateOn(ContextReference context);
+    void workWith(NamedNode context);
 
 }

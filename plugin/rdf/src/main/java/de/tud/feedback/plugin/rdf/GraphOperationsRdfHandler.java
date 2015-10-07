@@ -60,7 +60,7 @@ public class GraphOperationsRdfHandler extends RDFHandlerBase {
     }
 
     private void create(URI node) {
-        operations.createNode(uriOf(node), namespaceOf(node));
+        operations.createNode(uriOf(node));
         operations.setNodeProperty(uriOf(node), "name", nameFor(node));
     }
 
@@ -74,10 +74,6 @@ public class GraphOperationsRdfHandler extends RDFHandlerBase {
 
     private URI uriOf(BNode node) {
         return new URIImpl("blank://" + node.getID());
-    }
-
-    private String namespaceOf(URI node) {
-        return node.getNamespace();
     }
 
     private String nameFor(URI uri) {

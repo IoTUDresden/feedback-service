@@ -1,0 +1,321 @@
+# baseURI: http://openhab-semantic/0.1/instance
+# imports: http://elite.polito.it/ontologies/dogont.owl
+
+@prefix dogont: <http://elite.polito.it/ontologies/dogont.owl#> .
+@prefix instance: <http://openhab-semantic/0.1/instance#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+dogont:State_fingerscanner_identify_c6faf529_channel_person
+  rdf:type rdf:Statement ;
+  rdf:predicate dogont:hasState ;
+.
+<http://openhab-semantic/0.1/instance>
+  rdf:type owl:Ontology ;
+  owl:imports <http://elite.polito.it/ontologies/dogont.owl> ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+instance:Command_fingerscanner_identify_c6faf529_channel_identify
+  rdf:type dogont:OnCommand ;
+.
+instance:Command_fingerscanner_identify_c6faf529_channel_person
+  rdf:type dogont:GetCommand ;
+  dogont:returnType "Object"^^xsd:string ;
+.
+instance:DownCommand_OpenHab
+  rdf:type dogont:DownCommand ;
+.
+instance:Function_AmbTemp
+  rdf:type dogont:TemperatureMeasurementFunctionality ;
+.
+instance:Function_AmbTemp2
+  rdf:type dogont:Functionality ;
+.
+instance:Function_HomematicDimmer_1
+  rdf:type dogont:LevelControlFunctionality ;
+  dogont:hasCommand instance:DownCommand_OpenHab ;
+  dogont:hasCommand instance:OffCommand_OpenHab ;
+  dogont:hasCommand instance:OnCommand_OpenHab ;
+  dogont:hasCommand instance:UpCommand_OpenHab ;
+.
+instance:Function_HomematicDimmer_2
+  rdf:type dogont:LevelControlFunctionality ;
+  dogont:hasCommand instance:OffCommand_OpenHab ;
+  dogont:hasCommand instance:OnCommand_OpenHab ;
+.
+instance:Function_HomematicGong_1
+  rdf:type dogont:AlertNotificationFunctionality ;
+  dogont:hasNotification [
+      rdf:type dogont:AlertNotification ;
+    ] ;
+.
+instance:Function_HomematicLightGong_1
+  rdf:type dogont:AlertNotificationFunctionality ;
+.
+instance:Function_HomematicMotionIndicatorBrightness_1
+  rdf:type dogont:LightSensingFunctionality ;
+.
+instance:Function_HomematicMotionIndicator_1
+  rdf:type dogont:MovementNotificationFunctionality ;
+.
+instance:Function_IrTemp
+  rdf:type dogont:TemperatureMeasurementFunctionality ;
+.
+instance:Function_LCDBacklight
+  rdf:type dogont:OnOffFunctionality ;
+  dogont:hasCommand instance:OffCommand_2 ;
+  dogont:hasCommand instance:OnCommand_1 ;
+.
+instance:Function_LCDBacklight_2
+  rdf:type dogont:OnOffFunctionality ;
+  dogont:hasCommand instance:OffCommand_1 ;
+  dogont:hasCommand instance:OnCommand_1 ;
+.
+instance:Function_TinkerforgeAmbientLight
+  rdf:type dogont:LightSensingFunctionality ;
+  dogont:hasCommand [
+      rdf:type dogont:GetLuminanceCommand ;
+      dogont:returnType "Float"^^xsd:string ;
+    ] ;
+.
+instance:Function_TinkerforgeAmbientLight_2
+  rdf:type dogont:LightSensingFunctionality ;
+  dogont:hasCommand [
+      rdf:type dogont:GetLuminanceCommand ;
+    ] ;
+.
+instance:Function_TinkerforgeLcd
+  rdf:type dogont:SingleValuedNotificationFunctionality ;
+.
+instance:Function_TinkerforgeLcd_2
+  rdf:type dogont:SingleValuedNotificationFunctionality ;
+.
+instance:Function_Weather_Temperature
+  rdf:type dogont:TemperatureMeasurementFunctionality ;
+.
+instance:Function_fingerscanner_identify_c6faf529_channel_identify
+  rdf:type dogont:IdentificationFunctionality ;
+  dogont:hasCommand instance:Command_fingerscanner_identify_c6faf529_channel_identify ;
+  dogont:hasCommand instance:OffCommand_fingerscanner_identify_c6faf529_channel_identify ;
+  dogont:hasCommand instance:ToggleCommand_fingerscanner_identify_c6faf529_channel_identify ;
+.
+instance:Function_fingerscanner_identify_c6faf529_channel_person
+  rdf:type dogont:QueryFunctionality ;
+  dogont:hasCommand instance:Command_fingerscanner_identify_c6faf529_channel_person ;
+.
+instance:Kitchen_Mueller
+  rdf:type dogont:Kitchen ;
+  rdfs:label "Kueche"^^xsd:string ;
+.
+instance:Lobby_Mueller
+  rdf:type dogont:Lobby ;
+.
+instance:OffCommand_1
+  rdf:type dogont:OffCommand ;
+.
+instance:OffCommand_2
+  rdf:type dogont:OffCommand ;
+.
+instance:OffCommand_OpenHab
+  rdf:type dogont:OffCommand ;
+.
+instance:OffCommand_fingerscanner_identify_c6faf529_channel_identify
+  rdf:type dogont:OffCommand ;
+.
+instance:OnCommand_1
+  rdf:type dogont:OnCommand ;
+.
+instance:OnCommand_OpenHab
+  rdf:type dogont:OnCommand ;
+.
+instance:State_AmbTemp
+  rdf:type dogont:TemperatureState ;
+  dogont:hasStateValue [
+      rdf:type dogont:TemperatureStateValue ;
+      dogont:realStateValue "3"^^xsd:string ;
+      dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius> ;
+    ] ;
+.
+instance:State_HomematicDimmer_1
+  rdf:type dogont:LevelState ;
+  dogont:hasStateValue [
+      rdf:type dogont:LevelStateValue ;
+      dogont:realStateValue "0"^^xsd:string ;
+      dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
+    ] ;
+.
+instance:State_HomematicDimmer_2
+  rdf:type dogont:LevelState ;
+  dogont:hasStateValue [
+      rdf:type dogont:LevelStateValue ;
+      dogont:realStateValue "0"^^xsd:string ;
+      dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
+    ] ;
+.
+instance:State_HomematicGong_1
+  rdf:type dogont:DiscreteState ;
+  dogont:hasStateValue [
+      rdf:type dogont:OnStateValue ;
+    ] ;
+.
+instance:State_HomematicLightGong_1
+  rdf:type dogont:OnOffState ;
+  dogont:hasStateValue [
+      rdf:type dogont:OnStateValue ;
+    ] ;
+.
+instance:State_HomematicMotionIndicatorBrightness_1
+  rdf:type dogont:LightIntensityState ;
+  dogont:hasStateValue [
+      rdf:type dogont:BrightnessStateValue ;
+      dogont:realStateValue "0"^^xsd:string ;
+      dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/illuminance/lux> ;
+    ] ;
+.
+instance:State_HomematicMotionIndicator_1
+  rdf:type dogont:MovementState ;
+  dogont:hasStateValue [
+      rdf:type dogont:MovingStateValue ;
+    ] ;
+.
+instance:State_IrTemp
+  rdf:type dogont:TemperatureState ;
+  dogont:hasStateValue [
+      rdf:type dogont:TemperatureStateValue ;
+      dogont:realStateValue "4"^^xsd:string ;
+      dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius> ;
+    ] ;
+.
+instance:State_LCDBacklight
+  rdf:type dogont:OnOffState ;
+  dogont:hasStateValue [
+      rdf:type dogont:OffStateValue ;
+    ] ;
+.
+instance:State_LCDBacklight_2
+  rdf:type dogont:OnOffState ;
+  dogont:hasStateValue [
+      rdf:type dogont:OnStateValue ;
+    ] ;
+.
+instance:State_TinkerforgeAmbientLight
+  rdf:type dogont:LightIntensityState ;
+  dogont:hasStateValue [
+      rdf:type dogont:BrightnessStateValue ;
+      dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/illuminance/lux> ;
+    ] ;
+.
+instance:State_TinkerforgeAmbientLight_2
+  rdf:type dogont:LightIntensityState ;
+  dogont:hasStateValue [
+      rdf:type dogont:BrightnessStateValue ;
+      dogont:realStateValue "0"^^xsd:string ;
+      dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/illuminance/lux> ;
+    ] ;
+.
+instance:State_TinkerforgeLcd
+  rdf:type dogont:DiscreteState ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+    ] ;
+.
+instance:State_TinkerforgeLcd_2
+  rdf:type dogont:DiscreteState ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+    ] ;
+.
+instance:State_Weather_Temperature
+  rdf:type dogont:TemperatureState ;
+  dogont:hasStateValue [
+      rdf:type dogont:TemperatureStateValue ;
+      dogont:realStateValue "0"^^xsd:string ;
+      dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius> ;
+    ] ;
+.
+instance:State_fingerscanner_identify_c6faf529_channel_person
+  rdf:type dogont:State ;
+  dogont:hasStateValue [
+      rdf:type dogont:AuthenticatedStateValue ;
+      dogont:realStateValue "nobody"^^xsd:string ;
+    ] ;
+.
+instance:Thing_HomematicDimmer_1
+  rdf:type dogont:DimmerSwitch ;
+  dogont:hasFunctionality instance:Function_HomematicDimmer_1 ;
+  dogont:hasState instance:State_HomematicDimmer_1 ;
+  dogont:isIn instance:Kitchen_Mueller ;
+.
+instance:Thing_HomematicDimmer_2
+  rdf:type dogont:DimmerSwitch ;
+  dogont:hasFunctionality instance:Function_HomematicDimmer_2 ;
+  dogont:hasState instance:State_HomematicDimmer_2 ;
+.
+instance:Thing_HomematicGong_1
+  rdf:type dogont:Buzzer ;
+  dogont:hasFunctionality instance:Function_HomematicGong_1 ;
+  dogont:hasFunctionality instance:Function_HomematicLightGong_1 ;
+  dogont:hasState instance:State_HomematicGong_1 ;
+  dogont:hasState instance:State_HomematicLightGong_1 ;
+.
+instance:Thing_HomematicMotionIndicator_1
+  rdf:type dogont:MovementSensor ;
+  dogont:hasFunctionality instance:Function_HomematicMotionIndicatorBrightness_1 ;
+  dogont:hasFunctionality instance:Function_HomematicMotionIndicator_1 ;
+  dogont:hasState instance:State_HomematicMotionIndicatorBrightness_1 ;
+  dogont:hasState instance:State_HomematicMotionIndicator_1 ;
+.
+instance:Thing_IrTemp
+  rdf:type dogont:MultipleTemperatureSensor ;
+  dogont:hasFunctionality instance:Function_AmbTemp ;
+  dogont:hasFunctionality instance:Function_IrTemp ;
+  dogont:hasState instance:State_AmbTemp ;
+  dogont:hasState instance:State_IrTemp ;
+  dogont:isIn instance:Kitchen_Mueller ;
+.
+instance:Thing_TinkerforgeAmbientLight
+  rdf:type dogont:LightSensor ;
+  dogont:hasFunctionality instance:Function_TinkerforgeAmbientLight ;
+  dogont:hasState instance:State_TinkerforgeAmbientLight ;
+.
+instance:Thing_TinkerforgeAmbientLight_2
+  rdf:type dogont:LightSensor ;
+  dogont:hasFunctionality instance:Function_TinkerforgeAmbientLight_2 ;
+  dogont:hasState instance:State_TinkerforgeAmbientLight_2 ;
+.
+instance:Thing_TinkerforgeLcd
+  rdf:type dogont:Communication ;
+  dogont:hasFunctionality instance:Function_LCDBacklight ;
+  dogont:hasFunctionality instance:Function_TinkerforgeLcd ;
+  dogont:hasState instance:State_LCDBacklight ;
+  dogont:hasState instance:State_TinkerforgeLcd ;
+.
+instance:Thing_TinkerforgeLcd_2
+  rdf:type dogont:Communication ;
+  dogont:hasFunctionality instance:Function_LCDBacklight_2 ;
+  dogont:hasFunctionality instance:Function_TinkerforgeLcd_2 ;
+  dogont:hasState instance:State_LCDBacklight_2 ;
+  dogont:hasState instance:State_TinkerforgeLcd_2 ;
+.
+instance:Thing_fingerscanner_identify_c6faf529
+  rdf:type dogont:AccessControlSystem ;
+  dogont:hasFunctionality instance:Function_fingerscanner_identify_c6faf529_channel_identify ;
+  dogont:hasFunctionality instance:Function_fingerscanner_identify_c6faf529_channel_person ;
+  dogont:hasState instance:State_fingerscanner_identify_c6faf529_channel_person ;
+.
+instance:Thing_yahooweather_weather_berlin
+  rdf:type dogont:SingleTemperatureSensor ;
+  dogont:hasFunctionality instance:Function_Weather_Temperature ;
+  dogont:hasState instance:State_Weather_Temperature ;
+.
+instance:ToggleCommand_fingerscanner_identify_c6faf529_channel_identify
+  rdf:type dogont:ToggleCommand ;
+.
+instance:UpCommand_OpenHab
+  rdf:type dogont:UpCommand ;
+.
+instance:homematic_radio_controlled_socket_adapter
+  rdf:type owl:Thing ;
+.

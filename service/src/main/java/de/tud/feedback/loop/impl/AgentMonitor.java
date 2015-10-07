@@ -30,9 +30,8 @@ public class AgentMonitor implements Monitor {
     public void start(Context context) {
         plugin.monitorAgents().forEach(agent -> {
             ContextUpdater updater = plugin.contextUpdater(executor);
-
-            updater.operateOn(context);
-            agent.use(updater);
+            updater.workWith(context);
+            agent.workWith(updater);
             tasks.execute(agent);
         });
     }

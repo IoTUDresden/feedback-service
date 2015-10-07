@@ -22,10 +22,6 @@ public class LabelBasedGraphOperations implements GraphOperations {
         executor.execute(
                 format("CREATE CONSTRAINT ON (n:%s) ASSERT n.%s IS UNIQUE", label, identifier),
                 params().build());
-
-        executor.execute(
-                format("CREATE INDEX ON :%s(namespace)", label),
-                params().build());
     }
 
     @Override
@@ -43,13 +39,12 @@ public class LabelBasedGraphOperations implements GraphOperations {
     }
 
     @Override
-    public void createNode(String id, String namespace) {
+    public void createNode(String id) {
         executor.execute(
-                        format("MERGE (n:%s { %s: {id}, namespace: {namespace} }) ", label, identifier) +
+                        format("MERGE (n:%s { %s: {id} }) ", label, identifier) +
                                "RETURN ID(n)",
 
                 params().put("id", id)
-                        .put("namespace", namespace)
                         .build());
     }
 

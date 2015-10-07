@@ -12,7 +12,6 @@ import de.tud.feedback.loop.Monitor;
 import de.tud.feedback.repository.ContextImportRepository;
 import de.tud.feedback.repository.ContextRepository;
 import de.tud.feedback.service.ContextService;
-import de.tud.feedback.service.KnowledgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -25,7 +24,6 @@ import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.partition;
-import static com.google.common.collect.Sets.intersection;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -38,8 +36,6 @@ public class PluginContextService implements ContextService {
     private Provider<CollectingCypherExecutor> executorProvider;
 
     private ResourceLoader resources;
-
-    private KnowledgeService knowledge;
 
     private ContextRepository contexts;
 
@@ -76,7 +72,7 @@ public class PluginContextService implements ContextService {
     }
 
     private List<ContextNode> entranceNodesFrom(Set<Long> createdNotes) {
-        return intersection(createdNotes, knowledge.findOrphanedNodes()).stream()
+        return createdNotes.stream()
                 .map(ContextNode::fromId)
                 .collect(toList());
     }
@@ -103,11 +99,6 @@ public class PluginContextService implements ContextService {
     @Autowired
     public void setResources(ResourceLoader resources) {
         this.resources = resources;
-    }
-
-    @Autowired
-    public void setKnowledge(KnowledgeService knowledge) {
-        this.knowledge = knowledge;
     }
 
     @Autowired

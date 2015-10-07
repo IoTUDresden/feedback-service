@@ -1,8 +1,8 @@
 package de.tud.feedback.plugin.factory;
 
 import de.tud.feedback.plugin.OpenHabMonitorAgent;
+import de.tud.feedback.plugin.openhab.ItemUpdateHandler;
 import de.tud.feedback.plugin.openhab.OpenHabService;
-import de.tud.feedback.plugin.openhab.impl.ContextUpdatingItemUpdateHandler;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
@@ -50,17 +50,18 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
 
     @Override
     protected OpenHabMonitorAgent createInstance() throws Exception {
-        final ContextUpdatingItemUpdateHandler handler = new ContextUpdatingItemUpdateHandler();
-        final OpenHabService service =
-                Feign.builder()
-                        .decoder(new JacksonDecoder())
-                        .target(OpenHabService.class, format("http://%s:%s", host, port));
+        final ItemUpdateHandler handler = new ItemUpdateHandler(numberStateChangeDelta);
+        final OpenHabMonitorAgent agent = new OpenHabMonitorAgent(createService(), handler);
 
-        final OpenHabMonitorAgent agent = new OpenHabMonitorAgent(service, handler);
-
-        handler.setNumberStateChangeDelta(numberStateChangeDelta);
         agent.setPollingSeconds(pollingSeconds);
+
         return agent;
+    }
+
+    private OpenHabService createService() {
+        return Feign.builder()
+                .decoder(new JacksonDecoder())
+                .target(OpenHabService.class, format("http://%s:%s", host, port));
     }
 
     @Override

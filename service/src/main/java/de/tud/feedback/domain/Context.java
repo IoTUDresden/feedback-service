@@ -1,6 +1,7 @@
 package de.tud.feedback.domain;
 
-import de.tud.feedback.api.ContextReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.tud.feedback.api.NamedNode;
 import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -13,7 +14,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
 @NodeEntity
-public class Context implements ContextReference {
+public class Context implements NamedNode {
 
     @GraphId
     private Long id;
@@ -21,10 +22,7 @@ public class Context implements ContextReference {
     @NotBlank
     private String name;
 
-    @NotBlank
-    private String itemNamespace;
-
-    @Relationship(type = "importedFor", direction = Relationship.INCOMING)
+    @Relationship(type = "for", direction = Relationship.INCOMING)
     private List<ContextImport> imports = newArrayList();
 
     public Long getId() {
@@ -35,7 +33,6 @@ public class Context implements ContextReference {
         this.id = id;
     }
 
-    @Override
     public String getName() {
         return name;
     }
@@ -57,12 +54,9 @@ public class Context implements ContextReference {
     }
 
     @Override
-    public String getItemNamespace() {
-        return itemNamespace;
-    }
-
-    public void setItemNamespace(String itemNamespace) {
-        this.itemNamespace = itemNamespace;
+    @JsonIgnore
+    public String name() {
+        return name;
     }
 
     @Override
