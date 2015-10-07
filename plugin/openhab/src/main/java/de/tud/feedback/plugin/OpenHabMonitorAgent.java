@@ -34,7 +34,7 @@ public class OpenHabMonitorAgent implements MonitorAgent {
     }
 
     private void processOpenHabItems() {
-        service.getAllItems().getItems().stream().forEach(handler::handle);
+        service.getAllItems().stream().forEach(handler::handle);
     }
 
     private void postponeNextRequest() {

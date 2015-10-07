@@ -1,6 +1,7 @@
 package de.tud.feedback.domain;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
@@ -24,6 +25,13 @@ public class Workflow {
 
     @Relationship(type = "runsWithin", direction = Relationship.OUTGOING)
     private Context context;
+
+    @URL
+    @NotBlank
+    private String source;
+
+    @NotBlank
+    private String mime;
 
     public Long getId() {
         return id;
@@ -59,6 +67,22 @@ public class Workflow {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getMime() {
+        return mime;
+    }
+
+    public void setMime(String mime) {
+        this.mime = mime;
     }
 
 }

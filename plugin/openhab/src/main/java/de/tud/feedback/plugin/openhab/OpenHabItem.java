@@ -1,4 +1,4 @@
-package de.tud.feedback.plugin.openhab.domain;
+package de.tud.feedback.plugin.openhab;
 
 public class OpenHabItem {
 
