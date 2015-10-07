@@ -24,24 +24,6 @@ public class ItemUpdateHandler {
     }
 
     public void handle(OpenHabItem item) {
-        switch (item.getType()) {
-            case "NumberItem": handleNumberItem(item); break;
-
-            // other items will be ignored
-            case "ColorItem":
-            case "ContactItem":
-            case "DateTimeItem":
-            case "DimmerItem":
-            case "LocationItem":
-            case "RollershutterItem":
-            case "StringItem":
-            case "SwitchItem":
-            default:
-                break;
-        }
-    }
-
-    private void handleNumberItem(OpenHabItem item) {
         if (!cacheContains(item)) {
             cache(item);
             update(item);
@@ -58,7 +40,12 @@ public class ItemUpdateHandler {
     }
 
     private boolean isSignificantChange(String currentState, String cachedState) {
-        return Math.abs(Double.valueOf(currentState) - Double.valueOf(cachedState)) > numberStateChangeDelta;
+        try {
+            return Math.abs(Double.valueOf(currentState) - Double.valueOf(cachedState)) > numberStateChangeDelta;
+        } catch (NumberFormatException exception) {
+            // changes on strings are always significant
+            return true;
+        }
     }
 
     private String cached(OpenHabItem item) {
