@@ -1,44 +1,36 @@
 package de.tud.feedback.configuration;
 
-import com.google.common.base.Strings;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.domain.WorkflowInstance;
 import de.tud.feedback.repository.WorkflowRepository;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.URL;
 import org.neo4j.ogm.session.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.support.GenericConversionService;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
 import org.springframework.data.neo4j.conversion.MetaDataDrivenConversionService;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.server.Neo4jServer;
 import org.springframework.data.neo4j.server.RemoteServer;
 
-import java.io.IOException;
-
 @Configuration
 @EnableNeo4jRepositories(basePackageClasses = {WorkflowRepository.class})
-@EnableConfigurationProperties(KnowledgeConfiguration.ServerProperties.class)
-class KnowledgeConfiguration extends Neo4jConfiguration {
+class KnowledgeConfiguration extends Neo4jConfiguration implements EnvironmentAware {
 
-    @Autowired
-    ServerProperties server;
+    private String neo4jUrl;
+
+    private String neo4jUsername;
+
+    private String neo4jPassword;
 
     @Override
     public Neo4jServer neo4jServer() {
-        if (server.hasAuthentication()) {
-            return new RemoteServer(server.url(), server.username(), server.password());
-        } else {
-            return new RemoteServer(server.url());
-        }
+        return new RemoteServer(neo4jUrl, neo4jUsername, neo4jPassword);
     }
 
     @Override
@@ -49,70 +41,24 @@ class KnowledgeConfiguration extends Neo4jConfiguration {
     }
 
     @Bean
-    public ConversionService conversionService(final ResourceLoader loader) {
-        MetaDataDrivenConversionService conversionService
+    public ConversionService conversionService(
+            Converter<String, Resource> stringResourceConverter,
+            Converter<Resource, String> resourceStringConverter
+    ) {
+        GenericConversionService conversionService
                 = new MetaDataDrivenConversionService(getSessionFactory().metaData());
 
-        conversionService.addConverter(new Converter<String, Resource>() {
-            @Override
-            public Resource convert(String source) {
-                return loader.getResource(source);
-            }
-        });
-
-        conversionService.addConverter(new Converter<Resource, String>() {
-            @Override
-            public String convert(Resource source) {
-                try {
-                    return source.getURI().toString();
-                } catch (IOException e) {
-                    return null;
-                }
-            }
-        });
+        conversionService.addConverter(stringResourceConverter);
+        conversionService.addConverter(resourceStringConverter);
 
         return conversionService;
     }
 
-    @ConfigurationProperties(prefix = "service.knowledge")
-    public static final class ServerProperties {
-
-        @URL
-        @NotBlank
-        private String url;
-
-        private String username;
-
-        private String password;
-
-        public String url() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public String username() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String password() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public boolean hasAuthentication() {
-            return !Strings.isNullOrEmpty(username);
-        }
-
+    @Override
+    public void setEnvironment(Environment environment) {
+        neo4jUrl = environment.getProperty("service.knowledge.url");
+        neo4jUsername = environment.getProperty("service.knowledge.username");
+        neo4jPassword = environment.getProperty("service.knowledge.password");
     }
 
 }
