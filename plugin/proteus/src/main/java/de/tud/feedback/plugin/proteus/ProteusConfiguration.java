@@ -23,7 +23,7 @@ public class ProteusConfiguration {
             @Value("${openHab.host:localhost}") String host,
             @Value("${openHab.port:8080}") int port,
             @Value("${openHab.delta:0.01}") Double delta,
-            @Value("${openHab.pollingSeconds:2}") Integer pollingSeconds
+            @Value("${openHab.pollingSeconds:1}") Integer pollingSeconds
     ) {
         return OpenHabMonitorAgentFactoryBean.build()
                 .setNumberStateChangeDelta(delta)

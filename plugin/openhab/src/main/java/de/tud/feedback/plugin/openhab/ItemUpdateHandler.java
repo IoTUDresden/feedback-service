@@ -5,17 +5,22 @@ import de.tud.feedback.ContextUpdater;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static java.lang.Math.abs;
 
 public class ItemUpdateHandler {
 
-    private final Map<String, String> cache = newHashMap();
+    private final Map<String, OpenHabItem> cache = newHashMap();
 
-    private final Double numberStateChangeDelta;
+    private final Map<String, Double> maximum = newHashMap();
+
+    private final Map<String, Double> normalized = newHashMap();
+
+    private final Double delta;
 
     private ContextUpdater updater;
 
     public ItemUpdateHandler(Double delta) {
-        this.numberStateChangeDelta = delta;
+        this.delta = delta;
     }
 
     public void setUpdater(ContextUpdater updater) {
@@ -23,31 +28,51 @@ public class ItemUpdateHandler {
     }
 
     public void handle(OpenHabItem item) {
-        if (!cacheContains(item)) {
-            cache(item);
+        if (!cacheContains(item) || containsSignificantStateChange(item))
             update(item);
 
-        } else {
-            final String cachedState = cached(item);
-            final String currentState = item.getState();
-
-            if (!cachedState.equals(currentState) && isSignificantChange(currentState, cachedState)) {
-                cache(item);
-                update(item);
-            }
-        }
+        cache(item);
     }
 
-    private boolean isSignificantChange(String currentState, String cachedState) {
-        try {
-            return Math.abs(Double.valueOf(currentState) - Double.valueOf(cachedState)) > numberStateChangeDelta;
-        } catch (NumberFormatException exception) {
-            // changes on strings are always significant
+    @SuppressWarnings("SimplifiableIfStatement")
+    private boolean containsSignificantStateChange(OpenHabItem current) {
+        if (current.getState().equals(cached(current).getState()))
+            return false;
+
+        else if (!hasNumberState(current))
             return true;
+
+        else
+            return hasSignificantDifference(current.getState(), current.getLink());
+    }
+
+    private boolean hasSignificantDifference(String state, String item) {
+        Double number = Double.valueOf(state);
+        Double last = normalized.getOrDefault(item, Double.MIN_VALUE);
+        Double max = maximum.getOrDefault(item, Double.MIN_VALUE);
+
+        if (max < number) {
+            maximum.put(item, number);
+            max = number;
+        }
+
+        Double current = (number / max);
+        normalized.put(item, current);
+
+        return abs(current - last) > delta;
+    }
+
+    private boolean hasNumberState(OpenHabItem item) {
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            Double.valueOf(item.getState());
+            return true;
+        } catch (NumberFormatException exception) {
+            return false;
         }
     }
 
-    private String cached(OpenHabItem item) {
+    private OpenHabItem cached(OpenHabItem item) {
         return cache.get(item.getLink());
     }
 
@@ -59,8 +84,8 @@ public class ItemUpdateHandler {
         return cache.containsKey(item.getLink());
     }
 
-    private String cache(OpenHabItem item) {
-        return cache.put(item.getLink(), item.getState());
+    private OpenHabItem cache(OpenHabItem item) {
+        return cache.put(item.getLink(), item);
     }
 
 }

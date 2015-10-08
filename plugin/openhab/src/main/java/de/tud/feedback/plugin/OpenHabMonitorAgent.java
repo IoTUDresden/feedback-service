@@ -28,21 +28,22 @@ public class OpenHabMonitorAgent implements MonitorAgent {
     @SuppressWarnings("InfiniteLoopStatement")
     public void run() {
         while (true) {
-            processOpenHabItems();
-            postponeNextRequest();
+            try {
+                processOpenHabItems();
+                Thread.sleep(1000L * pollingSeconds);
+
+            } catch (InterruptedException exception) {
+                LOG.info("Stopped");
+                break;
+
+            } catch (RuntimeException exception) {
+                LOG.warn("No connection to OpenHAB. " + exception.getMessage());
+            }
         }
     }
 
     private void processOpenHabItems() {
         service.getAllItems().stream().forEach(handler::handle);
-    }
-
-    private void postponeNextRequest() {
-        try {
-            Thread.sleep(1000L * pollingSeconds);
-        } catch (InterruptedException exception) {
-            LOG.debug(exception.getMessage());
-        }
     }
 
     public void setPollingSeconds(Integer seconds) {
