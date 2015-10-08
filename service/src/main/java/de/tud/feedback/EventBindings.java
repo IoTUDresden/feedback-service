@@ -7,6 +7,7 @@ import de.tud.feedback.service.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,6 +18,7 @@ public class EventBindings {
 
     @Autowired WorkflowService workflows;
 
+    @Async
     @HandleAfterCreate
     public void importContextSourcesAfterContextCreation(Context context) {
         contexts.importAllOf(context);

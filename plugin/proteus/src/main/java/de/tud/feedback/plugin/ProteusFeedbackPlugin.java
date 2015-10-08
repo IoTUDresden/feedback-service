@@ -29,7 +29,7 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Override
     public ContextUpdater contextUpdater(CypherExecutor executor) {
-        return new DogOntContextUpdater(executor);
+        return new DogOntContextUpdater(executor, "State_");
     }
 
     @Override

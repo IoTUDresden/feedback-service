@@ -16,29 +16,35 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     private static final Logger LOG = LoggerFactory.getLogger(DogOntContextUpdater.class);
 
-    private CypherExecutor executor;
+    private final String stateNodePrefix;
+
+    private final CypherExecutor executor;
 
     private String contextName;
 
-    private Map<String, Integer> itemValues;
+    private Map<String, Integer> stateValueMapping;
 
-    public DogOntContextUpdater(CypherExecutor executor) {
+    public DogOntContextUpdater(CypherExecutor executor, String stateNodePrefix) {
+        this.stateNodePrefix = stateNodePrefix;
         this.executor = executor;
     }
 
     @Override
     public void update(String item, Object state) {
-        if (itemValues == null)
-            itemValues = resolveItemValues();
+        final String stateName = stateNodePrefix + item;
 
-        if (itemValues.containsKey(item)) {
+        if (stateValueMapping == null) {
+            stateValueMapping = resolveStateValueMapping();
+        }
+
+        if (stateValueMapping.containsKey(stateName)) {
             executor.execute(
                     "MATCH (v) " +
                     "WHERE ID(v) = {id} " +
                     "SET v.realStateValue = {value} " +
                     "RETURN v",
 
-                    params().put("id", itemValues.get(item))
+                    params().put("id", stateValueMapping.get(stateName))
                             .put("value", state)
                             .build());
 
@@ -46,18 +52,18 @@ public class DogOntContextUpdater implements ContextUpdater {
         }
     }
 
-    private Map<String, Integer> resolveItemValues() {
+    private Map<String, Integer> resolveStateValueMapping() {
         return executor.execute(
                 "MATCH (c:Context)<-[:for]-(:ContextImport)<-[:within]-(i)-[:hasState]->(s)-[:hasStateValue]->(v) " +
                 "WHERE c.name = {contextName} " +
-                "RETURN i.name AS item, ID(v) AS valueId",
+                "RETURN s.name AS state, ID(v) AS valueId",
 
                 params().put("contextName", contextName)
                         .build())
 
                 .stream()
                 .collect(toMap(
-                        e -> (String) e.get("item"),
+                        e -> (String) e.get("state"),
                         e -> (Integer) e.get("valueId")));
     }
 

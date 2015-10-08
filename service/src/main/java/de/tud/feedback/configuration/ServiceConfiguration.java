@@ -1,5 +1,11 @@
 package de.tud.feedback.configuration;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -40,6 +46,28 @@ public class ServiceConfiguration {
                 } catch (IOException exception) {
                     return null;
                 }
+            }
+        };
+    }
+
+    @Bean JsonSerializer<Resource> resourceJsonSerializer(Converter<Resource, String> resourceStringConverter) {
+        return new JsonSerializer<Resource>() {
+            @Override
+            public void serialize(Resource value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+                gen.writeString(resourceStringConverter.convert(value));
+            }
+
+            @Override
+            public Class<Resource> handledType() {
+                return Resource.class;
+            }
+        };
+    }
+
+    @Bean JsonDeserializer<Resource> resourceJsonDeserializer(Converter<String, Resource> stringResourceConverter) {
+        return new FromStringDeserializer<Resource>(Resource.class) {
+            protected Resource _deserialize(String value, DeserializationContext ctxt) throws IOException {
+                return stringResourceConverter.convert(value);
             }
         };
     }

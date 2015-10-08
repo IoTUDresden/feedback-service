@@ -54,7 +54,10 @@ public class LoggingAspect {
     }
 
     private String argumentsFrom(JoinPoint point) {
-        return Arrays.toString(point.getArgs());
+        if (point.getArgs().length != 0)
+            return Arrays.toString(point.getArgs());
+        else
+            return "";
     }
 
     private String methodFrom(JoinPoint point) {

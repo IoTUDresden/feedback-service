@@ -17,15 +17,10 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
 
     private Double numberStateChangeDelta = 0.01;
 
-    private Integer pollingSeconds = 2;
+    private int pollingSeconds = 2;
 
     public static OpenHabMonitorAgentFactoryBean build() {
         return new OpenHabMonitorAgentFactoryBean();
-    }
-
-    public OpenHabMonitorAgentFactoryBean setPollingSeconds(Integer pollingSeconds) {
-        this.pollingSeconds = pollingSeconds;
-        return this;
     }
 
     public OpenHabMonitorAgentFactoryBean setHost(String host) {
@@ -40,6 +35,11 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
 
     public OpenHabMonitorAgentFactoryBean setNumberStateChangeDelta(Double numberStateChangeDelta) {
         this.numberStateChangeDelta = numberStateChangeDelta;
+        return this;
+    }
+
+    public OpenHabMonitorAgentFactoryBean setPollingSeconds(Integer pollingSeconds) {
+        this.pollingSeconds = pollingSeconds;
         return this;
     }
 

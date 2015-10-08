@@ -13,7 +13,6 @@ import de.tud.feedback.repository.ContextImportRepository;
 import de.tud.feedback.repository.ContextRepository;
 import de.tud.feedback.service.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -38,7 +37,6 @@ public class PluginContextService implements ContextService {
 
     private Provider<Monitor> monitor;
 
-    @Async
     @Override
     @LogDuration
     @GraphTransactional

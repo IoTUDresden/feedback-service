@@ -26,8 +26,8 @@ public class ProteusConfiguration {
             @Value("${openHab.pollingSeconds:2}") Integer pollingSeconds
     ) {
         return OpenHabMonitorAgentFactoryBean.build()
-                .setPollingSeconds(pollingSeconds)
                 .setNumberStateChangeDelta(delta)
+                .setPollingSeconds(pollingSeconds)
                 .setHost(host)
                 .setPort(port);
     }
