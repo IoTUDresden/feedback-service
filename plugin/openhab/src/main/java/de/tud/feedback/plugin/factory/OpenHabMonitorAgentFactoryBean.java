@@ -6,9 +6,12 @@ import de.tud.feedback.plugin.openhab.OpenHabService;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.stereotype.Component;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
+@Component
 public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabMonitorAgent> {
 
     private String host;
@@ -17,39 +20,13 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
 
     private Double numberStateChangeDelta = 0.01;
 
-    private int pollingSeconds = 2;
-
-    public static OpenHabMonitorAgentFactoryBean build() {
-        return new OpenHabMonitorAgentFactoryBean();
-    }
-
-    public OpenHabMonitorAgentFactoryBean setHost(String host) {
-        this.host = host;
-        return this;
-    }
-
-    public OpenHabMonitorAgentFactoryBean setPort(Integer port) {
-        this.port = port;
-        return this;
-    }
-
-    public OpenHabMonitorAgentFactoryBean setNumberStateChangeDelta(Double numberStateChangeDelta) {
-        this.numberStateChangeDelta = numberStateChangeDelta;
-        return this;
-    }
-
-    public OpenHabMonitorAgentFactoryBean setPollingSeconds(Integer pollingSeconds) {
-        this.pollingSeconds = pollingSeconds;
-        return this;
-    }
-
-    @Override
-    public Class<?> getObjectType() {
-        return OpenHabMonitorAgent.class;
-    }
+    private Integer pollingSeconds = 1;
 
     @Override
     protected OpenHabMonitorAgent createInstance() throws Exception {
+        checkNotNull(host, "Host is missing");
+        checkNotNull(port, "Port is missing");
+
         final ItemUpdateHandler handler = new ItemUpdateHandler(numberStateChangeDelta);
         final OpenHabMonitorAgent agent = new OpenHabMonitorAgent(createService(), handler);
 
@@ -62,6 +39,31 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
         return Feign.builder()
                 .decoder(new JacksonDecoder())
                 .target(OpenHabService.class, format("http://%s:%s", host, port));
+    }
+
+    public OpenHabMonitorAgentFactoryBean setHost(String host) {
+        this.host = checkNotNull(host);
+        return this;
+    }
+
+    public OpenHabMonitorAgentFactoryBean setPort(Integer port) {
+        this.port = checkNotNull(port);
+        return this;
+    }
+
+    public OpenHabMonitorAgentFactoryBean setNumberStateChangeDelta(Double numberStateChangeDelta) {
+        this.numberStateChangeDelta = checkNotNull(numberStateChangeDelta);
+        return this;
+    }
+
+    public OpenHabMonitorAgentFactoryBean setPollingSeconds(Integer pollingSeconds) {
+        this.pollingSeconds = checkNotNull(pollingSeconds);
+        return this;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return OpenHabMonitorAgent.class;
     }
 
     @Override

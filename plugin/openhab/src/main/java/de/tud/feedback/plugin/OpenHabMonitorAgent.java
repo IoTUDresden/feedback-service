@@ -37,7 +37,8 @@ public class OpenHabMonitorAgent implements MonitorAgent {
                 break;
 
             } catch (RuntimeException exception) {
-                LOG.warn("No connection to OpenHAB. " + exception.getMessage());
+                LOG.warn(exception.getMessage());
+                break;
             }
         }
     }

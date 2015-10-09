@@ -2,19 +2,15 @@ package de.tud.feedback.plugin;
 
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.CypherExecutor;
+import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.domain.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 import static de.tud.feedback.Utils.params;
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toMap;
 
 public class DogOntContextUpdater implements ContextUpdater {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DogOntContextUpdater.class);
 
     private final String stateNodePrefix;
 
@@ -30,6 +26,7 @@ public class DogOntContextUpdater implements ContextUpdater {
     }
 
     @Override
+    @LogInvocation
     public void update(String item, Object state) {
         final String stateName = stateNodePrefix + item;
 
@@ -47,8 +44,6 @@ public class DogOntContextUpdater implements ContextUpdater {
                     params().put("id", stateValueMapping.get(stateName))
                             .put("value", state)
                             .build());
-
-            LOG.debug(format("SET %s = %s", item, state));
         }
     }
 

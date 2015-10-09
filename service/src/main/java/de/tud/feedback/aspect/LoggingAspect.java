@@ -54,10 +54,7 @@ public class LoggingAspect {
     }
 
     private String argumentsFrom(JoinPoint point) {
-        if (point.getArgs().length != 0)
-            return Arrays.toString(point.getArgs());
-        else
-            return "";
+        return Arrays.toString(point.getArgs()).replaceAll("^\\[(.*)\\]$", "$1");
     }
 
     private String methodFrom(JoinPoint point) {

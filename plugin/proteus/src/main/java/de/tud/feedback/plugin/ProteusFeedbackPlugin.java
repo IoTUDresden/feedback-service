@@ -1,9 +1,13 @@
 package de.tud.feedback.plugin;
 
 import de.tud.feedback.*;
+import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
+import de.tud.feedback.plugin.factory.OpenHabMonitorAgentFactoryBean;
 import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.inject.Provider;
 import java.util.Collection;
@@ -19,7 +23,11 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired RdfContextImporterFactoryBean importerFactory;
 
-    @Autowired OpenHabMonitorAgent monitorAgent;
+    @Autowired Provider<DogOntContextUpdater> updaterProvider;
+
+    @Autowired DogOntContextUpdaterFactoryBean updaterFactory;
+
+    @Autowired Provider<OpenHabMonitorAgent> monitorAgentProvider;
 
     @Override
     public ContextImporter contextImporter(CypherExecutor executor) {
@@ -29,12 +37,13 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Override
     public ContextUpdater contextUpdater(CypherExecutor executor) {
-        return new DogOntContextUpdater(executor, "State_");
+        updaterFactory.setExecutor(executor);
+        return updaterProvider.get();
     }
 
     @Override
     public Collection<MonitorAgent> monitorAgents() {
-        return singletonList(monitorAgent);
+        return singletonList(monitorAgentProvider.get());
     }
 
     @Override
@@ -45,6 +54,37 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     @Override
     public String toString() {
         return name();
+    }
+
+    @Autowired
+    void configureRdfContextImporters(
+            RdfContextImporterFactoryBean factoryBean
+    ) {
+        factoryBean
+                .setNodeLabel(StringUtils.capitalize(ProteusFeedbackPlugin.NAME));
+    }
+
+    @Autowired
+    void configureOpenHabMonitorAgents(
+            OpenHabMonitorAgentFactoryBean factoryBean,
+            @Value("${openHab.host:localhost}") String host,
+            @Value("${openHab.port:8080}") int port,
+            @Value("${openHab.delta:0.01}") Double delta,
+            @Value("${openHab.pollingSeconds:1}") Integer pollingSeconds
+    ) {
+        factoryBean
+                .setNumberStateChangeDelta(delta)
+                .setPollingSeconds(pollingSeconds)
+                .setHost(host)
+                .setPort(port);
+    }
+
+    @Autowired
+    void configureDogOntContextUpdaters(
+            DogOntContextUpdaterFactoryBean factoryBean,
+            @Value("${dogOnt.stateNodePrefix:State_}") String stateNodePrefix
+    ) {
+        factoryBean.setStateNodePrefix(stateNodePrefix);
     }
 
 }
