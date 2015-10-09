@@ -20,12 +20,12 @@ allprojects {
     apply plugin: 'idea'
 
     dependencies {
-        compile('org.springframework.data:spring-data-neo4j:4.0.0.RELEASE') {
-            exclude module: "logback-classic"
+        compile('org.springframework.boot:spring-boot-starter-web:1.3.0.M5') { // FIXME necessary?
+            exclude module: 'spring-boot-starter-tomcat'
         }
 
-        compile('org.springframework.boot:spring-boot-starter-web:1.3.0.M5') {
-            exclude module: 'spring-boot-starter-tomcat'
+        compile('org.springframework.data:spring-data-neo4j:4.0.0.RELEASE') {
+            exclude module: "logback-classic"
         }
 
         compile 'com.google.guava:guava:18.0',

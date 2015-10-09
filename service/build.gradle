@@ -16,7 +16,8 @@ dependencies {
     compile 'org.springframework.data:spring-data-rest-webmvc:2.4.0.RELEASE',
             'org.springframework.data:spring-data-rest-hal-browser:2.4.0.RELEASE'
 
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8',
+            'org.apache.solr:solr-core:4.10.4'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }

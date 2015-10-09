@@ -1,8 +1,7 @@
 package de.tud.feedback.configuration;
 
 import de.tud.feedback.domain.Workflow;
-import de.tud.feedback.domain.WorkflowInstance;
-import de.tud.feedback.repository.WorkflowRepository;
+import de.tud.feedback.repository.graph.WorkflowRepository;
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -35,9 +34,7 @@ class KnowledgeConfiguration extends Neo4jConfiguration implements EnvironmentAw
 
     @Override
     public SessionFactory getSessionFactory() {
-        return new SessionFactory(
-                Workflow.class.getPackage().getName(),
-                WorkflowInstance.class.getPackage().getName());
+        return new SessionFactory(Workflow.class.getPackage().getName());
     }
 
     @Bean

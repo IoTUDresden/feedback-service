@@ -3,6 +3,7 @@ package de.tud.feedback.plugin;
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.annotation.LogInvocation;
+import de.tud.feedback.annotation.LogTimeSeries;
 import de.tud.feedback.domain.Context;
 
 import java.util.Map;
@@ -16,7 +17,7 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     private final CypherExecutor executor;
 
-    private String contextName;
+    private String context;
 
     private Map<String, Integer> stateValueMapping;
 
@@ -27,6 +28,7 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     @Override
     @LogInvocation
+    @LogTimeSeries(context = "#this.context")
     public void update(String item, Object state) {
         final String stateName = stateNodePrefix + item;
 
@@ -37,9 +39,9 @@ public class DogOntContextUpdater implements ContextUpdater {
         if (stateValueMapping.containsKey(stateName)) {
             executor.execute(
                     "MATCH (v) " +
-                    "WHERE ID(v) = {id} " +
-                    "SET v.realStateValue = {value} " +
-                    "RETURN v",
+                            "WHERE ID(v) = {id} " +
+                            "SET v.realStateValue = {value} " +
+                            "RETURN v",
 
                     params().put("id", stateValueMapping.get(stateName))
                             .put("value", state)
@@ -53,7 +55,7 @@ public class DogOntContextUpdater implements ContextUpdater {
                 "WHERE c.name = {contextName} " +
                 "RETURN s.name AS state, ID(v) AS valueId",
 
-                params().put("contextName", contextName)
+                params().put("contextName", context)
                         .build())
 
                 .stream()
@@ -64,7 +66,11 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     @Override
     public void workWith(Context context) {
-        this.contextName = context.getName();
+        this.context = context.getName();
+    }
+
+    public String getContext() {
+        return context;
     }
 
     @Override

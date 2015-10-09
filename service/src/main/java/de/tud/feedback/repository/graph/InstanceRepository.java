@@ -1,4 +1,4 @@
-package de.tud.feedback.repository;
+package de.tud.feedback.repository.graph;
 
 import de.tud.feedback.domain.WorkflowInstance;
 import org.springframework.data.neo4j.repository.GraphRepository;

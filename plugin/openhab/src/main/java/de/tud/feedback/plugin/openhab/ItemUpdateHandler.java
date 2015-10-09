@@ -47,19 +47,22 @@ public class ItemUpdateHandler {
     }
 
     private boolean hasSignificantDifference(String state, String item) {
-        Double number = Double.valueOf(state);
-        Double last = normalized.getOrDefault(item, Double.MIN_VALUE);
-        Double max = maximum.getOrDefault(item, Double.MIN_VALUE);
+        double number = Double.valueOf(state);
+        double last = normalized.getOrDefault(item, Double.MIN_VALUE);
+        double max = maximum.getOrDefault(item, Double.MIN_VALUE);
 
         if (max < number) {
             maximum.put(item, number);
             max = number;
         }
 
-        Double current = (number / max);
+        double current = (number / max);
         normalized.put(item, current);
 
-        return abs(current - last) > delta;
+        if (current == last && last == 1.0)
+            return true;
+        else
+            return abs(current - last) > delta;
     }
 
     private boolean hasNumberState(OpenHabItem item) {
@@ -77,7 +80,7 @@ public class ItemUpdateHandler {
     }
 
     private void update(OpenHabItem item) {
-        updater.update(item.getName(), item.getState());
+        updater.update(item.getName(), item.getState()); // FIXME happens twice ...
     }
 
     private boolean cacheContains(OpenHabItem item) {

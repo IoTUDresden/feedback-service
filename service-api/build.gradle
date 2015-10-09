@@ -1,4 +1,4 @@
 jar {
-  baseName = 'feedback-service-api'
-  version =  '1.0.0-SNAPSHOT'
+    baseName = 'feedback-service-api'
+    version = '1.0.0-SNAPSHOT'
 }

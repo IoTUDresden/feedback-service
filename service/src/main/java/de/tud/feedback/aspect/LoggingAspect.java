@@ -33,9 +33,9 @@ public class LoggingAspect {
         final Long begin = currentTimeMillis();
         final Object result;
 
-        logger.info(format("Starting %s(%s)", method, argumentsFrom(point)));
+        logger.debug(format("Starting %s(%s)", method, argumentsFrom(point)));
         result = point.proceed();
-        logger.info(format("Finished %s(...) after %sms", method, timeGoneBySince(begin)));
+        logger.debug(format("Finished %s(...) after %sms", method, timeGoneBySince(begin)));
 
         return result;
     }

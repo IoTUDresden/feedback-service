@@ -3,7 +3,7 @@ package de.tud.feedback.service.impl;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.domain.WorkflowInstance;
 import de.tud.feedback.graph.SimpleCypherExecutor;
-import de.tud.feedback.repository.WorkflowRepository;
+import de.tud.feedback.repository.graph.WorkflowRepository;
 import de.tud.feedback.service.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
