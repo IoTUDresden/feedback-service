@@ -4,6 +4,7 @@ import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.MonitorAgent;
 import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.plugin.openhab.ItemUpdateHandler;
+import de.tud.feedback.plugin.openhab.OpenHabItem;
 import de.tud.feedback.plugin.openhab.OpenHabService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +36,14 @@ public class OpenHabMonitorAgent implements MonitorAgent {
             } catch (InterruptedException exception) {
                 LOG.info("Stopped");
                 break;
-
-            } catch (RuntimeException exception) {
-                LOG.warn(exception.getMessage());
-                break;
             }
         }
     }
 
     private void processOpenHabItems() {
-        service.getAllItems().stream().forEach(handler::handle);
+        service.getAllItems().stream()
+                .filter(OpenHabItem::hasValidState)
+                .forEach(handler::handle);
     }
 
     public void setPollingSeconds(Integer seconds) {

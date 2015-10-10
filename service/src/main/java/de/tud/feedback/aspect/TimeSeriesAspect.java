@@ -8,14 +8,14 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-
-import static java.lang.System.currentTimeMillis;
+import java.util.Calendar;
 
 @Aspect
 @Component
@@ -40,9 +40,9 @@ public class TimeSeriesAspect {
         item.setContext(getValue(annotation.context(), context));
         item.setItem(getValue(annotation.item(), context));
         item.setState(getValue(annotation.state(), context));
-        item.setTime(currentTimeMillis());
+        item.setTime(Calendar.getInstance().getTime());
 
-        // repository.save(item);
+        repository.save(item);
     }
 
     private String getValue(String expression, StandardEvaluationContext context) {
@@ -53,7 +53,7 @@ public class TimeSeriesAspect {
         return MethodSignature.class.cast(point.getSignature()).getMethod();
     }
 
-    // @Autowired
+    @Autowired
     public void setRepository(HistoricalStateRepository repository) {
         this.repository = repository;
     }

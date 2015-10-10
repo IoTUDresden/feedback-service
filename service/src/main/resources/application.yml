@@ -6,7 +6,13 @@ spring:
     returnBodyOnCreate: true
     returnBodyOnUpdate: true
 
-service.knowledge:
-  url: http://localhost:7474
-  username:
-  password:
+service:
+  knowledge:
+    neo4j:
+      url: http://localhost:7474
+      username:
+      password:
+
+    elasticsearch:
+      host:
+      port: 9300

@@ -6,13 +6,17 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
+import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.data.neo4j.conversion.MetaDataDrivenConversionService;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -22,6 +26,21 @@ import java.io.IOException;
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceConfiguration {
+
+    @Bean
+    public ConversionService conversionService(
+            SessionFactory neo4jSessionFactory,
+            Converter<String, Resource> stringResourceConverter,
+            Converter<Resource, String> resourceStringConverter
+    ) {
+        GenericConversionService conversionService
+                = new MetaDataDrivenConversionService(neo4jSessionFactory.metaData());
+
+        conversionService.addConverter(stringResourceConverter);
+        conversionService.addConverter(resourceStringConverter);
+
+        return conversionService;
+    }
 
     @Bean
     public TaskExecutor taskExecutor() {

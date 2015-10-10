@@ -52,4 +52,9 @@ public class OpenHabItem {
         this.label = label;
     }
 
+    public boolean hasValidState() {
+        return !"NULL".equals(state) &&
+                !"UNDEF".equals(state);
+    }
+
 }
