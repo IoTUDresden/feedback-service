@@ -1,0 +1,75 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'de.undercouch:gradle-download-task:2.0.0'
+    }
+}
+
+ant.condition(property: "os", value: "windows") { os(family: "windows") }
+ant.condition(property: "os", value: "unix"   ) { os(family: "unix")    }
+
+apply plugin: 'de.undercouch.download'
+
+def os() { ant.properties.os }
+def isWindows() { os() == 'windows' }
+def archive = new File(buildDir, 'neo4j' + (isWindows() ? '.zip' : '.tar.gz'))
+def serverDir = new File(buildDir, 'neo4j')
+def binaries = new File(buildDir, 'neo4j/neo4j-community-2.2.5/bin/')
+def config = new File(buildDir, 'neo4j/neo4j-community-2.2.5/conf/neo4j-server.properties')
+def dataDir = new File(rootDir, 'data/neo4j')
+
+def neo4j(dir, command) {
+    exec {
+        workingDir dir
+
+        standardOutput = new ByteArrayOutputStream()
+        errorOutput = standardOutput
+
+        if (isWindows()) {
+            commandLine 'cmd', '/c', 'neo4j.bat', command
+        } else {
+            commandLine './neo4j', command
+        }
+    }
+}
+
+
+task fetch() << {
+    if (!archive.exists()) {
+        download {
+            dest archive
+            src isWindows() \
+                ? 'http://neo4j.com/artifact.php?name=neo4j-community-2.2.5-windows.zip' \
+                : 'http://neo4j.com/artifact.php?name=neo4j-community-2.2.5-unix.tar.gz'
+        }
+    }
+}
+
+task prepare(dependsOn: fetch) << {
+    if (!serverDir.exists()) {
+        copy {
+            from isWindows() ? zipTree(archive) : tarTree(archive)
+            into serverDir
+        }
+
+        ant.replace(file: config,
+                token: 'org.neo4j.server.database.location=data/graph.db',
+                value: 'org.neo4j.server.database.location=' + dataDir
+        )
+    }
+}
+
+task run(dependsOn: prepare) << {
+    try {
+        neo4j(binaries, 'status')
+    } catch (Exception ignored) {
+        neo4j(binaries, 'start')
+    }
+}
+
+task stop() << {
+    neo4j(binaries, 'stop')
+}
