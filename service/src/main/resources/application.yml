@@ -1,18 +1,9 @@
 server.port: 9000
 
 spring:
+  profiles.active: development,embeddedNeo4j,embeddedElasticsearch
+
   main.showBanner: false
   data.rest:
     returnBodyOnCreate: true
     returnBodyOnUpdate: true
-
-service:
-  knowledge:
-    neo4j:
-      url: http://localhost:7474
-      username:
-      password:
-
-    elasticsearch:
-      host:
-      port: 9300

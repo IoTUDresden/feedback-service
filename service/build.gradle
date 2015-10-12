@@ -7,6 +7,7 @@ jar {
 
 dependencies {
     compile project(':service-api')
+    compile project(':knowledge/neo4j')
 
     compile('org.springframework.boot:spring-boot-starter-undertow') { exclude module: 'undertow-websockets-jsr' }
 
