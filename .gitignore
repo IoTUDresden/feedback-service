@@ -2,6 +2,10 @@
 *.iml
 *.ipr
 *.iws
+*.launch
+.settings
+.classpath
+.project
 catalog-v*.xml
 build
 target

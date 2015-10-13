@@ -1,3 +1,5 @@
+import groovy.xml.MarkupBuilder
+
 buildscript {
     repositories {
         maven { url 'http://repo.spring.io/plugins-snapshot' }
@@ -19,6 +21,24 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
     apply plugin: 'idea'
+
+    sourceCompatibility = '1.8'
+
+    eclipse {
+        project {
+            name = project.name.replace('/', '-')
+        }
+
+        classpath {
+            file {
+                whenMerged { classpath ->
+                    classpath.entries.removeAll { entry ->
+                        entry.path.endsWith '.pom'
+                    }
+                }
+            }
+        }
+    }
 
     dependencies {
         compile('org.springframework.boot:spring-boot-starter-web:1.3.0.M5') { // FIXME necessary?
@@ -44,6 +64,35 @@ project(':service') {
         compile project(':plugin/proteus')
     }
 }
+
+task eclipseLaunchConfiguration() << {
+    file("$rootDir/Service.launch").withWriter { writer ->
+        new MarkupBuilder(writer).launchConfiguration(type: 'org.eclipse.jdt.launching.localJavaApplication') {
+            listAttribute(key: 'org.eclipse.debug.core.MAPPED_RESOURCE_PATHS') {
+                listEntry value: '/service/src/main/java/de/tud/feedback/FeedbackService.java'
+            }
+
+            listAttribute(key: 'org.eclipse.debug.core.MAPPED_RESOURCE_TYPES') {
+                listEntry value: '1'
+            }
+
+            listAttribute(key: 'org.eclipse.debug.ui.favoriteGroups') {
+                listEntry value: 'org.eclipse.debug.ui.launchGroup.debug'
+                listEntry value: 'org.eclipse.debug.ui.launchGroup.run'
+            }
+
+            stringAttribute key: 'org.eclipse.jdt.launching.MAIN_TYPE', value: 'de.tud.feedback.FeedbackService'
+            stringAttribute key: 'org.eclipse.jdt.launching.PROJECT_ATTR', value: 'service'
+        }
+    }
+}
+
+task cleanEclipseLaunchConfiguration() << {
+    file("$rootDir/Service.launch").delete()
+}
+
+eclipseProject.dependsOn eclipseLaunchConfiguration
+cleanEclipse.dependsOn cleanEclipseLaunchConfiguration
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.6'
