@@ -11,3 +11,4 @@ build
 target
 .gradle
 data
+local.yml
