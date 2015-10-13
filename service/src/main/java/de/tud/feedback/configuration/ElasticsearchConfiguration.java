@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 
@@ -28,13 +27,13 @@ public class ElasticsearchConfiguration implements EnvironmentAware {
     static final Logger LOG = LoggerFactory.getLogger(ElasticsearchConfiguration.class);
 
     @Bean(name = "elasticsearchClient")
-    @Profile({ "embeddedElasticsearch", "!production" })
+    @Profile("embeddedElasticsearch")
     public Client embeddedClient() {
         return nodeBuilder().local(true).node().client();
     }
 
     @Bean(name = "elasticsearchClient")
-    @Profile({ "!embeddedElasticsearch", "production" })
+    @Profile("!embeddedElasticsearch")
     public Client externalClient(
             @Value("${service.knowledge.elasticsearch.host}") String host,
             @Value("${service.knowledge.elasticsearch.port:0}") int port
@@ -43,12 +42,12 @@ public class ElasticsearchConfiguration implements EnvironmentAware {
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
-        ArrayList<String> profiles = newArrayList(environment.getActiveProfiles());
+    public void setEnvironment(Environment env) {
+        ArrayList<String> profiles = newArrayList(env.getActiveProfiles());
 
         if (!profiles.contains("embeddedElasticsearch")) {
-            Assert.isTrue(environment.containsProperty("service.knowledge.elasticsearch.host"));
-            Assert.isTrue(environment.containsProperty("service.knowledge.elasticsearch.port"));
+            env.getRequiredProperty("service.knowledge.elasticsearch.host");
+            env.getRequiredProperty("service.knowledge.elasticsearch.port");
 
         } else {
             LOG.warn("Using embedded server");

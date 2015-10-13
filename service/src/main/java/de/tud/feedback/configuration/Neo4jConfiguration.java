@@ -13,9 +13,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.server.Neo4jServer;
 import org.springframework.data.neo4j.server.RemoteServer;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
@@ -37,7 +37,7 @@ public abstract class Neo4jConfiguration extends org.springframework.data.neo4j.
     }
 
     @Configuration
-    @Profile({ "!embeddedNeo4j", "production" })
+    @Profile("!embeddedNeo4j")
     public static class ExternalNeo4jConfiguration extends Neo4jConfiguration implements EnvironmentAware {
 
         private String url;
@@ -52,25 +52,25 @@ public abstract class Neo4jConfiguration extends org.springframework.data.neo4j.
         }
 
         @Override
-        public void setEnvironment(Environment environment) {
-            ArrayList<String> profiles = newArrayList(environment.getActiveProfiles());
+        public void setEnvironment(Environment env) {
+            ArrayList<String> profiles = newArrayList(env.getActiveProfiles());
 
             if (!profiles.contains("embeddedNeo4j")) {
-                Assert.isTrue(environment.containsProperty("service.knowledge.neo4j.url"));
+                url = env.getRequiredProperty("service.knowledge.neo4j.url");
+                username = env.getRequiredProperty("service.knowledge.neo4j.username");
+                password = env.getRequiredProperty("service.knowledge.neo4j.password");
             }
-
-            url = environment.getProperty("service.knowledge.neo4j.url");
-            username = environment.getProperty("service.knowledge.neo4j.username", "");
-            password = environment.getProperty("service.knowledge.neo4j.password", "");
         }
 
     }
 
     @Configuration
-    @Profile({ "embeddedNeo4j", "!production" })
+    @Profile("embeddedNeo4j")
     public static class InternalNeo4jConfiguration extends Neo4jConfiguration implements EnvironmentAware {
 
         private String binary;
+
+        private boolean isWindows;
 
         public InternalNeo4jConfiguration() {
             LOG.warn("Using embedded server");
@@ -87,8 +87,7 @@ public abstract class Neo4jConfiguration extends org.springframework.data.neo4j.
 
         private int neo4j(String command) {
             try {
-                ProcessBuilder builder = new ProcessBuilder(binary, command);
-                Process process = builder.start();
+                Process process = new ProcessBuilder(osSpecificCommandLineFor(command)).start();
                 process.waitFor();
                 return process.exitValue();
             } catch (Exception exception) {
@@ -97,8 +96,17 @@ public abstract class Neo4jConfiguration extends org.springframework.data.neo4j.
             }
         }
 
+        private List<String> osSpecificCommandLineFor(String command) {
+            if (isWindows) {
+                return newArrayList("cmd.exe", "/C", binary, command);
+            } else {
+                return newArrayList(binary, command);
+            }
+        }
+
         @Override
         public void setEnvironment(Environment environment) {
+            isWindows = environment.getProperty("os.name").toLowerCase().contains("windows");
             binary = environment.getRequiredProperty("service.knowledge.neo4j.binary");
         }
 

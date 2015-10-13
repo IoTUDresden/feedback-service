@@ -7,12 +7,16 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
 import org.neo4j.ogm.session.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.GenericConversionService;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.task.TaskExecutor;
@@ -21,11 +25,16 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.io.IOException;
+import java.util.Arrays;
+
+import static java.lang.String.format;
 
 @EnableAsync
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class ServiceConfiguration {
+public class ServiceConfiguration implements EnvironmentAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceConfiguration.class);
 
     @Bean
     public ConversionService conversionService(
@@ -89,6 +98,12 @@ public class ServiceConfiguration {
                 return stringResourceConverter.convert(value);
             }
         };
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        LOG.info(format("Active profiles: %s",
+                Arrays.toString(environment.getActiveProfiles()).replaceAll("^\\[(.*)\\]$", "$1")));
     }
 
 }
