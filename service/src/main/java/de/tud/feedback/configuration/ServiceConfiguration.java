@@ -6,9 +6,13 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
+import de.tud.feedback.WorkflowAugmentation;
 import org.neo4j.ogm.session.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +34,7 @@ import java.util.Arrays;
 import static java.lang.String.format;
 
 @EnableAsync
+@EnableCaching
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceConfiguration implements EnvironmentAware {
@@ -54,6 +59,13 @@ public class ServiceConfiguration implements EnvironmentAware {
     @Bean
     public TaskExecutor taskExecutor() {
         return new ThreadPoolTaskExecutor();
+    }
+
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager(
+            WorkflowAugmentation.CACHE
+        );
     }
 
     @Bean Converter<String, Resource> stringResourceConverter(ResourceLoader loader) {

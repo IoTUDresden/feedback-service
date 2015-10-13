@@ -1,5 +1,6 @@
 package de.tud.feedback.service.impl;
 
+import de.tud.feedback.WorkflowAugmentation;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.domain.WorkflowInstance;
 import de.tud.feedback.graph.SimpleCypherExecutor;
@@ -22,7 +23,7 @@ public class PluginWorkflowService implements WorkflowService {
     }
 
     @Override
-    @Cacheable("augmentedWorkflows") // TODO
+    @Cacheable(WorkflowAugmentation.CACHE)
     public String augment(Workflow workflow) {
         return "Sorry, dude...";
     }
