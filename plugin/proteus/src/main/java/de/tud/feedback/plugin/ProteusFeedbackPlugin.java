@@ -29,6 +29,8 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<OpenHabMonitorAgent> monitorAgentProvider;
 
+    @Autowired ProteusWorkflowAugmentation augmentation;
+
     @Override
     public ContextImporter contextImporter(CypherExecutor executor) {
         importerFactory.setExecutor(executor);
@@ -44,6 +46,11 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     @Override
     public Collection<MonitorAgent> monitorAgents() {
         return singletonList(monitorAgentProvider.get());
+    }
+
+    @Override
+    public WorkflowAugmentation workflowAugmentation() {
+        return augmentation;
     }
 
     @Override

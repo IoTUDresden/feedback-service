@@ -12,4 +12,6 @@ public interface FeedbackPlugin {
 
     Collection<MonitorAgent> monitorAgents();
 
+    WorkflowAugmentation workflowAugmentation();
+
 }
