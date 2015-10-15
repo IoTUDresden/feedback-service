@@ -40,8 +40,6 @@ Content-Type: application/json
 POST /workflows HTTP/1.1
 Host: localhost:9000
 Content-Type: application/json
-Cache-Control: no-cache
-Postman-Token: 628e4199-20db-1226-395e-5f62d7e43635
 
 {
     "name": "cooking with friends scenario",
@@ -55,8 +53,6 @@ Postman-Token: 628e4199-20db-1226-395e-5f62d7e43635
 POST /goals HTTP/1.1
 Host: localhost:9000
 Content-Type: application/json
-Cache-Control: no-cache
-Postman-Token: 879cf86a-deda-a203-ac99-2c5019dc50b9
 
 {
     "name": "enough light for cooking",
