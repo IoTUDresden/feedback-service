@@ -57,4 +57,8 @@ public class OpenHabItem {
                 !"UNDEF".equals(state);
     }
 
+    public boolean isUsefulItem() {
+        return !"GroupItem".equals(type);
+    }
+
 }

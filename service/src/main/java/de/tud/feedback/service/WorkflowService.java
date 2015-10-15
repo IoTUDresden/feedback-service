@@ -1,12 +1,11 @@
 package de.tud.feedback.service;
 
 import de.tud.feedback.domain.Workflow;
-import de.tud.feedback.domain.WorkflowInstance;
 
 public interface WorkflowService {
 
-    void attendExecutionOf(WorkflowInstance instance);
+    void attend(Workflow workflow);
 
-    String augment(Workflow workflow);
+    void deleteGoals(Workflow workflow);
 
 }

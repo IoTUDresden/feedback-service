@@ -1,11 +1,12 @@
 package de.tud.feedback;
 
 import de.tud.feedback.domain.Context;
-import de.tud.feedback.domain.WorkflowInstance;
+import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.service.ContextService;
 import de.tud.feedback.service.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
+import org.springframework.data.rest.core.annotation.HandleAfterDelete;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -26,8 +27,13 @@ public class EventBindings {
     }
 
     @HandleAfterCreate
-    public void attendWorkflowExecutionWithNewInstance(WorkflowInstance instance) {
-        workflows.attendExecutionOf(instance);
+    public void attendWorkflowExecutionWithNewInstance(Workflow workflow) {
+        workflows.attend(workflow);
+    }
+
+    @HandleAfterDelete
+    public void deleteWorkflowGoals(Workflow workflow) {
+        workflows.deleteGoals(workflow);
     }
 
 }

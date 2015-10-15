@@ -1,18 +1,13 @@
 package de.tud.feedback.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
-import org.neo4j.ogm.annotation.typeconversion.Convert;
-import org.springframework.core.io.Resource;
 
-import javax.validation.constraints.NotNull;
-import java.util.Set;
+import java.util.Collection;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.String.format;
 
 @NodeEntity
 public class Workflow {
@@ -20,24 +15,14 @@ public class Workflow {
     @GraphId
     private Long id;
 
-    @Relationship(type = "instanceOf", direction = Relationship.INCOMING)
-    private Set<WorkflowInstance> instances = newHashSet();
-
     @NotBlank
     private String name;
 
+    @Relationship(type = "hasGoal", direction = Relationship.OUTGOING)
+    private Collection<Goal> goals;
+
     @Relationship(type = "runsWithin", direction = Relationship.OUTGOING)
     private Context context;
-
-    @NotNull
-    @Convert(graphPropertyType = String.class)
-    private Resource source;
-
-    @NotBlank
-    private String mime;
-
-    @JsonIgnore
-    private Resource resource;
 
     public Long getId() {
         return id;
@@ -55,16 +40,12 @@ public class Workflow {
         this.name = name;
     }
 
-    public Set<WorkflowInstance> getInstances() {
-        return instances;
+    public Collection<Goal> getGoals() {
+        return goals;
     }
 
-    public void setInstances(Set<WorkflowInstance> instances) {
-        try {
-            this.instances = checkNotNull(instances);
-        } catch (NullPointerException exception) {
-            this.instances = newHashSet();
-        }
+    public void setGoals(Collection<Goal> goals) {
+        this.goals = goals;
     }
 
     public Context getContext() {
@@ -75,28 +56,9 @@ public class Workflow {
         this.context = context;
     }
 
-    public Resource getSource() {
-        return source;
-    }
-
-    public void setSource(Resource source) {
-        this.source = source;
-    }
-
-    public String getMime() {
-        return mime;
-    }
-
-    public void setMime(String mime) {
-        this.mime = mime;
-    }
-
-    public Resource getResource() {
-        return resource;
-    }
-
-    public void setResource(Resource resource) {
-        this.resource = resource;
+    @Override
+    public String toString() {
+        return format("Workflow(%s)", name);
     }
 
 }

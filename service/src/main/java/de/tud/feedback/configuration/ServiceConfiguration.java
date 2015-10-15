@@ -1,18 +1,9 @@
 package de.tud.feedback.configuration;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.deser.std.FromStringDeserializer;
-import de.tud.feedback.WorkflowAugmentation;
 import org.neo4j.ogm.session.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +18,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.neo4j.conversion.MetaDataDrivenConversionService;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.util.MimeType;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -45,13 +37,17 @@ public class ServiceConfiguration implements EnvironmentAware {
     public ConversionService conversionService(
             SessionFactory neo4jSessionFactory,
             Converter<String, Resource> stringResourceConverter,
-            Converter<Resource, String> resourceStringConverter
+            Converter<Resource, String> resourceStringConverter,
+            Converter<MimeType, String> mimeTypeStringConverter,
+            Converter<String, MimeType> stringMimeTypeConverter
     ) {
         GenericConversionService conversionService
                 = new MetaDataDrivenConversionService(neo4jSessionFactory.metaData());
 
         conversionService.addConverter(stringResourceConverter);
         conversionService.addConverter(resourceStringConverter);
+        conversionService.addConverter(stringMimeTypeConverter);
+        conversionService.addConverter(mimeTypeStringConverter);
 
         return conversionService;
     }
@@ -59,13 +55,6 @@ public class ServiceConfiguration implements EnvironmentAware {
     @Bean
     public TaskExecutor taskExecutor() {
         return new ThreadPoolTaskExecutor();
-    }
-
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager(
-            WorkflowAugmentation.CACHE
-        );
     }
 
     @Bean Converter<String, Resource> stringResourceConverter(ResourceLoader loader) {
@@ -90,24 +79,20 @@ public class ServiceConfiguration implements EnvironmentAware {
         };
     }
 
-    @Bean JsonSerializer<Resource> resourceJsonSerializer(Converter<Resource, String> resourceStringConverter) {
-        return new JsonSerializer<Resource>() {
-            @Override
-            public void serialize(Resource value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-                gen.writeString(resourceStringConverter.convert(value));
-            }
-
-            @Override
-            public Class<Resource> handledType() {
-                return Resource.class;
+    @Bean Converter<String, MimeType> stringMimeTypeConverter() {
+        //noinspection Convert2Lambda, Anonymous2MethodRef
+        return new Converter<String, MimeType>() {
+            public MimeType convert(String source) {
+                return MimeType.valueOf(source);
             }
         };
     }
 
-    @Bean JsonDeserializer<Resource> resourceJsonDeserializer(Converter<String, Resource> stringResourceConverter) {
-        return new FromStringDeserializer<Resource>(Resource.class) {
-            protected Resource _deserialize(String value, DeserializationContext ctxt) throws IOException {
-                return stringResourceConverter.convert(value);
+    @Bean Converter<MimeType, String> mimeTypeStringConverter() {
+        //noinspection Convert2Lambda, Anonymous2MethodRef
+        return new Converter<MimeType, String>() {
+            public String convert(MimeType source) {
+                return source.toString();
             }
         };
     }

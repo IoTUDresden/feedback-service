@@ -43,6 +43,7 @@ public class OpenHabMonitorAgent implements MonitorAgent {
     private void processOpenHabItems() {
         service.getAllItems().stream()
                 .filter(OpenHabItem::hasValidState)
+                .filter(OpenHabItem::isUsefulItem)
                 .forEach(handler::handle);
     }
 

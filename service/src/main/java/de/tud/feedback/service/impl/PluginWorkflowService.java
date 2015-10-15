@@ -1,12 +1,12 @@
 package de.tud.feedback.service.impl;
 
 import de.tud.feedback.FeedbackPlugin;
-import de.tud.feedback.WorkflowAugmentation;
+import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Workflow;
-import de.tud.feedback.domain.WorkflowInstance;
+import de.tud.feedback.repository.graph.GoalRepository;
+import de.tud.feedback.repository.graph.ObjectiveRepository;
 import de.tud.feedback.service.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service("workflows")
@@ -14,15 +14,33 @@ public class PluginWorkflowService implements WorkflowService {
 
     private FeedbackPlugin plugin;
 
+    private ObjectiveRepository objectives;
+
+    private GoalRepository goals;
+
     @Override
-    public void attendExecutionOf(WorkflowInstance instance) {
+    public void attend(Workflow workflow) {
         // TODO
     }
 
     @Override
-    @Cacheable(WorkflowAugmentation.CACHE)
-    public String augment(Workflow workflow) {
-        return plugin.workflowAugmentation().augment(workflow);
+    public void deleteGoals(Workflow workflow) {
+        workflow.getGoals().stream().forEach(this::deleteGoal);
+    }
+
+    private void deleteGoal(Goal goal) {
+        goal.getObjectives().stream().forEach(objectives::delete);
+        goals.delete(goal);
+    }
+
+    @Autowired
+    public void setObjectives(ObjectiveRepository objectives) {
+        this.objectives = objectives;
+    }
+
+    @Autowired
+    public void setGoals(GoalRepository goals) {
+        this.goals = goals;
     }
 
     @Autowired
