@@ -46,16 +46,6 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
         return singletonList(monitorAgentProvider.get());
     }
 
-    @Override
-    public String name() {
-        return NAME;
-    }
-
-    @Override
-    public String toString() {
-        return name();
-    }
-
     @Autowired
     void configureRdfContextImporters(
             RdfContextImporterFactoryBean factoryBean

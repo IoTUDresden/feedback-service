@@ -4,8 +4,6 @@ import java.util.Collection;
 
 public interface FeedbackPlugin {
 
-    String name();
-
     ContextImporter contextImporter(CypherExecutor executor);
 
     ContextUpdater contextUpdater(CypherExecutor executor);

@@ -1,8 +1,10 @@
 package de.tud.feedback.configuration;
 
+import org.joda.time.DateTime;
 import org.neo4j.ogm.session.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +24,7 @@ import org.springframework.util.MimeType;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 
 import static java.lang.String.format;
 
@@ -36,19 +39,12 @@ public class ServiceConfiguration implements EnvironmentAware {
     @Bean
     public ConversionService conversionService(
             SessionFactory neo4jSessionFactory,
-            Converter<String, Resource> stringResourceConverter,
-            Converter<Resource, String> resourceStringConverter,
-            Converter<MimeType, String> mimeTypeStringConverter,
-            Converter<String, MimeType> stringMimeTypeConverter
+            @Qualifier("customConverter") Collection<Converter> converters
     ) {
         GenericConversionService conversionService
                 = new MetaDataDrivenConversionService(neo4jSessionFactory.metaData());
 
-        conversionService.addConverter(stringResourceConverter);
-        conversionService.addConverter(resourceStringConverter);
-        conversionService.addConverter(stringMimeTypeConverter);
-        conversionService.addConverter(mimeTypeStringConverter);
-
+        converters.forEach(conversionService::addConverter);
         return conversionService;
     }
 
@@ -57,6 +53,7 @@ public class ServiceConfiguration implements EnvironmentAware {
         return new ThreadPoolTaskExecutor();
     }
 
+    @Qualifier("customConverter")
     @Bean Converter<String, Resource> stringResourceConverter(ResourceLoader loader) {
         //noinspection Convert2Lambda,Anonymous2MethodRef
         return new Converter<String, Resource>() {
@@ -66,6 +63,7 @@ public class ServiceConfiguration implements EnvironmentAware {
         };
     }
 
+    @Qualifier("customConverter")
     @Bean Converter<Resource, String> resourceStringConverter() {
         //noinspection Convert2Lambda
         return new Converter<Resource, String>() {
@@ -79,6 +77,7 @@ public class ServiceConfiguration implements EnvironmentAware {
         };
     }
 
+    @Qualifier("customConverter")
     @Bean Converter<String, MimeType> stringMimeTypeConverter() {
         //noinspection Convert2Lambda, Anonymous2MethodRef
         return new Converter<String, MimeType>() {
@@ -88,10 +87,31 @@ public class ServiceConfiguration implements EnvironmentAware {
         };
     }
 
+    @Qualifier("customConverter")
     @Bean Converter<MimeType, String> mimeTypeStringConverter() {
         //noinspection Convert2Lambda, Anonymous2MethodRef
         return new Converter<MimeType, String>() {
             public String convert(MimeType source) {
+                return source.toString();
+            }
+        };
+    }
+
+    @Qualifier("customConverter")
+    @Bean Converter<String, DateTime> stringDateTimeConverter() {
+        //noinspection Convert2Lambda, Anonymous2MethodRef
+        return new Converter<String, DateTime>() {
+            public DateTime convert(String source) {
+                return DateTime.parse(source);
+            }
+        };
+    }
+
+    @Qualifier("customConverter")
+    @Bean Converter<DateTime, String> DateTimeStringConverter() {
+        //noinspection Convert2Lambda, Anonymous2MethodRef
+        return new Converter<DateTime, String>() {
+            public String convert(DateTime source) {
                 return source.toString();
             }
         };

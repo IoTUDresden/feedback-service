@@ -58,11 +58,11 @@ Content-Type: application/json
     "name": "enough light for cooking",
     "workflow": "http://localhost:9000/workflows/6348",
     "objectives": [{
-        "name": "within the next ten seconds",
-        "mime": "application/spel+joda",
-        "expression": "now().plusSeconds(10)"
+        "name": "within ten seconds",
+        "mime": "application/spel",
+        "expression": "goal.objective('light in kitchen > 1000 lux').satisfaction.isBefore(goal.created.plusSeconds(10))"
     }, {
-        "name": "light intensity in the kitchen will be above 1000 lux",
+        "name": "light in kitchen > 1000 lux",
         "mime": "application/cypher",
         "expressions": [
             "MATCH (thing)-[:isIn]->({ name: 'Kitchen_Mueller' })",

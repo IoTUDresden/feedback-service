@@ -1,15 +1,19 @@
 package de.tud.feedback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
+import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
+import static org.joda.time.DateTime.now;
 
 @NodeEntity
 public class Goal {
@@ -25,6 +29,9 @@ public class Goal {
 
     @Relationship(type = "hasGoal", direction = Relationship.INCOMING)
     private Workflow workflow;
+
+    @Convert(graphPropertyType = String.class)
+    private DateTime created = now();
 
     public Long getId() {
         return id;
@@ -46,6 +53,14 @@ public class Goal {
         }
     }
 
+    @JsonIgnore
+    public Objective objective(String name) {
+        return objectives.stream()
+                .filter(objective -> name.equals(objective.getName()))
+                .findAny()
+                .get();
+    }
+
     public String getName() {
         return name;
     }
@@ -60,6 +75,14 @@ public class Goal {
 
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
+    }
+
+    public DateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(DateTime created) {
+        this.created = created;
     }
 
     @Override
