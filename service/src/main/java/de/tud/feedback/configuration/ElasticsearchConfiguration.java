@@ -14,44 +14,45 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
-import java.util.ArrayList;
-
-import static com.google.common.collect.Lists.newArrayList;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 @Configuration
 @EnableElasticsearchRepositories(
         basePackageClasses = HistoricalStateRepository.class)
-public class ElasticsearchConfiguration implements EnvironmentAware {
+public class ElasticsearchConfiguration {
 
     static final Logger LOG = LoggerFactory.getLogger(ElasticsearchConfiguration.class);
 
-    @Bean(name = "elasticsearchClient")
+    @Configuration
     @Profile("embeddedElasticsearch")
-    public Client embeddedClient() {
-        return nodeBuilder().local(true).node().client();
+    public static class EmbeddedElasticsearchConfiguration {
+
+        @Bean(name = "elasticsearchClient")
+        public Client embeddedClient() {
+            LOG.warn("Using embedded server");
+            return nodeBuilder().local(true).node().client();
+        }
+
     }
 
-    @Bean(name = "elasticsearchClient")
+    @Configuration
     @Profile("!embeddedElasticsearch")
-    public Client externalClient(
-            @Value("${service.knowledge.elasticsearch.host}") String host,
-            @Value("${service.knowledge.elasticsearch.port:0}") int port
-    ) {
-        return new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port));
-    }
+    public static class ExternalElasticsearchConfiguration implements EnvironmentAware {
 
-    @Override
-    public void setEnvironment(Environment env) {
-        ArrayList<String> profiles = newArrayList(env.getActiveProfiles());
+        @Bean(name = "elasticsearchClient")
+        public Client externalClient(
+                @Value("${service.knowledge.elasticsearch.host}") String host,
+                @Value("${service.knowledge.elasticsearch.port:0}") int port
+        ) {
+            return new TransportClient().addTransportAddress(new InetSocketTransportAddress(host, port));
+        }
 
-        if (!profiles.contains("embeddedElasticsearch")) {
+        @Override
+        public void setEnvironment(Environment env) {
             env.getRequiredProperty("service.knowledge.elasticsearch.host");
             env.getRequiredProperty("service.knowledge.elasticsearch.port");
-
-        } else {
-            LOG.warn("Using embedded server");
         }
+
     }
 
 }

@@ -25,7 +25,7 @@ public class TimeSeriesAspect {
 
     private HistoricalStateRepository repository;
 
-    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.annotation.LogTimeSeries)")
+    @Pointcut("execution(* de.tud..*(..)) && @annotation(de.tud.feedback.annotation.LogTimeSeries)")
     public void timeSeriesAnnotatedMethods() {}
 
     @Before("timeSeriesAnnotatedMethods()")

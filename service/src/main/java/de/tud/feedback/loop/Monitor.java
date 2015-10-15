@@ -4,6 +4,6 @@ import de.tud.feedback.domain.Context;
 
 public interface Monitor {
 
-    void start(Context context);
+    void monitor(Context context);
 
 }

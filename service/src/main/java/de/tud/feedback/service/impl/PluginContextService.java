@@ -52,7 +52,7 @@ public class PluginContextService implements ContextService {
     @PostConstruct
     public void beginContextUpdates() {
         newArrayList(contexts.findAll())
-                .forEach(context -> monitor.get().start(context));
+                .forEach(context -> monitor.get().monitor(context));
     }
 
     private void importContextFrom(ContextImport contextImport) {

@@ -1,11 +1,14 @@
 package de.tud.feedback.service;
 
+import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.Workflow;
 
 public interface WorkflowService {
 
-    void attend(Workflow workflow);
+    void deleteGoalsFor(Workflow workflow);
 
-    void deleteGoals(Workflow workflow);
+    void analyzeGoalsFor(Workflow workflow);
+
+    void analyzeGoalsForWorkflowsWithin(Context context);
 
 }

@@ -7,6 +7,8 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Collection;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
 @NodeEntity
@@ -19,7 +21,7 @@ public class Workflow {
     private String name;
 
     @Relationship(type = "hasGoal", direction = Relationship.OUTGOING)
-    private Collection<Goal> goals;
+    private Collection<Goal> goals = newArrayList();
 
     @Relationship(type = "runsWithin", direction = Relationship.OUTGOING)
     private Context context;
@@ -45,7 +47,11 @@ public class Workflow {
     }
 
     public void setGoals(Collection<Goal> goals) {
-        this.goals = goals;
+        try {
+            this.goals = checkNotNull(goals);
+        } catch (NullPointerException exception) {
+            this.goals = newArrayList();
+        }
     }
 
     public Context getContext() {
@@ -59,6 +65,25 @@ public class Workflow {
     @Override
     public String toString() {
         return format("Workflow(%s)", name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Workflow workflow = (Workflow) o;
+
+        return !(id != null ? !id.equals(workflow.id) : workflow.id != null) &&
+               !(name != null ? !name.equals(workflow.name) : workflow.name != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 
 }

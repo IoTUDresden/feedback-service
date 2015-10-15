@@ -5,6 +5,8 @@ import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.annotation.LogTimeSeries;
 import de.tud.feedback.domain.Context;
+import de.tud.feedback.event.SymptomDetectedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Map;
 
@@ -17,9 +19,11 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     private final CypherExecutor executor;
 
-    private String context;
+    private Context context;
 
     private Map<String, Integer> stateValueMapping;
+
+    private ApplicationEventPublisher publisher;
 
     public DogOntContextUpdater(CypherExecutor executor, String stateNodePrefix) {
         this.stateNodePrefix = stateNodePrefix;
@@ -28,7 +32,7 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     @Override
     @LogInvocation
-    @LogTimeSeries(context = "#this.context")
+    @LogTimeSeries(context = "#this.context.name")
     public void update(String item, Object state) {
         final String stateName = stateNodePrefix + item;
 
@@ -39,24 +43,29 @@ public class DogOntContextUpdater implements ContextUpdater {
         if (stateValueMapping.containsKey(stateName)) {
             executor.execute(
                     "MATCH (v) " +
-                            "WHERE ID(v) = {id} " +
-                            "SET v.realStateValue = {value} " +
-                            "RETURN v",
+                    "WHERE ID(v) = {id} " +
+                    "SET v.realStateValue = {value} " +
+                    "RETURN v",
 
                     params().put("id", stateValueMapping.get(stateName))
                             .put("value", state)
                             .build());
+
+            publisher.publishEvent(SymptomDetectedEvent.on(context));
         }
     }
 
     private Map<String, Integer> resolveStateValueMapping() {
         return executor.execute(
-                "MATCH (c:Context)<-[:for]-(:ContextImport)<-[:within]-(i)-[:hasState]->(s)-[:hasStateValue]->(v) " +
-                "WHERE c.name = {contextName} " +
-                "RETURN s.name AS state, ID(v) AS valueId",
+                    "MATCH (thing)-[:within]->(import:ContextImport) " +
+                    "MATCH (import)-[:for]->(context:Context) " +
+                    "MATCH (thing)-[:hasState]->(state) " +
+                    "MATCH (state)-[:hasStateValue]->(value) " +
+                    "WHERE context.name = {contextName} " +
+                    "RETURN state.name AS state, ID(value) AS valueId",
 
-                params().put("contextName", context)
-                        .build())
+                    params().put("contextName", context.getName())
+                            .build())
 
                 .stream()
                 .collect(toMap(
@@ -66,16 +75,21 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     @Override
     public void workWith(Context context) {
-        this.context = context.getName();
+        this.context = context;
     }
 
-    public String getContext() {
+    public Context getContext() {
         return context;
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
     }
 
 }

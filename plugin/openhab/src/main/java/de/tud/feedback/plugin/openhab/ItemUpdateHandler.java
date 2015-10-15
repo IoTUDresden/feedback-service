@@ -59,6 +59,7 @@ public class ItemUpdateHandler {
         double current = (number / max);
         normalized.put(item, current);
 
+        //noinspection SimplifiableIfStatement
         if (current == last && last == 1.0)
             return true;
         else
@@ -80,7 +81,7 @@ public class ItemUpdateHandler {
     }
 
     private void update(OpenHabItem item) {
-        updater.update(item.getName(), item.getState()); // FIXME happens twice ...
+        updater.update(item.getName(), item.getState());
     }
 
     private boolean cacheContains(OpenHabItem item) {

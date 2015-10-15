@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.String.format;
 
 @NodeEntity
 public class ContextImport {
@@ -87,7 +88,7 @@ public class ContextImport {
 
     @Override
     public String toString() {
-        return name;
+        return format("ContextImport(%s)", name);
     }
 
 }

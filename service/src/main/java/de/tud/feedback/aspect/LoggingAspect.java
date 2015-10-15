@@ -20,10 +20,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Component
 public class LoggingAspect {
 
-    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.annotation.LogDuration)")
+    @Pointcut("execution(* de.tud..*(..)) && @annotation(de.tud.feedback.annotation.LogDuration)")
     public void durationLoggedMethods() {}
 
-    @Pointcut("execution(* *(..)) && @annotation(de.tud.feedback.annotation.LogInvocation)")
+    @Pointcut("execution(* de.tud..*(..)) && @annotation(de.tud.feedback.annotation.LogInvocation)")
     public void invocationLoggedMethods() {}
 
     @Around("durationLoggedMethods()")
@@ -42,7 +42,7 @@ public class LoggingAspect {
 
     @Before("invocationLoggedMethods()")
     public void logInvocation(JoinPoint point) {
-        getLogger(classFrom(point)).info(format("%s(%s)", methodFrom(point), argumentsFrom(point)));
+        getLogger(classFrom(point)).debug(format("%s(%s)", methodFrom(point), argumentsFrom(point)));
     }
 
     private String timeGoneBySince(long begin) {
