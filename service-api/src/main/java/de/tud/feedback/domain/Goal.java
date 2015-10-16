@@ -1,6 +1,7 @@
 package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.tud.feedback.Satisfiable;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
@@ -16,7 +17,7 @@ import static java.lang.String.format;
 import static org.joda.time.DateTime.now;
 
 @NodeEntity
-public class Goal {
+public class Goal implements Satisfiable {
 
     @GraphId
     private Long id;
@@ -88,6 +89,33 @@ public class Goal {
     @Override
     public String toString() {
         return format("Goal(%s)", name);
+    }
+
+    @Override
+    public boolean hasBeenSatisfied() {
+        return objectives.stream().allMatch(Objective::hasBeenSatisfied);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Goal goal = (Goal) o;
+
+        if (id != null ? !id.equals(goal.id) : goal.id != null) return false;
+        //noinspection SimplifiableIfStatement
+        if (name != null ? !name.equals(goal.name) : goal.name != null) return false;
+        return !(created != null ? !created.equals(goal.created) : goal.created != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (created != null ? created.hashCode() : 0);
+        return result;
     }
 
 }

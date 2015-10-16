@@ -1,5 +1,6 @@
 package de.tud.feedback.domain;
 
+import de.tud.feedback.Satisfiable;
 import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -12,7 +13,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
 @NodeEntity
-public class Workflow {
+public class Workflow implements Satisfiable {
 
     @GraphId
     private Long id;
@@ -84,6 +85,11 @@ public class Workflow {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public boolean hasBeenSatisfied() {
+        return goals.stream().allMatch(Goal::hasBeenSatisfied);
     }
 
 }

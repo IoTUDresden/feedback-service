@@ -1,6 +1,7 @@
 package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.tud.feedback.Satisfiable;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
@@ -16,7 +17,7 @@ import static java.lang.String.join;
 import static org.joda.time.DateTime.now;
 
 @NodeEntity
-public class Objective {
+public class Objective implements Satisfiable {
 
     @GraphId
     private Long id;
@@ -26,6 +27,10 @@ public class Objective {
 
     @NotBlank
     private String expression;
+
+    private boolean failed = false;
+
+    private boolean compensable = false;
 
     @Convert(graphPropertyType = String.class)
     private DateTime satisfaction = now().plusYears(100);
@@ -42,6 +47,7 @@ public class Objective {
         return id;
     }
 
+    @JsonIgnore
     public void setId(Long id) {
         this.id = id;
     }
@@ -50,6 +56,7 @@ public class Objective {
         return satisfaction;
     }
 
+    @JsonIgnore
     public void setSatisfaction(DateTime satisfaction) {
         this.satisfaction = satisfaction;
     }
@@ -82,16 +89,36 @@ public class Objective {
         this.mime = mime;
     }
 
+    @JsonIgnore
     public Goal getGoal() {
         return goal;
     }
 
+    @JsonIgnore
     public void setGoal(Goal goal) {
         this.goal = goal;
     }
 
+    @Override
     public boolean hasBeenSatisfied() {
         return now().isAfter(satisfaction);
+    }
+
+    public boolean hasFailed() {
+        return failed;
+    }
+
+    @JsonIgnore
+    public void setFailed(boolean failed) {
+        this.failed = failed;
+    }
+
+    public boolean isCompensable() {
+        return compensable;
+    }
+
+    public void setCompensable(boolean compensable) {
+        this.compensable = compensable;
     }
 
     @Override

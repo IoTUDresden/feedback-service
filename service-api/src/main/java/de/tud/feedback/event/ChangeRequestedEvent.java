@@ -2,9 +2,9 @@ package de.tud.feedback.event;
 
 import org.springframework.context.ApplicationEvent;
 
-public class ChangeRequestEvent extends ApplicationEvent {
+public class ChangeRequestedEvent extends ApplicationEvent {
 
-    private ChangeRequestEvent(Object source) {
+    private ChangeRequestedEvent(Object source) {
         super(source);
     }
 

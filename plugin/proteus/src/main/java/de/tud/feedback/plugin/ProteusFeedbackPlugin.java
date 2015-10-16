@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 import javax.inject.Provider;
 import java.util.Collection;
 
-import static java.util.Collections.singletonList;
+import static com.google.common.collect.Lists.newArrayList;
 
 @Component
 public class ProteusFeedbackPlugin implements FeedbackPlugin {
@@ -30,20 +30,25 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     @Autowired Provider<OpenHabMonitorAgent> monitorAgentProvider;
 
     @Override
-    public ContextImporter contextImporter(CypherExecutor executor) {
+    public ContextImporter getContextImporter(CypherExecutor executor) {
         importerFactory.setExecutor(executor);
         return importerProvider.get();
     }
 
     @Override
-    public ContextUpdater contextUpdater(CypherExecutor executor) {
+    public ContextUpdater getContextUpdater(CypherExecutor executor) {
         updaterFactory.setExecutor(executor);
         return updaterProvider.get();
     }
 
     @Override
-    public Collection<MonitorAgent> monitorAgents() {
-        return singletonList(monitorAgentProvider.get());
+    public Collection<MonitorAgent> getMonitorAgents() {
+        return newArrayList(monitorAgentProvider.get());
+    }
+
+    @Override
+    public Collection<ObjectiveEvaluator> getObjectiveEvaluators() {
+        return newArrayList(/* TODO */);
     }
 
     @Autowired

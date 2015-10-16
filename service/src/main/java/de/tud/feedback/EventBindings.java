@@ -39,7 +39,7 @@ public class EventBindings {
     }
 
     @EventListener
-    public void evaluateGoalsOn(SymptomDetectedEvent event) {
+    public void analyzeGoalsOn(SymptomDetectedEvent event) {
         workflowService.analyzeGoalsForWorkflowsWithin(event.context());
     }
 

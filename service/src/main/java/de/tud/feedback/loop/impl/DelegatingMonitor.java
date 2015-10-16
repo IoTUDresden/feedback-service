@@ -26,8 +26,8 @@ public class DelegatingMonitor implements Monitor {
 
     @Override
     public void monitor(Context context) {
-        plugin.monitorAgents().forEach(agent -> {
-            ContextUpdater updater = plugin.contextUpdater(executor);
+        plugin.getMonitorAgents().forEach(agent -> {
+            ContextUpdater updater = plugin.getContextUpdater(executor);
             updater.setApplicationEventPublisher(publisher);
             updater.workWith(context);
             agent.workWith(updater);

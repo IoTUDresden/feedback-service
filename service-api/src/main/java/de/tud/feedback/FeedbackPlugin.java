@@ -4,10 +4,12 @@ import java.util.Collection;
 
 public interface FeedbackPlugin {
 
-    ContextImporter contextImporter(CypherExecutor executor);
+    ContextImporter getContextImporter(CypherExecutor executor);
 
-    ContextUpdater contextUpdater(CypherExecutor executor);
+    ContextUpdater getContextUpdater(CypherExecutor executor);
 
-    Collection<MonitorAgent> monitorAgents();
+    Collection<MonitorAgent> getMonitorAgents();
+
+    Collection<ObjectiveEvaluator> getObjectiveEvaluators();
 
 }

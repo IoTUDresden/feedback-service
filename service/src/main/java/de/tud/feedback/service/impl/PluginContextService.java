@@ -58,7 +58,7 @@ public class PluginContextService implements ContextService {
     private void importContextFrom(ContextImport contextImport) {
         final CollectingCypherExecutor executor = executorProvider.get();
 
-        plugin.contextImporter(executor).importContextFrom(contextImport);
+        plugin.getContextImporter(executor).importContextFrom(contextImport);
         partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
             contextImport.getContextNodes().addAll(nodes);
             imports.save(contextImport);
