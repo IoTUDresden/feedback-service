@@ -6,6 +6,6 @@ import java.util.Collection;
 
 public interface Analyzer {
 
-    boolean evaluate(Collection<Goal> goals);
+    boolean analyze(Collection<Goal> goals);
 
 }

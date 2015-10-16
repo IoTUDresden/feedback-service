@@ -54,7 +54,7 @@ public class PluginWorkflowService implements WorkflowService {
                         objective -> objective.getGoal().equals(goal)).collect(toList())));
 
         if (!workflow.hasBeenSatisfied()) {
-            boolean hasBeenSatisfiedNow = analyzerFor(workflow).evaluate(goals);
+            boolean hasBeenSatisfiedNow = analyzerFor(workflow).analyze(goals);
 
             if (hasBeenSatisfiedNow) {
                 publisher.publishEvent(WorkflowSatisfiedEvent.on(workflow));

@@ -39,7 +39,7 @@ public class DelegatingAnalyzer implements Analyzer {
     }
 
     @Override
-    public boolean evaluate(Collection<Goal> goals) {
+    public boolean analyze(Collection<Goal> goals) {
         return goals.stream()
                 .filter(goal -> !goal.hasBeenSatisfied())
                 .filter(this::evaluate)
