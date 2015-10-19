@@ -5,10 +5,10 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 
 @NodeEntity
@@ -23,11 +23,11 @@ public class Context {
     private String name;
 
     @Relationship(type = "for", direction = Relationship.INCOMING)
-    private List<ContextImport> imports = newArrayList();
+    private Set<ContextImport> imports = newHashSet();
 
     @JsonIgnore
     @Relationship(type = "runsWithin", direction = Relationship.INCOMING)
-    private Collection<Workflow> workflows;
+    private Set<Workflow> workflows;
 
     public String getName() {
         return name;
@@ -37,15 +37,15 @@ public class Context {
         this.name = name;
     }
 
-    public List<ContextImport> getImports() {
+    public Collection<ContextImport> getImports() {
         return imports;
     }
 
-    public void setImports(List<ContextImport> imports) {
+    public void setImports(Set<ContextImport> imports) {
         try {
             this.imports = checkNotNull(imports);
         } catch (NullPointerException exception) {
-            this.imports = newArrayList();
+            this.imports = newHashSet();
         }
     }
 
@@ -53,11 +53,11 @@ public class Context {
         return workflows;
     }
 
-    public void setWorkflows(Collection<Workflow> workflows) {
+    public void setWorkflows(Set<Workflow> workflows) {
         try {
             this.workflows = checkNotNull(workflows);
         } catch (NullPointerException exception) {
-            this.workflows = newArrayList();
+            this.workflows = newHashSet();
         }
     }
 

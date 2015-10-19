@@ -5,10 +5,8 @@ import de.tud.feedback.domain.Workflow;
 
 public interface WorkflowService {
 
-    void deleteGoalsFor(Workflow workflow);
+    void analyzeGoalsForWorkflowsWithin(Context context);
 
     void analyzeGoalsFor(Workflow workflow);
-
-    void analyzeGoalsForWorkflowsWithin(Context context);
 
 }

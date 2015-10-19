@@ -11,8 +11,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.util.MimeType;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 
@@ -68,12 +70,16 @@ public class ContextImport {
         this.source = source;
     }
 
-    public Set<ContextNode> getContextNodes() {
+    public Collection<ContextNode> getContextNodes() {
         return contextNodes;
     }
 
     public void setContextNodes(Set<ContextNode> contextNodes) {
-        this.contextNodes = contextNodes;
+        try {
+            this.contextNodes = checkNotNull(contextNodes);
+        } catch (NullPointerException exception) {
+            this.contextNodes = newHashSet();
+        }
     }
 
     public String getName() {

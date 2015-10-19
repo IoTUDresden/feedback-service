@@ -8,9 +8,10 @@ import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Collection;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 
 @NodeEntity
@@ -24,7 +25,7 @@ public class Workflow implements Satisfiable {
     private String name;
 
     @Relationship(type = "hasGoal", direction = Relationship.OUTGOING)
-    private Collection<Goal> goals = newArrayList();
+    private Set<Goal> goals = newHashSet();
 
     @Relationship(type = "runsWithin", direction = Relationship.OUTGOING)
     private Context context;
@@ -41,11 +42,11 @@ public class Workflow implements Satisfiable {
         return goals;
     }
 
-    public void setGoals(Collection<Goal> goals) {
+    public void setGoals(Set<Goal> goals) {
         try {
             this.goals = checkNotNull(goals);
         } catch (NullPointerException exception) {
-            this.goals = newArrayList();
+            this.goals = newHashSet();
         }
     }
 

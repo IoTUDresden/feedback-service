@@ -1,8 +1,11 @@
 package de.tud.feedback;
 
 import de.tud.feedback.domain.Context;
+import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.SymptomDetectedEvent;
+import de.tud.feedback.repository.graph.GoalRepository;
+import de.tud.feedback.repository.graph.ObjectiveRepository;
 import de.tud.feedback.service.ContextService;
 import de.tud.feedback.service.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,10 @@ public class EventBindings {
 
     @Autowired WorkflowService workflowService;
 
+    @Autowired GoalRepository goalRepository;
+
+    @Autowired ObjectiveRepository objectiveRepository;
+
     @Async
     @HandleAfterCreate
     public void importContextSourcesAfterContextCreation(Context context) {
@@ -33,14 +40,19 @@ public class EventBindings {
         workflowService.analyzeGoalsFor(workflow);
     }
 
-    @HandleAfterDelete
-    public void deleteWorkflowGoals(Workflow workflow) {
-        workflowService.deleteGoalsFor(workflow);
-    }
-
     @EventListener
     public void analyzeGoalsOn(SymptomDetectedEvent event) {
         workflowService.analyzeGoalsForWorkflowsWithin(event.context());
+    }
+
+    @HandleAfterDelete
+    public void deleteWorkflowGoals(Workflow workflow) {
+        goalRepository.delete(workflow.getGoals());
+    }
+
+    @HandleAfterDelete
+    public void deleteGoalObjectives(Goal goal) {
+        objectiveRepository.delete(goal.getObjectives());
     }
 
 }

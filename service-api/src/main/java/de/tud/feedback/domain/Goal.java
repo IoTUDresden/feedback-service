@@ -11,9 +11,10 @@ import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.util.Collection;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static org.joda.time.DateTime.now;
 
@@ -32,7 +33,7 @@ public class Goal implements Satisfiable {
     private DateTime created = now();
 
     @Relationship(type = "hasObjective", direction = Relationship.OUTGOING)
-    private Collection<Objective> objectives = newArrayList();
+    private Set<Objective> objectives = newHashSet();
 
     @Relationship(type = "hasGoal", direction = Relationship.INCOMING)
     private Workflow workflow;
@@ -41,11 +42,11 @@ public class Goal implements Satisfiable {
         return objectives;
     }
 
-    public void setObjectives(Collection<Objective> objectives) {
+    public void setObjectives(Set<Objective> objectives) {
         try {
             this.objectives = checkNotNull(objectives);
         } catch (NullPointerException exception) {
-            this.objectives = newArrayList();
+            this.objectives = newHashSet();
         }
     }
 
