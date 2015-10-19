@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +30,8 @@ public class DelegatingAnalyzer implements Analyzer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegatingAnalyzer.class);
 
+    private final ExpressionParser parser = new SpelExpressionParser();
+
     private FeedbackPlugin plugin;
 
     private List<ObjectiveEvaluator> evaluators;
@@ -35,7 +39,6 @@ public class DelegatingAnalyzer implements Analyzer {
     @PostConstruct
     public void initialize() {
         evaluators = newArrayList(plugin.getObjectiveEvaluators());
-        evaluators.sort(AnnotationAwareOrderComparator.INSTANCE);
     }
 
     @Override
@@ -49,6 +52,7 @@ public class DelegatingAnalyzer implements Analyzer {
     private boolean evaluate(Goal goal) {
         return goal.getObjectives().stream()
                 .filter(objective -> !objective.hasBeenSatisfied())
+                .filter(objective -> objective.getState() != Objective.State.COMPENSATION)
                 .filter(this::evaluate)
                 .allMatch(Objective::hasBeenSatisfied);
     }
@@ -58,14 +62,40 @@ public class DelegatingAnalyzer implements Analyzer {
                 .filter(evaluator -> evaluator.getSupportedMimeTypes().contains(objective.getMime()))
                 .findFirst();
 
-        if (compatibleEvaluator.isPresent() && compatibleEvaluator.get().evaluate(objective)) {
-            objective.setSatisfaction(now());
-            return true;
-
-        } else {
-            LOG.error(format("There's no evaluator for mime type '%s'", objective.getMime()));
+        if (!compatibleEvaluator.isPresent()) {
+            LOG.error(format("There's no evaluator for %s", objective));
+            objective.setState(Objective.State.FAILED);
             return false;
         }
+
+        boolean weCantGetNoSatisfaction = !compatibleEvaluator.get().evaluate(objective);
+        boolean isReadyForCompensation = compensateConditionSatisfiedFor(objective);
+
+        if (weCantGetNoSatisfaction && isReadyForCompensation) {
+            LOG.debug(format("%s will be compensated", objective));
+            objective.setState(Objective.State.COMPENSATION);
+            compensate(objective);
+            return true;
+
+        } else if (weCantGetNoSatisfaction) {
+            objective.setState(Objective.State.UNSATISFIED);
+            return false;
+
+        } else {
+            LOG.debug(format("%s has been satisfied", objective));
+            objective.setState(Objective.State.SATISFIED);
+            return true;
+        }
+    }
+
+    private void compensate(Objective objective) {
+        // TODO
+    }
+
+    public boolean compensateConditionSatisfiedFor(Objective objective) {
+        final StandardEvaluationContext context = new StandardEvaluationContext(objective);
+        context.setVariable("now", now());
+        return (boolean) parser.parseExpression(objective.getCompensateCondition()).getValue(context);
     }
 
     @Autowired

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.tud.feedback.Satisfiable;
 import org.hibernate.validator.constraints.NotBlank;
-import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -16,7 +15,6 @@ import java.util.Collection;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
-import static org.joda.time.DateTime.now;
 
 @NodeEntity
 public class Objective implements Satisfiable {
@@ -30,39 +28,36 @@ public class Objective implements Satisfiable {
 
     @NotBlank
     @Property
+    @JsonProperty("compensateWhen")
+    private String compensateCondition;
+
+    @NotBlank
+    @Property
     private String expression;
-
-    @Property
-    private boolean failed = false;
-
-    @Property
-    private boolean compensable = false;
-
-    @JsonIgnore
-    @Convert(graphPropertyType = String.class)
-    private DateTime satisfaction = now().plusYears(100);
 
     @NotBlank
     @Convert(graphPropertyType = String.class)
     private MimeType mime;
 
+    @Property
+    private State state = State.UNSATISFIED;
+
     @Relationship(type = "hasObjective", direction = Relationship.INCOMING)
     private Goal goal;
 
-    public DateTime getSatisfaction() {
-        return satisfaction;
+    public enum State {
+        SATISFIED,
+        UNSATISFIED,
+        COMPENSATION,
+        FAILED
     }
 
-    public void setSatisfaction(DateTime satisfaction) {
-        this.satisfaction = satisfaction;
+    public String getCompensateCondition() {
+        return compensateCondition;
     }
 
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public void setCompensateCondition(String compensateCondition) {
+        this.compensateCondition = compensateCondition;
     }
 
     public void setExpressions(Collection<String> lines) {
@@ -93,26 +88,28 @@ public class Objective implements Satisfiable {
         this.goal = goal;
     }
 
+    @JsonProperty("state")
+    public State getState() {
+        return state;
+    }
+
+    @JsonIgnore
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
     @Override
-    @JsonProperty("satisfied")
+    @JsonIgnore
     public boolean hasBeenSatisfied() {
-        return now().isAfter(satisfaction);
-    }
-
-    public boolean hasFailed() {
-        return failed;
-    }
-
-    public void setFailed(boolean failed) {
-        this.failed = failed;
-    }
-
-    public boolean isCompensable() {
-        return compensable;
-    }
-
-    public void setCompensable(boolean compensable) {
-        this.compensable = compensable;
+        return state == State.SATISFIED;
     }
 
     @Override
