@@ -23,7 +23,7 @@ public class RdfContextImporter implements ContextImporter {
     @Override
     public void importContextFrom(ContextImport contextImport) {
         try {
-            final RDFFormat format = Rio.getParserFormatForMIMEType(contextImport.getMime());
+            final RDFFormat format = Rio.getParserFormatForMIMEType(contextImport.getMimeType().toString());
             final RDFParser parser = Rio.createParser(format);
             final Resource resource = contextImport.getSource();
 

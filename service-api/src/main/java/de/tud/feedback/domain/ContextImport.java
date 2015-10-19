@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 import org.springframework.core.io.Resource;
+import org.springframework.util.MimeType;
 
 import javax.validation.constraints.NotNull;
 import java.util.Set;
@@ -21,13 +23,17 @@ public class ContextImport {
     private Long id;
 
     @NotNull
+    @Property
     @Convert(graphPropertyType = String.class)
     private Resource source;
 
     @NotBlank
-    private String mime;
+    @Property
+    @Convert(graphPropertyType = String.class)
+    private MimeType mimeType;
 
     @NotBlank
+    @Property
     private String name;
 
     @JsonIgnore
@@ -38,14 +44,6 @@ public class ContextImport {
     @Relationship(type = "for", direction = Relationship.OUTGOING)
     private Context context;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Context getContext() {
         return context;
     }
@@ -54,12 +52,12 @@ public class ContextImport {
         this.context = context;
     }
 
-    public String getMime() {
-        return mime;
+    public MimeType getMimeType() {
+        return mimeType;
     }
 
-    public void setMime(String mime) {
-        this.mime = mime;
+    public void setMimeType(MimeType mimeType) {
+        this.mimeType = mimeType;
     }
 
     public Resource getSource() {

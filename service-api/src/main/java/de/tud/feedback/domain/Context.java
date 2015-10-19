@@ -2,9 +2,7 @@ package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
-import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,6 +18,8 @@ public class Context {
     private Long id;
 
     @NotBlank
+    @Property
+    @Index(unique = true)
     private String name;
 
     @Relationship(type = "for", direction = Relationship.INCOMING)
@@ -28,14 +28,6 @@ public class Context {
     @JsonIgnore
     @Relationship(type = "runsWithin", direction = Relationship.INCOMING)
     private Collection<Workflow> workflows;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

@@ -78,6 +78,7 @@ public class PluginWorkflowService implements WorkflowService {
     }
 
     private void deleteGoal(Goal goal) {
+        // FIXME objectives are incomplete somehow => orphaned nodes
         goal.getObjectives().stream().forEach(objectiveRepository::delete);
         goalRepository.delete(goal);
     }

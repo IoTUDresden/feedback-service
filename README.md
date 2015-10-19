@@ -24,11 +24,11 @@ Content-Type: application/json
     "name": "home",
     "imports": [{
         "source": "classpath:dogont.owl",
-        "mime": "application/rdf+xml",
+        "mimeType": "application/rdf+xml",
         "name": "ontology"
     },{
         "source": "http://localhost:8080/rest/semantic",
-        "mime": "application/rdf+xml",
+        "mimeType": "application/rdf+xml",
         "name": "items"
     }]
 } 
@@ -59,11 +59,11 @@ Content-Type: application/json
     "workflow": "http://localhost:9000/workflows/6348",
     "objectives": [{
         "name": "within ten seconds",
-        "mime": "application/spel",
+        "mimeType": "application/spel",
         "expression": "goal.objective('light in kitchen > 1000 lux').satisfaction.isBefore(goal.created.plusSeconds(10))"
     }, {
         "name": "light in kitchen > 1000 lux",
-        "mime": "application/cypher",
+        "mimeType": "application/cypher",
         "expressions": [
             "MATCH (thing)-[:isIn]->({ name: 'Kitchen_Mueller' })",
             "MATCH (thing)-[:hasState]->(state:LightIntensityState)",

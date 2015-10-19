@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
@@ -23,24 +24,18 @@ public class Goal implements Satisfiable {
     private Long id;
 
     @NotBlank
+    @Property
     private String name;
+
+    @Property
+    @Convert(graphPropertyType = String.class)
+    private DateTime created = now();
 
     @Relationship(type = "hasObjective", direction = Relationship.OUTGOING)
     private Collection<Objective> objectives = newArrayList();
 
     @Relationship(type = "hasGoal", direction = Relationship.INCOMING)
     private Workflow workflow;
-
-    @Convert(graphPropertyType = String.class)
-    private DateTime created = now();
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Collection<Objective> getObjectives() {
         return objectives;

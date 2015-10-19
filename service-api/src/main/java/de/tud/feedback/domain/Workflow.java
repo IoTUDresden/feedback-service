@@ -4,6 +4,7 @@ import de.tud.feedback.Satisfiable;
 import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Collection;
@@ -19,6 +20,7 @@ public class Workflow implements Satisfiable {
     private Long id;
 
     @NotBlank
+    @Property
     private String name;
 
     @Relationship(type = "hasGoal", direction = Relationship.OUTGOING)
@@ -26,14 +28,6 @@ public class Workflow implements Satisfiable {
 
     @Relationship(type = "runsWithin", direction = Relationship.OUTGOING)
     private Context context;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

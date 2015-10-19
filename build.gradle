@@ -15,6 +15,8 @@ allprojects {
     repositories {
         mavenCentral()
         maven { url 'http://repo.spring.io/milestone' }
+        maven { url 'http://repo.spring.io/snapshot' }
+        maven { url 'http://m2.neo4j.org/content/repositories/snapshots' }
         maven { url 'http://maven.restlet.com' }
     }
 
@@ -45,7 +47,7 @@ allprojects {
             exclude module: 'spring-boot-starter-tomcat'
         }
 
-        compile('org.springframework.data:spring-data-neo4j:4.0.0.RELEASE') {
+        compile('org.springframework.data:spring-data-neo4j:4.1.0.BUILD-SNAPSHOT') {
             exclude module: 'logback-classic'
         }
 

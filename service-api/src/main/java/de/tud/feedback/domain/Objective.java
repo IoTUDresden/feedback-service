@@ -1,11 +1,13 @@
 package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.tud.feedback.Satisfiable;
 import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 import org.springframework.util.MimeType;
@@ -23,15 +25,20 @@ public class Objective implements Satisfiable {
     private Long id;
 
     @NotBlank
+    @Property
     private String name;
 
     @NotBlank
+    @Property
     private String expression;
 
+    @Property
     private boolean failed = false;
 
+    @Property
     private boolean compensable = false;
 
+    @JsonIgnore
     @Convert(graphPropertyType = String.class)
     private DateTime satisfaction = now().plusYears(100);
 
@@ -39,24 +46,13 @@ public class Objective implements Satisfiable {
     @Convert(graphPropertyType = String.class)
     private MimeType mime;
 
-    @JsonIgnore
     @Relationship(type = "hasObjective", direction = Relationship.INCOMING)
     private Goal goal;
-
-    public Long getId() {
-        return id;
-    }
-
-    @JsonIgnore
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public DateTime getSatisfaction() {
         return satisfaction;
     }
 
-    @JsonIgnore
     public void setSatisfaction(DateTime satisfaction) {
         this.satisfaction = satisfaction;
     }
@@ -89,17 +85,16 @@ public class Objective implements Satisfiable {
         this.mime = mime;
     }
 
-    @JsonIgnore
     public Goal getGoal() {
         return goal;
     }
 
-    @JsonIgnore
     public void setGoal(Goal goal) {
         this.goal = goal;
     }
 
     @Override
+    @JsonProperty("satisfied")
     public boolean hasBeenSatisfied() {
         return now().isAfter(satisfaction);
     }
@@ -108,7 +103,6 @@ public class Objective implements Satisfiable {
         return failed;
     }
 
-    @JsonIgnore
     public void setFailed(boolean failed) {
         this.failed = failed;
     }
