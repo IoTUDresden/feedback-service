@@ -28,7 +28,6 @@ public class Objective implements Satisfiable {
 
     @NotBlank
     @Property
-    @JsonProperty("compensateWhen")
     private String compensateCondition;
 
     @NotBlank
@@ -60,8 +59,12 @@ public class Objective implements Satisfiable {
         this.compensateCondition = compensateCondition;
     }
 
-    public void setExpressions(Collection<String> lines) {
-        this.expression = join(" ", lines);
+    public void setCompensateCondition(Collection<String> compensateCondition) {
+        this.compensateCondition = join(" ", compensateCondition);
+    }
+
+    public void setExpression(Collection<String> expression) {
+        this.expression = join(" ", expression);
     }
 
     public String getName() {

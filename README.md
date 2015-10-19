@@ -60,8 +60,8 @@ Content-Type: application/json
     "objectives": [{
         "name": "light in kitchen > 1000 lux",
         "mime": "application/cypher",
-        "compensateWhen": "goal.created.isBefore(now.minusSeconds(10))",
-        "expressions": [
+        "compensateCondition": "goal.created.isBefore(now.minusSeconds(10))",
+        "expression": [
             "MATCH (thing)-[:isIn]->({ name: 'Kitchen_Mueller' })",
             "MATCH (thing)-[:hasState]->(state:LightIntensityState)",
             "MATCH (state)-[:hasStateValue]->(value)",
