@@ -3,7 +3,9 @@ package de.tud.feedback;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Workflow;
+import de.tud.feedback.event.ChangeRequestedEvent;
 import de.tud.feedback.event.SymptomDetectedEvent;
+import de.tud.feedback.loop.Planner;
 import de.tud.feedback.repository.graph.GoalRepository;
 import de.tud.feedback.repository.graph.ObjectiveRepository;
 import de.tud.feedback.service.ContextService;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RepositoryEventHandler
-public class EventBindings {
+public class EventBroker {
 
     @Autowired ContextService contextService;
 
@@ -27,6 +29,8 @@ public class EventBindings {
     @Autowired GoalRepository goalRepository;
 
     @Autowired ObjectiveRepository objectiveRepository;
+
+    @Autowired Planner planner;
 
     @Async
     @HandleAfterCreate
@@ -43,6 +47,11 @@ public class EventBindings {
     @EventListener
     public void analyzeGoalsOn(SymptomDetectedEvent event) {
         workflowService.analyzeGoalsForWorkflowsWithin(event.context());
+    }
+
+    @EventListener
+    public void startPlanningOn(ChangeRequestedEvent event) {
+        planner.queue(event);
     }
 
     @HandleAfterDelete

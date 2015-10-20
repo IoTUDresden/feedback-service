@@ -10,6 +10,6 @@ public interface FeedbackPlugin {
 
     Collection<MonitorAgent> getMonitorAgents();
 
-    Collection<ObjectiveEvaluator> getObjectiveEvaluators();
+    Collection<ObjectiveEvaluation> getObjectiveEvaluators();
 
 }

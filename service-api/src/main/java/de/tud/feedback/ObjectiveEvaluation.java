@@ -5,10 +5,10 @@ import org.springframework.util.MimeType;
 
 import java.util.Collection;
 
-public interface ObjectiveEvaluator {
+public interface ObjectiveEvaluation {
 
     Collection<MimeType> getSupportedMimeTypes();
 
-    boolean evaluate(Objective objective);
+    ObjectiveEvaluationResult evaluate(Objective objective);
 
 }

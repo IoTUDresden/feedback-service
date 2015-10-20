@@ -1,13 +1,16 @@
 package de.tud.feedback.loop.impl;
 
 import de.tud.feedback.FeedbackPlugin;
-import de.tud.feedback.ObjectiveEvaluator;
+import de.tud.feedback.ObjectiveEvaluation;
+import de.tud.feedback.ObjectiveEvaluationResult;
 import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Objective;
+import de.tud.feedback.event.ChangeRequestedEvent;
 import de.tud.feedback.loop.Analyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.expression.ExpressionParser;
@@ -34,7 +37,9 @@ public class DelegatingAnalyzer implements Analyzer {
 
     private FeedbackPlugin plugin;
 
-    private List<ObjectiveEvaluator> evaluators;
+    private List<ObjectiveEvaluation> evaluators;
+
+    private ApplicationEventPublisher publisher;
 
     @PostConstruct
     public void initialize() {
@@ -58,7 +63,7 @@ public class DelegatingAnalyzer implements Analyzer {
     }
 
     private boolean evaluate(Objective objective) {
-        Optional<ObjectiveEvaluator> compatibleEvaluator = evaluators.stream()
+        Optional<ObjectiveEvaluation> compatibleEvaluator = evaluators.stream()
                 .filter(evaluator -> evaluator.getSupportedMimeTypes().contains(objective.getMime()))
                 .findFirst();
 
@@ -68,13 +73,18 @@ public class DelegatingAnalyzer implements Analyzer {
             return false;
         }
 
-        boolean weCantGetNoSatisfaction = !compatibleEvaluator.get().evaluate(objective);
+        return evaluate(objective, compatibleEvaluator.get());
+    }
+
+    private boolean evaluate(Objective objective, ObjectiveEvaluation evaluator) {
+        ObjectiveEvaluationResult result = evaluator.evaluate(objective);
+        boolean weCantGetNoSatisfaction = !result.hasBeenSatisfied();
         boolean isReadyForCompensation = compensateConditionSatisfiedFor(objective);
 
         if (weCantGetNoSatisfaction && isReadyForCompensation) {
             LOG.debug(format("%s will be compensated", objective));
             objective.setState(Objective.State.COMPENSATION);
-            compensate(objective);
+            publisher.publishEvent(ChangeRequestedEvent.on(objective, result));
             return true;
 
         } else if (weCantGetNoSatisfaction) {
@@ -88,10 +98,6 @@ public class DelegatingAnalyzer implements Analyzer {
         }
     }
 
-    private void compensate(Objective objective) {
-        // TODO
-    }
-
     public boolean compensateConditionSatisfiedFor(Objective objective) {
         final StandardEvaluationContext context = new StandardEvaluationContext(objective);
         context.setVariable("now", now());
@@ -101,6 +107,11 @@ public class DelegatingAnalyzer implements Analyzer {
     @Autowired
     public void setFeedbackPlugin(FeedbackPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
     }
 
 }

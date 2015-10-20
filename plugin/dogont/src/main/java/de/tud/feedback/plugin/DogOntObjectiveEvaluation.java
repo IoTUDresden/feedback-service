@@ -1,6 +1,7 @@
 package de.tud.feedback.plugin;
 
-import de.tud.feedback.ObjectiveEvaluator;
+import de.tud.feedback.ObjectiveEvaluation;
+import de.tud.feedback.ObjectiveEvaluationResult;
 import de.tud.feedback.domain.Objective;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeType;
@@ -10,11 +11,11 @@ import java.util.Collection;
 import static com.google.common.collect.Lists.newArrayList;
 
 @Component
-public class DogOntObjectiveEvaluator implements ObjectiveEvaluator {
+public class DogOntObjectiveEvaluation implements ObjectiveEvaluation {
 
     @Override
-    public boolean evaluate(Objective objective) {
-        return false;
+    public ObjectiveEvaluationResult evaluate(Objective objective) {
+        return null; // TODO
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.neo4j.conversion.MetaDataDrivenConversionService;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.MimeType;
 
@@ -31,6 +32,7 @@ import static java.lang.String.format;
 @EnableAsync
 @EnableCaching
 @Configuration
+@EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceConfiguration implements EnvironmentAware {
 

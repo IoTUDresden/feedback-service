@@ -29,7 +29,8 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<OpenHabMonitorAgent> monitorAgentProvider;
 
-    @Autowired DogOntObjectiveEvaluator dogOntObjectiveEvaluator;
+    @Autowired
+    DogOntObjectiveEvaluation dogOntObjectiveEvaluator;
 
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
@@ -49,7 +50,7 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     }
 
     @Override
-    public Collection<ObjectiveEvaluator> getObjectiveEvaluators() {
+    public Collection<ObjectiveEvaluation> getObjectiveEvaluators() {
         return newArrayList(dogOntObjectiveEvaluator);
     }
 
