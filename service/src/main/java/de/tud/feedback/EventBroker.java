@@ -39,16 +39,19 @@ public class EventBroker {
         contextService.beginContextUpdates();
     }
 
+    @Async
     @HandleAfterCreate
     public void attendWorkflowExecutionWithNewInstance(Workflow workflow) {
         workflowService.analyzeGoalsFor(workflow);
     }
 
+    @Async
     @EventListener
     public void analyzeGoalsOn(SymptomDetectedEvent event) {
         workflowService.analyzeGoalsForWorkflowsWithin(event.context());
     }
 
+    @Async
     @EventListener
     public void startPlanningOn(ChangeRequestedEvent event) {
         planner.queue(event);

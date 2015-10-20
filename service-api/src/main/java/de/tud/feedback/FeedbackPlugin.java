@@ -8,8 +8,8 @@ public interface FeedbackPlugin {
 
     ContextUpdater getContextUpdater(CypherExecutor executor);
 
-    Collection<MonitorAgent> getMonitorAgents();
+    ObjectiveEvaluator getObjectiveEvaluator(CypherExecutor executor);
 
-    Collection<ObjectiveEvaluation> getObjectiveEvaluators();
+    Collection<MonitorAgent> getMonitorAgents();
 
 }

@@ -28,7 +28,13 @@ public class Objective implements Satisfiable {
 
     @NotBlank
     @Property
-    private String compensateCondition;
+    @JsonProperty("compensateIf")
+    private String compensateRule;
+
+    @NotBlank
+    @Property
+    @JsonProperty("satisfiedIf")
+    private String satisfiedRule;
 
     @NotBlank
     @Property
@@ -47,20 +53,31 @@ public class Objective implements Satisfiable {
     public enum State {
         SATISFIED,
         UNSATISFIED,
-        COMPENSATION,
-        FAILED
+        COMPENSATION
     }
 
-    public String getCompensateCondition() {
-        return compensateCondition;
+    public String getCompensateRule() {
+        return compensateRule;
     }
 
-    public void setCompensateCondition(String compensateCondition) {
-        this.compensateCondition = compensateCondition;
+    public String getSatisfiedRule() {
+        return satisfiedRule;
     }
 
-    public void setCompensateCondition(Collection<String> compensateCondition) {
-        this.compensateCondition = join(" ", compensateCondition);
+    public void setCompensateRule(String compensateRule) {
+        this.compensateRule = compensateRule;
+    }
+
+    public void setCompensateRule(Collection<String> compensateCondition) {
+        this.compensateRule = join(" ", compensateCondition);
+    }
+
+    public void setSatisfiedRule(String satisfiedRule) {
+        this.satisfiedRule = satisfiedRule;
+    }
+
+    public void setSatisfiedRule(Collection<String> satisfiedRule) {
+        this.satisfiedRule = join(" ", satisfiedRule);
     }
 
     public void setExpression(Collection<String> expression) {
@@ -91,7 +108,6 @@ public class Objective implements Satisfiable {
         this.goal = goal;
     }
 
-    @JsonProperty("state")
     public State getState() {
         return state;
     }
@@ -110,7 +126,6 @@ public class Objective implements Satisfiable {
     }
 
     @Override
-    @JsonIgnore
     public boolean hasBeenSatisfied() {
         return state == State.SATISFIED;
     }

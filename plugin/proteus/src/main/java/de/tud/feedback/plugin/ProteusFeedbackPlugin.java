@@ -2,6 +2,7 @@ package de.tud.feedback.plugin;
 
 import de.tud.feedback.*;
 import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
+import de.tud.feedback.plugin.factory.DogOntObjectiveEvaluatorFactoryBean;
 import de.tud.feedback.plugin.factory.OpenHabMonitorAgentFactoryBean;
 import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,9 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<OpenHabMonitorAgent> monitorAgentProvider;
 
-    @Autowired
-    DogOntObjectiveEvaluation dogOntObjectiveEvaluator;
+    @Autowired Provider<DogOntObjectiveEvaluator> evaluatorProvider;
+
+    @Autowired DogOntObjectiveEvaluatorFactoryBean evaluatorFactory;
 
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
@@ -50,8 +52,9 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     }
 
     @Override
-    public Collection<ObjectiveEvaluation> getObjectiveEvaluators() {
-        return newArrayList(dogOntObjectiveEvaluator);
+    public ObjectiveEvaluator getObjectiveEvaluator(CypherExecutor executor) {
+        evaluatorFactory.setExecutor(executor);
+        return evaluatorProvider.get();
     }
 
     @Autowired

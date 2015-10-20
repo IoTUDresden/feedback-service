@@ -3,10 +3,8 @@ package de.tud.feedback;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;
 
-public interface ChangeRequest {
+public interface ObjectiveEvaluator {
 
-    ObjectiveEvaluationResult getResult();
-
-    Objective getObjective();
+    ObjectiveEvaluationResult evaluate(Objective objective);
 
 }

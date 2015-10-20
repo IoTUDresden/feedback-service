@@ -58,15 +58,14 @@ Content-Type: application/json
     "name": "enough light for cooking",
     "workflow": "http://localhost:9000/workflows/6339",
     "objectives": [{
-        "name": "light in kitchen > 1000 lux",
-        "mime": "application/cypher",
-        "compensateCondition": "goal.created.isBefore(now.minusSeconds(10))",
+        "name": "light in kitchen > 1000 lux within ten seconds",
+        "satisfiedRule": "#lightIntensity > 1000",
+        "compensateRule": "#goal.created.isBefore(#now.minusSeconds(10))",
         "expression": [
             "MATCH (thing)-[:isIn]->({ name: 'Kitchen_Mueller' })",
             "MATCH (thing)-[:hasState]->(state:LightIntensityState)",
             "MATCH (state)-[:hasStateValue]->(value)",
-            "WHERE toFloat(value.realStateValue) > 1000",
-            "RETURN state"
+            "RETURN avg(toFloat(value.realStateValue)) AS lightIntensity"
         ]
     }]
 }
