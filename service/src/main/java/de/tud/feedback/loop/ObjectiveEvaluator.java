@@ -1,4 +1,4 @@
-package de.tud.feedback;
+package de.tud.feedback.loop;
 
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;

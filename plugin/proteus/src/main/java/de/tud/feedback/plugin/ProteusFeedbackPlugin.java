@@ -1,7 +1,6 @@
 package de.tud.feedback.plugin;
 
 import de.tud.feedback.*;
-import de.tud.feedback.impl.SpelCypherObjectiveEvaluator;
 import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
 import de.tud.feedback.plugin.factory.OpenHabMonitorAgentFactoryBean;
 import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
@@ -45,11 +44,6 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     @Override
     public Collection<MonitorAgent> getMonitorAgents() {
         return newArrayList(monitorAgentProvider.get());
-    }
-
-    @Override
-    public ObjectiveEvaluator getObjectiveEvaluator(CypherExecutor executor) {
-        return new SpelCypherObjectiveEvaluator(executor);
     }
 
     @Autowired

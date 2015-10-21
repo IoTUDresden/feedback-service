@@ -2,38 +2,41 @@ package de.tud.feedback.domain;
 
 public class ContextMismatch {
 
-    private Object targetState;
+    private Object target;
 
-    private Object actualState;
+    private Object source;
 
-    private Type type = Type.DIFFERENT;
+    private Type type = Type.UNEQUAL;
 
-    public enum Type {
-        BELOW, ABOVE, DIFFERENT
+    public Object getTarget() {
+        return target;
     }
 
-    public Object getTargetState() {
-        return targetState;
+    public ContextMismatch setTarget(Object target) {
+        this.target = target;
+        return this;
     }
 
-    public void setTargetState(Object targetState) {
-        this.targetState = targetState;
+    public Object getSource() {
+        return source;
     }
 
-    public Object getActualState() {
-        return actualState;
-    }
-
-    public void setActualState(Object actualState) {
-        this.actualState = actualState;
+    public ContextMismatch setSource(Object source) {
+        this.source = source;
+        return this;
     }
 
     public Type getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public ContextMismatch setType(Type type) {
         this.type = type;
+        return this;
+    }
+
+    public enum Type {
+        TOO_LOW, TOO_HIGH, UNEQUAL
     }
 
 }

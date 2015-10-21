@@ -1,13 +1,11 @@
 package de.tud.feedback.loop.impl;
 
-import de.tud.feedback.FeedbackPlugin;
-import de.tud.feedback.ObjectiveEvaluator;
 import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;
 import de.tud.feedback.event.ChangeRequestedEvent;
-import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.Analyzer;
+import de.tud.feedback.loop.ObjectiveEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +20,13 @@ import static java.lang.String.format;
 
 @Component
 @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class DelegatingAnalyzer implements Analyzer {
+public class ObjectiveEvaluatingAnalyzer implements Analyzer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DelegatingAnalyzer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectiveEvaluatingAnalyzer.class);
 
     private ObjectiveEvaluator evaluator;
 
-    private final SimpleCypherExecutor executor;
-
     private ApplicationEventPublisher publisher;
-
-    @Autowired
-    public DelegatingAnalyzer(SimpleCypherExecutor executor) {
-        this.executor = executor;
-    }
 
     @Override
     public boolean analyze(Collection<Goal> goals) {
@@ -72,8 +63,8 @@ public class DelegatingAnalyzer implements Analyzer {
     }
 
     @Autowired
-    public void setFeedbackPlugin(FeedbackPlugin plugin) {
-        this.evaluator = plugin.getObjectiveEvaluator(executor);
+    public void setObjectiveEvaluator(ObjectiveEvaluator evaluator) {
+        this.evaluator = evaluator;
     }
 
     @Autowired
