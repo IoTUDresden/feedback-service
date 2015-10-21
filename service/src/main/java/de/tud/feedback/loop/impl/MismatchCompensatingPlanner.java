@@ -1,8 +1,9 @@
 package de.tud.feedback.loop.impl;
 
-import de.tud.feedback.ChangeRequest;
+import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.domain.ContextMismatch;
 import de.tud.feedback.domain.Objective;
+import de.tud.feedback.loop.ChangeRequest;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.Planner;
 import de.tud.feedback.repository.graph.ObjectiveRepository;
@@ -25,7 +26,7 @@ public class MismatchCompensatingPlanner implements Planner {
     private MismatchProvider mismatchProvider;
 
     @Override
-    public void generatePlanFor(ChangeRequest changeRequest) {
+    public void plan(ChangeRequest changeRequest) {
         try {
             ContextMismatch mismatch = mismatchProvider.getMismatch(
                     satisfiedExpressionFrom(changeRequest), contextVariablesFrom(changeRequest));
@@ -56,8 +57,8 @@ public class MismatchCompensatingPlanner implements Planner {
     }
 
     @Autowired
-    public void setMismatchProvider(MismatchProvider provider) {
-        mismatchProvider = provider;
+    public void setFeedbackPlugin(FeedbackPlugin plugin) {
+        mismatchProvider = plugin.getMismatchProvider();
     }
 
 }

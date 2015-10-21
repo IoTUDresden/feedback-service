@@ -1,9 +1,16 @@
 package de.tud.feedback.plugin;
 
-import de.tud.feedback.*;
+import de.tud.feedback.ContextImporter;
+import de.tud.feedback.ContextUpdater;
+import de.tud.feedback.CypherExecutor;
+import de.tud.feedback.FeedbackPlugin;
+import de.tud.feedback.loop.MismatchProvider;
+import de.tud.feedback.loop.MonitorAgent;
+import de.tud.feedback.loop.ObjectiveEvaluator;
 import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
 import de.tud.feedback.plugin.factory.OpenHabMonitorAgentFactoryBean;
 import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
+import de.tud.feedback.plugin.factory.SpelObjectiveEvaluatorFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,6 +36,10 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<OpenHabMonitorAgent> monitorAgentProvider;
 
+    @Autowired SpelObjectiveEvaluatorFactoryBean evaluatorFactory;
+
+    @Autowired Provider<SpelObjectiveEvaluator> evaluatorProvider;
+
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
         importerFactory.setExecutor(executor);
@@ -39,6 +50,17 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     public ContextUpdater getContextUpdater(CypherExecutor executor) {
         updaterFactory.setExecutor(executor);
         return updaterProvider.get();
+    }
+
+    @Override
+    public ObjectiveEvaluator getObjectiveEvaluator(CypherExecutor executor) {
+        evaluatorFactory.setExecutor(executor);
+        return evaluatorProvider.get();
+    }
+
+    @Override
+    public MismatchProvider getMismatchProvider() {
+        return new SpelMismatchProvider();
     }
 
     @Override

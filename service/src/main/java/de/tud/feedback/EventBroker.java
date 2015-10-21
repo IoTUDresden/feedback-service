@@ -49,7 +49,7 @@ public class EventBroker {
 
     @EventListener
     public void startPlanningOn(ChangeRequestedEvent event) {
-        planner.generatePlanFor(event);
+        planner.plan(event);
     }
 
     @EventListener

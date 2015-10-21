@@ -1,8 +1,8 @@
 package de.tud.feedback.event;
 
-import de.tud.feedback.ChangeRequest;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;
+import de.tud.feedback.loop.ChangeRequest;
 import org.springframework.context.ApplicationEvent;
 
 public class ChangeRequestedEvent extends ApplicationEvent implements ChangeRequest {

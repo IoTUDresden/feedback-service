@@ -1,15 +1,12 @@
-package de.tud.feedback.loop.impl;
+package de.tud.feedback.plugin;
 
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;
-import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.ObjectiveEvaluator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Map;
@@ -18,15 +15,13 @@ import static de.tud.feedback.Utils.params;
 import static java.lang.String.format;
 import static org.joda.time.DateTime.now;
 
-@Component// TODO move to API, Provided through plugin
-public class SpelBasedObjectiveEvaluator implements ObjectiveEvaluator {
+public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
 
     private final ExpressionParser parser = new SpelExpressionParser();
 
     private final CypherExecutor executor;
 
-    @Autowired
-    public SpelBasedObjectiveEvaluator(SimpleCypherExecutor executor) {
+    public SpelObjectiveEvaluator(CypherExecutor executor) {
         this.executor = executor;
     }
 

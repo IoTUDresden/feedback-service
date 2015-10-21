@@ -1,4 +1,6 @@
-package de.tud.feedback;
+package de.tud.feedback.loop;
+
+import de.tud.feedback.ContextUpdater;
 
 public interface MonitorAgent extends Runnable {
 

@@ -5,5 +5,6 @@ include ':plugin/proteus'
 include ':plugin/rdf'
 include ':plugin/openhab'
 include ':plugin/dogont'
+include ':plugin/spel'
 
 include ':knowledge/neo4j'

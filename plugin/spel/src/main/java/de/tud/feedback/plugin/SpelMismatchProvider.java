@@ -1,4 +1,4 @@
-package de.tud.feedback.loop.impl;
+package de.tud.feedback.plugin;
 
 import com.google.common.base.Optional;
 import de.tud.feedback.domain.ContextMismatch;
@@ -9,7 +9,6 @@ import org.springframework.expression.spel.ast.OpGT;
 import org.springframework.expression.spel.ast.VariableReference;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Map;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
-@Component// TODO move to API, Provided through plugin
+// TODO handle null values
 public class SpelMismatchProvider implements MismatchProvider {
 
     private static final ArrayList<String> SUPPORTED_OPS = newArrayList(">", "<", "==");
