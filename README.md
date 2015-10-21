@@ -59,13 +59,14 @@ Content-Type: application/json
     "workflow": "http://localhost:9000/workflows/6339",
     "objectives": [{
         "name": "light in kitchen > 1000 lux within ten seconds",
-        "satisfiedRule": "#lightIntensity > 1000",
-        "compensateRule": "#goal.created.isBefore(#now.minusSeconds(10))",
-        "expression": [
+        "satisfied": "#lightIntensity > 1000",
+        "compensate": "#objective.created.isBefore(#now.minusSeconds(10))",
+        "testNodeId": "#stateId",
+        "context": [
             "MATCH (thing)-[:isIn]->({ name: 'Kitchen_Mueller' })",
             "MATCH (thing)-[:hasState]->(state:LightIntensityState)",
             "MATCH (state)-[:hasStateValue]->(value)",
-            "RETURN avg(toFloat(value.realStateValue)) AS lightIntensity"
+            "RETURN avg(toFloat(value.realStateValue)) AS lightIntensity, ID(state) AS stateId"
         ]
     }]
 }

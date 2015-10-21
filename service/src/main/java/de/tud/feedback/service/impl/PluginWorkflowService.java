@@ -36,7 +36,6 @@ public class PluginWorkflowService implements WorkflowService {
         workflowRepository.findWorkflowsWithin(context).forEach(this::analyzeGoalsFor);
     }
 
-    @Override
     public void analyzeGoalsFor(Workflow workflow) {
         Collection<Goal> goals = workflow.getGoals();
 

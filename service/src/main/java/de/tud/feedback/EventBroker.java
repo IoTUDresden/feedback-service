@@ -15,7 +15,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,29 +31,10 @@ public class EventBroker {
 
     @Autowired Planner planner;
 
-    @Async
     @HandleAfterCreate
     public void importContextSourcesAfterContextCreation(Context context) {
         contextService.importAllOf(context);
         contextService.beginContextUpdates();
-    }
-
-    @Async
-    @HandleAfterCreate
-    public void attendWorkflowExecutionWithNewInstance(Workflow workflow) {
-        workflowService.analyzeGoalsFor(workflow);
-    }
-
-    @Async
-    @EventListener
-    public void analyzeGoalsOn(SymptomDetectedEvent event) {
-        workflowService.analyzeGoalsForWorkflowsWithin(event.context());
-    }
-
-    @Async
-    @EventListener
-    public void startPlanningOn(ChangeRequestedEvent event) {
-        planner.queue(event);
     }
 
     @HandleAfterDelete
@@ -65,6 +45,16 @@ public class EventBroker {
     @HandleAfterDelete
     public void deleteGoalObjectives(Goal goal) {
         objectiveRepository.delete(goal.getObjectives());
+    }
+
+    @EventListener
+    public void startPlanningOn(ChangeRequestedEvent event) {
+        planner.generatePlanFor(event);
+    }
+
+    @EventListener
+    public void analyzeGoalsOn(SymptomDetectedEvent event) {
+        workflowService.analyzeGoalsForWorkflowsWithin(event.context());
     }
 
 }

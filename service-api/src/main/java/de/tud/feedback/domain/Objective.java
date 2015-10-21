@@ -4,17 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.tud.feedback.Satisfiable;
 import org.hibernate.validator.constraints.NotBlank;
+import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
-import org.springframework.util.MimeType;
 
 import java.util.Collection;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
+import static org.joda.time.DateTime.now;
 
 @NodeEntity
 public class Objective implements Satisfiable {
@@ -28,21 +29,27 @@ public class Objective implements Satisfiable {
 
     @NotBlank
     @Property
-    @JsonProperty("compensateIf")
-    private String compensateRule;
+    @JsonProperty("compensate")
+    private String compensateExpression;
 
     @NotBlank
     @Property
-    @JsonProperty("satisfiedIf")
-    private String satisfiedRule;
+    @JsonProperty("satisfied")
+    private String satisfiedExpression;
 
     @NotBlank
     @Property
-    private String expression;
+    @JsonProperty("testNodeId")
+    private String testNodeIdExpression;
 
     @NotBlank
+    @Property
+    @JsonProperty("context")
+    private String contextExpression;
+
+    @Property
     @Convert(graphPropertyType = String.class)
-    private MimeType mime;
+    private DateTime created = now();
 
     @Property
     private State state = State.UNSATISFIED;
@@ -50,38 +57,28 @@ public class Objective implements Satisfiable {
     @Relationship(type = "hasObjective", direction = Relationship.INCOMING)
     private Goal goal;
 
-    public enum State {
-        SATISFIED,
-        UNSATISFIED,
-        COMPENSATION
+    public String getTestNodeIdExpression() {
+        return testNodeIdExpression;
     }
 
-    public String getCompensateRule() {
-        return compensateRule;
+    public void setTestNodeIdExpression(String testNodeIdExpression) {
+        this.testNodeIdExpression = testNodeIdExpression;
     }
 
-    public String getSatisfiedRule() {
-        return satisfiedRule;
+    public String getCompensateExpression() {
+        return compensateExpression;
     }
 
-    public void setCompensateRule(String compensateRule) {
-        this.compensateRule = compensateRule;
+    public void setCompensateExpression(String compensateExpression) {
+        this.compensateExpression = compensateExpression;
     }
 
-    public void setCompensateRule(Collection<String> compensateCondition) {
-        this.compensateRule = join(" ", compensateCondition);
+    public String getSatisfiedExpression() {
+        return satisfiedExpression;
     }
 
-    public void setSatisfiedRule(String satisfiedRule) {
-        this.satisfiedRule = satisfiedRule;
-    }
-
-    public void setSatisfiedRule(Collection<String> satisfiedRule) {
-        this.satisfiedRule = join(" ", satisfiedRule);
-    }
-
-    public void setExpression(Collection<String> expression) {
-        this.expression = join(" ", expression);
+    public void setSatisfiedExpression(String satisfiedExpression) {
+        this.satisfiedExpression = satisfiedExpression;
     }
 
     public String getName() {
@@ -90,14 +87,6 @@ public class Objective implements Satisfiable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public MimeType getMime() {
-        return mime;
-    }
-
-    public void setMime(MimeType mime) {
-        this.mime = mime;
     }
 
     public Goal getGoal() {
@@ -117,12 +106,26 @@ public class Objective implements Satisfiable {
         this.state = state;
     }
 
-    public String getExpression() {
-        return expression;
+    public String getContextExpression() {
+        return contextExpression;
     }
 
-    public void setExpression(String expression) {
-        this.expression = expression;
+    @JsonIgnore
+    public void setContextExpression(String expression) {
+        this.contextExpression = expression;
+    }
+
+    public void setContextExpression(Collection<String> contextExpression) {
+        this.contextExpression = join(" ", contextExpression);
+    }
+
+    public DateTime getCreated() {
+        return created;
+    }
+
+    @JsonIgnore
+    public void setCreated(DateTime created) {
+        this.created = created;
     }
 
     @Override
@@ -133,6 +136,13 @@ public class Objective implements Satisfiable {
     @Override
     public String toString() {
         return format("Objective(%s)", name);
+    }
+
+    public enum State {
+        SATISFIED,
+        UNSATISFIED,
+        COMPENSATION,
+        FAILED
     }
 
 }

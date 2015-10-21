@@ -4,6 +4,6 @@ import de.tud.feedback.ChangeRequest;
 
 public interface Planner {
 
-    void queue(ChangeRequest changeRequest);
+    void generatePlanFor(ChangeRequest changeRequest);
 
 }
