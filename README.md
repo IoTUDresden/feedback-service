@@ -16,7 +16,7 @@ After the context has been created, it will be updated constantly.
 The response includes the location of the new context for further reference.
 
 ```
-POST /context HTTP/1.1
+POST /contexts HTTP/1.1
 Host: localhost:9000
 Content-Type: application/json
 

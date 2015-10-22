@@ -31,6 +31,8 @@ public class MismatchCompensatingPlanner implements Planner {
             ContextMismatch mismatch = mismatchProvider.getMismatch(
                     satisfiedExpressionFrom(changeRequest), contextVariablesFrom(changeRequest));
 
+            Object a = mismatch.getSource();
+
         } catch (RuntimeException exception) {
             failOn(changeRequest, exception.getMessage());
         }
