@@ -1,20 +1,26 @@
 package de.tud.feedback.loop.impl;
 
+import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.FeedbackPlugin;
+import de.tud.feedback.domain.Command;
 import de.tud.feedback.domain.ContextMismatch;
 import de.tud.feedback.domain.Objective;
+import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.ChangeRequest;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.Planner;
+import de.tud.feedback.repository.CommandRepository;
 import de.tud.feedback.repository.graph.ObjectiveRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import java.util.Collection;
 
 import static java.lang.String.format;
+import static org.joda.time.DateTime.now;
 
 @Component
 public class MismatchCompensatingPlanner implements Planner {
@@ -23,19 +29,43 @@ public class MismatchCompensatingPlanner implements Planner {
 
     private ObjectiveRepository objectiveRepository;
 
+    private CommandRepository commandRepository;
+
     private MismatchProvider mismatchProvider;
+
+    private CypherExecutor executor;
+
+    private FeedbackPlugin plugin;
+
+    @PostConstruct
+    public void init() {
+        commandRepository = plugin.getCompensationRepository(executor);
+        mismatchProvider = plugin.getMismatchProvider();
+    }
 
     @Override
     public void plan(ChangeRequest changeRequest) {
         try {
+            Objective objective = changeRequest.getObjective();
+            Long measuringNodeId = changeRequest.getResult().getMeasuringNodeId();
+            Collection<Command> commands = commandRepository.findCommandsManipulating(measuringNodeId);
             ContextMismatch mismatch = mismatchProvider.getMismatch(
-                    satisfiedExpressionFrom(changeRequest), contextVariablesFrom(changeRequest));
+                    objective.getSatisfiedExpression(),
+                    changeRequest.getResult().getContextVariables());
 
-            Object a = mismatch.getSource();
+            int a = commands.size();
+
+            resetObjective(objective);
 
         } catch (RuntimeException exception) {
             failOn(changeRequest, exception.getMessage());
         }
+    }
+
+    private void resetObjective(Objective objective) {
+        objective.setCreated(now());
+        objective.setState(Objective.State.UNSATISFIED);
+        objectiveRepository.save(objective);
     }
 
     private void failOn(ChangeRequest changeRequest, String cause) {
@@ -45,14 +75,6 @@ public class MismatchCompensatingPlanner implements Planner {
         objectiveRepository.save(objective);
     }
 
-    private String satisfiedExpressionFrom(ChangeRequest changeRequest) {
-        return changeRequest.getObjective().getSatisfiedExpression();
-    }
-
-    private Map<String, Object> contextVariablesFrom(ChangeRequest changeRequest) {
-        return changeRequest.getResult().getContextVariables();
-    }
-
     @Autowired
     public void setObjectiveRepository(ObjectiveRepository objectiveRepository) {
         this.objectiveRepository = objectiveRepository;
@@ -60,7 +82,12 @@ public class MismatchCompensatingPlanner implements Planner {
 
     @Autowired
     public void setFeedbackPlugin(FeedbackPlugin plugin) {
-        mismatchProvider = plugin.getMismatchProvider();
+        this.plugin = plugin;
+    }
+
+    @Autowired
+    public void setExecutor(SimpleCypherExecutor executor) {
+        this.executor = executor;
     }
 
 }

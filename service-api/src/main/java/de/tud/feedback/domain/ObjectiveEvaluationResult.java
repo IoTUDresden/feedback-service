@@ -14,7 +14,7 @@ public class ObjectiveEvaluationResult implements Satisfiable {
 
     private Map<String, Object> contextVariables = newHashMap();
 
-    private Long testNodeId;
+    private Long measuringNodeId;
 
     public static ObjectiveEvaluationResult build() {
         return new ObjectiveEvaluationResult();
@@ -30,8 +30,8 @@ public class ObjectiveEvaluationResult implements Satisfiable {
         return this;
     }
 
-    public ObjectiveEvaluationResult setTestNodeIdTo(Long testNodeIdTo) {
-        this.testNodeId = testNodeIdTo;
+    public ObjectiveEvaluationResult setMeasuringNodeIdTo(Long testNodeIdTo) {
+        this.measuringNodeId = testNodeIdTo;
         return this;
     }
 
@@ -44,8 +44,8 @@ public class ObjectiveEvaluationResult implements Satisfiable {
         return contextVariables;
     }
 
-    public Long getTestNodeId() {
-        return testNodeId;
+    public Long getMeasuringNodeId() {
+        return measuringNodeId;
     }
 
     public boolean shouldBeCompensated() {

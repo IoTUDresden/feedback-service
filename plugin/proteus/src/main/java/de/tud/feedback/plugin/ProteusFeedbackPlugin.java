@@ -7,10 +7,8 @@ import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.loop.ObjectiveEvaluator;
-import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
-import de.tud.feedback.plugin.factory.OpenHabMonitorAgentFactoryBean;
-import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
-import de.tud.feedback.plugin.factory.SpelObjectiveEvaluatorFactoryBean;
+import de.tud.feedback.plugin.factory.*;
+import de.tud.feedback.repository.CommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -40,6 +38,10 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<SpelObjectiveEvaluator> evaluatorProvider;
 
+    @Autowired DogOntCompensationRepositoryFactoryBean compensationRepositoryFactory;
+
+    @Autowired Provider<DogOntCommandRepository> compensationRepositoryProvider;
+
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
         importerFactory.setExecutor(executor);
@@ -66,6 +68,12 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     @Override
     public Collection<MonitorAgent> getMonitorAgents() {
         return newArrayList(monitorAgentProvider.get());
+    }
+
+    @Override
+    public CommandRepository getCompensationRepository(CypherExecutor executor) {
+        compensationRepositoryFactory.setExecutor(executor);
+        return compensationRepositoryProvider.get();
     }
 
     @Autowired

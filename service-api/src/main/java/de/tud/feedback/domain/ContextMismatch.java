@@ -6,6 +6,7 @@ public class ContextMismatch {
 
     private Object source;
 
+    // TODO maybe a string for flexibility
     private Type type = Type.UNEQUAL;
 
     public Object getTarget() {
