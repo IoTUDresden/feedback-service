@@ -66,6 +66,7 @@ public class MismatchCompensatingPlanner implements Planner {
 
             LOG.info("Compensation through " + compensation.get()); // TODO
 
+
             objective.getCommands().add(compensation.get());
             resetObjective(objective);
 
