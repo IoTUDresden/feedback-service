@@ -4,7 +4,7 @@ import de.tud.feedback.domain.Command;
 
 import java.util.Collection;
 
-public interface CommandRepository {
+public interface CompensationRepository {
 
     Collection<Command> findCommandsManipulating(Long testNodeId);
 

@@ -3,7 +3,7 @@ package de.tud.feedback;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.loop.ObjectiveEvaluator;
-import de.tud.feedback.repository.CommandRepository;
+import de.tud.feedback.repository.CompensationRepository;
 
 import java.util.Collection;
 
@@ -19,6 +19,6 @@ public interface FeedbackPlugin {
 
     Collection<MonitorAgent> getMonitorAgents();
 
-    CommandRepository getCompensationRepository(CypherExecutor executor);
+    CompensationRepository getCompensationRepository(CypherExecutor executor);
 
 }

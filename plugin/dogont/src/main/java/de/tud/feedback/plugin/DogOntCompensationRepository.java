@@ -1,8 +1,9 @@
 package de.tud.feedback.plugin;
 
+import com.google.common.collect.ImmutableMap;
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.domain.Command;
-import de.tud.feedback.repository.CommandRepository;
+import de.tud.feedback.repository.CompensationRepository;
 
 import java.util.Collection;
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.Map;
 import static de.tud.feedback.Utils.params;
 import static java.util.stream.Collectors.toSet;
 
-public class DogOntCommandRepository implements CommandRepository {
+public class DogOntCompensationRepository implements CompensationRepository {
 
     private static final String QUERY = 
             "MATCH (sensor)-[:hasState]->(sensorState) " +
@@ -20,37 +21,40 @@ public class DogOntCommandRepository implements CommandRepository {
             "MATCH (actuator)-[:hasFunctionality]->(function)-[:hasCommand]->(command) " +
             "MATCH (command)-[:type]->(commandType) " +
             "MATCH (function)-[:type]->()-[:subClassOf*]->({ name: 'ControlFunctionality' }) " +
-            "WHERE ID(sensorState) = {stateId} " +
-            "RETURN actuator.name AS actuatorName, " +
-                    "command.realCommandName AS commandName, " +
-                    "commandType.name AS commandType";
+            "WHERE id(sensorState) = {stateId} AND has(command.realCommandName) " +
+            "RETURN actuator.name AS actuator, " +
+                    "commandType.name AS commandType, " +
+                    "command.realCommandName AS commandName";
+
+    private static final Map<String, Command.Type> commandTypes = ImmutableMap.<String, Command.Type>builder()
+            .put("OnCommand",   Command.Type.ASSIGN)
+            .put("OffCommand",  Command.Type.ASSIGN)
+            .put("UpCommand",   Command.Type.UP)
+            .put("DownCommand", Command.Type.DOWN)
+            .build();
 
     private final CypherExecutor executor;
 
-    public DogOntCommandRepository(CypherExecutor executor) {
+    public DogOntCompensationRepository(CypherExecutor executor) {
         this.executor = executor;
     }
 
     @Override
     public Collection<Command> findCommandsManipulating(Long testNodeId) {
         return executor.execute(QUERY, params()
-                    .put("stateId", testNodeId)
+                .put("stateId", testNodeId)
                     .build())
                 .stream()
                 .map(this::toCommand)
-                .filter(command -> command != null)
                 .collect(toSet());
     }
 
     private Command toCommand(Map<String, Object> objectMap) {
+        //noinspection SuspiciousMethodCalls
         return new Command()
-                .setNameTo(String.valueOf(objectMap.get("actuatorName")))
-                .setTargetTo(String.valueOf(objectMap.get("commandName")))
-                .setTypeTo(toCommandType(String.valueOf(objectMap.get("commandType"))));
-    }
-
-    private Command.Type toCommandType(String commandType) {
-        return null;
+                .setTargetTo((String) objectMap.get("actuator"))
+                .setNameTo((String) objectMap.get("commandName"))
+                .setTypeTo(commandTypes.get(objectMap.get("commandType")));
     }
 
 }

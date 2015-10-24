@@ -8,7 +8,7 @@ import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.loop.ObjectiveEvaluator;
 import de.tud.feedback.plugin.factory.*;
-import de.tud.feedback.repository.CommandRepository;
+import de.tud.feedback.repository.CompensationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -40,7 +40,7 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired DogOntCompensationRepositoryFactoryBean compensationRepositoryFactory;
 
-    @Autowired Provider<DogOntCommandRepository> compensationRepositoryProvider;
+    @Autowired Provider<DogOntCompensationRepository> compensationRepositoryProvider;
 
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
@@ -71,7 +71,7 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     }
 
     @Override
-    public CommandRepository getCompensationRepository(CypherExecutor executor) {
+    public CompensationRepository getCompensationRepository(CypherExecutor executor) {
         compensationRepositoryFactory.setExecutor(executor);
         return compensationRepositoryProvider.get();
     }

@@ -12,7 +12,10 @@ import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import java.util.Collection;
+import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static org.joda.time.DateTime.now;
@@ -51,11 +54,26 @@ public class Objective implements Satisfiable {
     @Convert(graphPropertyType = String.class)
     private DateTime created = now();
 
+    @Relationship(type = "executedFor", direction = Relationship.INCOMING)
+    private Set<Command> commands = newHashSet();
+
     @Property
     private State state = State.UNSATISFIED;
 
     @Relationship(type = "hasObjective", direction = Relationship.INCOMING)
     private Goal goal;
+
+    public void setCommands(Set<Command> commands) {
+        try {
+            this.commands = checkNotNull(commands);
+        } catch (NullPointerException exception) {
+            this.commands = newHashSet();
+        }
+    }
+
+    public Set<Command> getCommands() {
+        return commands;
+    }
 
     public String getTestNodeIdExpression() {
         return testNodeIdExpression;

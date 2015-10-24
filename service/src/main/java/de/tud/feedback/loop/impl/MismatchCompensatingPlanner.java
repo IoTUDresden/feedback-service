@@ -9,7 +9,8 @@ import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.ChangeRequest;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.Planner;
-import de.tud.feedback.repository.CommandRepository;
+import de.tud.feedback.repository.CompensationRepository;
+import de.tud.feedback.repository.graph.CommandRepository;
 import de.tud.feedback.repository.graph.ObjectiveRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.joda.time.DateTime.now;
@@ -29,6 +31,8 @@ public class MismatchCompensatingPlanner implements Planner {
 
     private ObjectiveRepository objectiveRepository;
 
+    private CompensationRepository compensationRepository;
+
     private CommandRepository commandRepository;
 
     private MismatchProvider mismatchProvider;
@@ -39,27 +43,50 @@ public class MismatchCompensatingPlanner implements Planner {
 
     @PostConstruct
     public void init() {
-        commandRepository = plugin.getCompensationRepository(executor);
+        compensationRepository = plugin.getCompensationRepository(executor);
         mismatchProvider = plugin.getMismatchProvider();
     }
 
     @Override
     public void plan(ChangeRequest changeRequest) {
+        Objective objective = changeRequest.getObjective();
+        ContextMismatch mismatch = mismatchWithin(changeRequest);
+        Long measuringNodeId = changeRequest.getResult().getMeasuringNodeId();
+        Collection<Command> executedCommands = commandRepository.findCommandsExecutedFor(objective);
+        Collection<Command> manipulatingCommands = compensationRepository.findCommandsManipulating(measuringNodeId);
+
         try {
-            Objective objective = changeRequest.getObjective();
-            Long measuringNodeId = changeRequest.getResult().getMeasuringNodeId();
-            Collection<Command> commands = commandRepository.findCommandsManipulating(measuringNodeId);
-            ContextMismatch mismatch = mismatchProvider.getMismatch(
-                    objective.getSatisfiedExpression(),
-                    changeRequest.getResult().getContextVariables());
+            Optional<Command> compensation = manipulatingCommands.stream()
+                    .filter(command -> !executedCommands.contains(command))
+                    .filter(command -> isCompensating(mismatch, command))
+                    .findAny();
 
-            int a = commands.size();
+            if (!compensation.isPresent())
+                throw new RuntimeException("No suitable command");
 
+            LOG.info("Compensation through " + compensation.get()); // TODO
+
+            objective.getCommands().add(compensation.get());
             resetObjective(objective);
 
         } catch (RuntimeException exception) {
             failOn(changeRequest, exception.getMessage());
         }
+    }
+
+    private boolean isCompensating(ContextMismatch mismatch, Command command) {
+        switch (mismatch.getType()) {
+            case TOO_LOW:  return command.getType() == Command.Type.UP;
+            case TOO_HIGH: return command.getType() == Command.Type.DOWN;
+            case UNEQUAL:  return command.getType() == Command.Type.ASSIGN;
+            default: return false;
+        }
+    }
+
+    private ContextMismatch mismatchWithin(ChangeRequest changeRequest) {
+        return mismatchProvider.getMismatch(
+                changeRequest.getObjective().getSatisfiedExpression(),
+                changeRequest.getResult().getContextVariables());
     }
 
     private void resetObjective(Objective objective) {
@@ -78,6 +105,11 @@ public class MismatchCompensatingPlanner implements Planner {
     @Autowired
     public void setObjectiveRepository(ObjectiveRepository objectiveRepository) {
         this.objectiveRepository = objectiveRepository;
+    }
+
+    @Autowired
+    public void setCommandRepository(CommandRepository commandRepository) {
+        this.commandRepository = commandRepository;
     }
 
     @Autowired
