@@ -9,7 +9,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.Set;
 
-@RepositoryRestResource(exported = false)
+@RepositoryRestResource
 public interface CommandRepository extends GraphRepository<Command> {
 
     @Query( "MATCH p = (c:Command)-[:executedFor]->(o:Objective) " +

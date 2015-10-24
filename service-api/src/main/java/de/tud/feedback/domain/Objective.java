@@ -127,11 +127,11 @@ public class Objective implements Satisfiable {
         return contextExpression;
     }
 
-    @JsonProperty("contextExpressions")
     public void setContextExpression(String expression) {
         this.contextExpression = expression;
     }
 
+    @JsonProperty("contextExpressions")
     public void setContextExpression(Collection<String> contextExpression) {
         this.contextExpression = join(" ", contextExpression);
     }

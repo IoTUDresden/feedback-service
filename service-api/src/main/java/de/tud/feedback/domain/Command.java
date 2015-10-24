@@ -3,6 +3,7 @@ package de.tud.feedback.domain;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
+import org.neo4j.ogm.annotation.Relationship;
 
 import static java.lang.String.format;
 
@@ -21,6 +22,17 @@ public class Command {
 
     @Property
     private String name;
+
+    @Relationship(type = "executedFor", direction = Relationship.OUTGOING)
+    private Objective objective;
+
+    public Objective getObjective() {
+        return objective;
+    }
+
+    public void setObjective(Objective objective) {
+        this.objective = objective;
+    }
 
     public String getTarget() {
         return target;

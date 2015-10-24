@@ -62,12 +62,17 @@ public class MismatchCompensatingPlanner implements Planner {
                     .findAny();
 
             if (!compensation.isPresent())
-                throw new RuntimeException("No suitable command");
+                throw new RuntimeException("No suitable command found");
 
             LOG.info("Compensation through " + compensation.get()); // TODO
 
+            compensation.get().setObjective(objective);
+            commandRepository.save(compensation.get());
+
+            objective.setCreated(now());
             objective.getCommands().add(compensation.get());
-            resetObjective(objective);
+            objective.setState(Objective.State.UNSATISFIED);
+            objectiveRepository.save(objective);
 
         } catch (RuntimeException exception) {
             failOn(changeRequest, exception.getMessage());
@@ -89,15 +94,9 @@ public class MismatchCompensatingPlanner implements Planner {
                 changeRequest.getResult().getContextVariables());
     }
 
-    private void resetObjective(Objective objective) {
-        objective.setCreated(now());
-        objective.setState(Objective.State.UNSATISFIED);
-        objectiveRepository.save(objective);
-    }
-
     private void failOn(ChangeRequest changeRequest, String cause) {
         Objective objective = changeRequest.getObjective();
-        LOG.warn(format("Compensation of %s failed. %s", objective, cause));
+        LOG.debug(format("Compensation of %s failed. %s", objective, cause));
         objective.setState(Objective.State.FAILED);
         objectiveRepository.save(objective);
     }

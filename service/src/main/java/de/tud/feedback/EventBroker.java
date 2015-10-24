@@ -2,10 +2,12 @@ package de.tud.feedback;
 
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.Goal;
+import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.ChangeRequestedEvent;
 import de.tud.feedback.event.SymptomDetectedEvent;
 import de.tud.feedback.loop.Planner;
+import de.tud.feedback.repository.graph.CommandRepository;
 import de.tud.feedback.repository.graph.GoalRepository;
 import de.tud.feedback.repository.graph.ObjectiveRepository;
 import de.tud.feedback.service.ContextService;
@@ -29,12 +31,24 @@ public class EventBroker {
 
     @Autowired ObjectiveRepository objectiveRepository;
 
+    @Autowired CommandRepository commandRepository;
+
     @Autowired Planner planner;
 
     @HandleAfterCreate
     public void importContextSourcesAfterContextCreation(Context context) {
         contextService.importAllOf(context);
         contextService.beginContextUpdates();
+    }
+
+    @EventListener
+    public void startPlanningOn(ChangeRequestedEvent event) {
+        planner.plan(event);
+    }
+
+    @EventListener
+    public void analyzeGoalsOn(SymptomDetectedEvent event) {
+        workflowService.analyzeGoalsForWorkflowsWithin(event.context());
     }
 
     @HandleAfterDelete
@@ -47,14 +61,9 @@ public class EventBroker {
         objectiveRepository.delete(goal.getObjectives());
     }
 
-    @EventListener
-    public void startPlanningOn(ChangeRequestedEvent event) {
-        planner.plan(event);
-    }
-
-    @EventListener
-    public void analyzeGoalsOn(SymptomDetectedEvent event) {
-        workflowService.analyzeGoalsForWorkflowsWithin(event.context());
+    @HandleAfterDelete
+    public void deleteObjectiveCommands(Objective objective) {
+        commandRepository.delete(objective.getCommands());
     }
 
 }

@@ -46,7 +46,6 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
         return goals.stream()
                 .filter(goal -> !goal.hasBeenSatisfied())
                 .filter(unsatisfiedGoal -> unsatisfiedGoal.getObjectives().stream()
-                        .filter(objective -> objective.getState() != Objective.State.SATISFIED)
                         .filter(objective -> objective.getState() != Objective.State.COMPENSATION)
                         .filter(this::isSatisfied)
                         .allMatch(Objective::hasBeenSatisfied))
@@ -59,7 +58,7 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
         boolean compensationIsRequired = result.shouldBeCompensated();
 
         if (weCantGetNoSatisfaction && compensationIsRequired) {
-            LOG.debug(format("%s will be compensated", objective));
+            LOG.debug(format("%s may be compensated", objective));
             objective.setState(Objective.State.COMPENSATION);
             publisher.publishEvent(ChangeRequestedEvent.on(objective, result));
             return true;
