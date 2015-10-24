@@ -1,6 +1,5 @@
 package de.tud.feedback.domain;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -8,20 +7,18 @@ import org.neo4j.ogm.annotation.Property;
 import static java.lang.String.format;
 
 @NodeEntity
+@SuppressWarnings("unused")
 public class Command {
 
     @GraphId
     private Long id;
 
-    @NotBlank
     @Property
     private String target;
 
-    @NotBlank
     @Property
     private Type type;
 
-    @NotBlank
     @Property
     private String name;
 
@@ -60,6 +57,7 @@ public class Command {
         Command command = (Command) o;
 
         if (target != null ? !target.equals(command.target) : command.target != null) return false;
+        //noinspection SimplifiableIfStatement
         if (type != command.type) return false;
         return !(name != null ? !name.equals(command.name) : command.name != null);
 

@@ -16,7 +16,7 @@ import java.util.Map;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 
-// TODO handle null values
+// LATER handle null values
 public class SpelMismatchProvider implements MismatchProvider {
 
     private static final ArrayList<String> SUPPORTED_OPS = newArrayList(">", "<", "==");

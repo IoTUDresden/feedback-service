@@ -3,7 +3,6 @@ package de.tud.feedback.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.tud.feedback.Satisfiable;
-import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -11,6 +10,7 @@ import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Set;
 
@@ -21,39 +21,37 @@ import static java.lang.String.join;
 import static org.joda.time.DateTime.now;
 
 @NodeEntity
+@SuppressWarnings("unused")
 public class Objective implements Satisfiable {
 
     @GraphId
     private Long id;
 
-    @NotBlank
+    @NotNull
     @Property
     private String name;
 
-    @NotBlank
+    @NotNull
     @Property
-    @JsonProperty("compensate")
     private String compensateExpression;
 
-    @NotBlank
+    @NotNull
     @Property
-    @JsonProperty("satisfied")
     private String satisfiedExpression;
 
-    @NotBlank
+    @NotNull
     @Property
-    @JsonProperty("testNodeId")
     private String testNodeIdExpression;
 
-    @NotBlank
+    @NotNull
     @Property
-    @JsonProperty("context")
     private String contextExpression;
 
     @Property
     @Convert(graphPropertyType = String.class)
     private DateTime created = now();
 
+    @JsonIgnore
     @Relationship(type = "executedFor", direction = Relationship.INCOMING)
     private Set<Command> commands = newHashSet();
 
@@ -63,6 +61,7 @@ public class Objective implements Satisfiable {
     @Relationship(type = "hasObjective", direction = Relationship.INCOMING)
     private Goal goal;
 
+    @JsonIgnore
     public void setCommands(Set<Command> commands) {
         try {
             this.commands = checkNotNull(commands);
@@ -128,7 +127,7 @@ public class Objective implements Satisfiable {
         return contextExpression;
     }
 
-    @JsonIgnore
+    @JsonProperty("contextExpressions")
     public void setContextExpression(String expression) {
         this.contextExpression = expression;
     }

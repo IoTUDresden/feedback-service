@@ -1,12 +1,12 @@
 package de.tud.feedback.domain;
 
 import de.tud.feedback.Satisfiable;
-import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Set;
 
@@ -15,18 +15,20 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 
 @NodeEntity
+@SuppressWarnings("unused")
 public class Workflow implements Satisfiable {
 
     @GraphId
     private Long id;
 
-    @NotBlank
+    @NotNull
     @Property
     private String name;
 
     @Relationship(type = "hasGoal", direction = Relationship.OUTGOING)
     private Set<Goal> goals = newHashSet();
 
+    @NotNull
     @Relationship(type = "runsWithin", direction = Relationship.OUTGOING)
     private Context context;
 

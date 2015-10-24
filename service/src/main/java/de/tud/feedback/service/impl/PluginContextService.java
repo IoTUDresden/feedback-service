@@ -50,7 +50,7 @@ public class PluginContextService implements ContextService {
     @Override
     @LogInvocation
     @PostConstruct
-    public void beginContextUpdates() { // TODO depending on specific context (see EventBroker)
+    public void beginContextUpdates() { // LATER depending on specific context (see EventBroker)
         newArrayList(contexts.findAll())
                 .forEach(context -> monitor.get().monitor(context));
     }

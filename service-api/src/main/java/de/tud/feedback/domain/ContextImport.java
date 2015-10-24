@@ -1,7 +1,6 @@
 package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -19,6 +18,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 
 @NodeEntity
+@SuppressWarnings("unused")
 public class ContextImport {
 
     @GraphId
@@ -29,12 +29,12 @@ public class ContextImport {
     @Convert(graphPropertyType = String.class)
     private Resource source;
 
-    @NotBlank
+    @NotNull
     @Property
     @Convert(graphPropertyType = String.class)
     private MimeType mimeType;
 
-    @NotBlank
+    @NotNull
     @Property
     private String name;
 

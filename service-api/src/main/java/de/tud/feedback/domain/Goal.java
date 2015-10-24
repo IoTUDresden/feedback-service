@@ -2,7 +2,6 @@ package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.tud.feedback.Satisfiable;
-import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -10,6 +9,7 @@ import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Set;
 
@@ -19,12 +19,13 @@ import static java.lang.String.format;
 import static org.joda.time.DateTime.now;
 
 @NodeEntity
+@SuppressWarnings("unused")
 public class Goal implements Satisfiable {
 
     @GraphId
     private Long id;
 
-    @NotBlank
+    @NotNull
     @Property
     private String name;
 
@@ -32,9 +33,11 @@ public class Goal implements Satisfiable {
     @Convert(graphPropertyType = String.class)
     private DateTime created = now();
 
+    @NotNull
     @Relationship(type = "hasObjective", direction = Relationship.OUTGOING)
     private Set<Objective> objectives = newHashSet();
 
+    @NotNull
     @Relationship(type = "hasGoal", direction = Relationship.INCOMING)
     private Workflow workflow;
 
@@ -50,7 +53,6 @@ public class Goal implements Satisfiable {
         }
     }
 
-    @JsonIgnore
     public Objective objective(String name) {
         return objectives.stream()
                 .filter(objective -> name.equals(objective.getName()))
@@ -78,6 +80,7 @@ public class Goal implements Satisfiable {
         return created;
     }
 
+    @JsonIgnore
     public void setCreated(DateTime created) {
         this.created = created;
     }

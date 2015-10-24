@@ -1,9 +1,9 @@
 package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.validator.constraints.NotBlank;
 import org.neo4j.ogm.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Set;
 
@@ -12,16 +12,18 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 
 @NodeEntity
+@SuppressWarnings("unused")
 public class Context {
 
     @GraphId
     private Long id;
 
-    @NotBlank
+    @NotNull
     @Property
     @Index(unique = true)
     private String name;
 
+    @NotNull
     @Relationship(type = "for", direction = Relationship.INCOMING)
     private Set<ContextImport> imports = newHashSet();
 

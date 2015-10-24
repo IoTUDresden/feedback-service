@@ -1,12 +1,12 @@
 package de.tud.feedback.domain;
 
+@SuppressWarnings("unused")
 public class ContextMismatch {
 
     private Object target;
 
     private Object source;
 
-    // TODO maybe a string for flexibility
     private Type type = Type.UNEQUAL;
 
     public Object getTarget() {
