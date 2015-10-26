@@ -31,7 +31,7 @@ public class ChangeRequestedEvent extends LoopEvent implements ChangeRequest {
 
     @Override
     public String toString() {
-        return format("%s(%s, %s)", getClass().getSimpleName(), getObjective(), getResult());
+        return format("%s(%s)", getClass().getSimpleName(), getObjective());
     }
 
 }

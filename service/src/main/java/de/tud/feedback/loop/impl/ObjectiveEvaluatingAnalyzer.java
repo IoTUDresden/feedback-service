@@ -4,11 +4,12 @@ import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Objective;
+import de.tud.feedback.domain.Objective.State;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.ChangeRequestedEvent;
+import de.tud.feedback.event.LoopFinishedEvent;
 import de.tud.feedback.event.ObjectiveSatisfiedEvent;
-import de.tud.feedback.event.WorkflowSatisfiedEvent;
 import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.Analyzer;
 import de.tud.feedback.loop.ObjectiveEvaluator;
@@ -39,17 +40,30 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
 
     @Override
     public void analyze(Workflow workflow) {
-        boolean allGoalsHaveBeenSatisfied = workflow.getGoals().stream()
-                .filter(goal -> !goal.hasBeenSatisfied())
-                .filter(unsatisfiedGoal -> unsatisfiedGoal.getObjectives().stream()
-                        .filter(objective -> objective.getState() != Objective.State.COMPENSATION)
-                        .filter(this::isSatisfied)
-                        .allMatch(Objective::hasBeenSatisfied))
+        boolean allGoalsHaveBeenSatisfied = workflow.getGoals()
+                .stream()
+                .filter(this::isSatisfied)
                 .allMatch(Goal::hasBeenSatisfied);
 
-        if (allGoalsHaveBeenSatisfied) {
-            publisher.publishEvent(WorkflowSatisfiedEvent.on(workflow));
+        boolean nothingLeft = !workflow.getGoals()
+                .stream()
+                .filter(goal -> goal.getObjectives()
+                        .stream()
+                        .anyMatch(o -> (o.getState() == State.COMPENSATION) ||
+                                       (o.getState() == State.UNSATISFIED)))
+                .findAny()
+                .isPresent();
+
+        if (allGoalsHaveBeenSatisfied || nothingLeft) {
+            publisher.publishEvent(LoopFinishedEvent.on(workflow));
         }
+    }
+
+    private boolean isSatisfied(Goal unsatisfiedGoal) {
+        return unsatisfiedGoal.getObjectives().stream()
+                .filter(objective -> objective.getState() != State.COMPENSATION)
+                .filter(this::isSatisfied)
+                .allMatch(Objective::hasBeenSatisfied);
     }
 
     private boolean isSatisfied(Objective objective) {
@@ -58,16 +72,16 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
         boolean compensationIsRequired = result.shouldBeCompensated();
 
         if (weCantGetNoSatisfaction && compensationIsRequired) {
-            objective.setState(Objective.State.COMPENSATION);
+            objective.setState(State.COMPENSATION);
             publisher.publishEvent(ChangeRequestedEvent.on(objective, result));
             return false;
 
         } else if (weCantGetNoSatisfaction) {
-            objective.setState(Objective.State.UNSATISFIED);
+            objective.setState(State.UNSATISFIED);
             return false;
 
         } else {
-            objective.setState(Objective.State.SATISFIED);
+            objective.setState(State.SATISFIED);
             publisher.publishEvent(ObjectiveSatisfiedEvent.on(objective));
             return true;
         }

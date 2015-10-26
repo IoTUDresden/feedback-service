@@ -4,14 +4,14 @@ import de.tud.feedback.domain.Workflow;
 
 import static java.lang.String.format;
 
-public class WorkflowSatisfiedEvent extends LoopEvent {
+public class LoopFinishedEvent extends LoopEvent {
 
-    private WorkflowSatisfiedEvent(Object source) {
+    private LoopFinishedEvent(Object source) {
         super(source);
     }
 
-    public static WorkflowSatisfiedEvent on(Workflow workflow) {
-        return new WorkflowSatisfiedEvent(workflow);
+    public static LoopFinishedEvent on(Workflow workflow) {
+        return new LoopFinishedEvent(workflow);
     }
 
     public Workflow workflow() {

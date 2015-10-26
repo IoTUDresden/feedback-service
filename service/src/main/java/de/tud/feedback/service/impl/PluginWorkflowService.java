@@ -28,6 +28,12 @@ public class PluginWorkflowService implements WorkflowService {
     private Provider<Analyzer> analyzerProvider;
 
     @Override
+    public void finish(Workflow workflow) {
+        workflow.setFinished(true);
+        workflowRepository.save(workflow);
+    }
+
+    @Override
     public void analyzeGoalsForWorkflowsWithin(Context context) {
         workflowRepository.findWorkflowsWithin(context).forEach(this::analyzeGoalsFor);
     }
@@ -35,7 +41,9 @@ public class PluginWorkflowService implements WorkflowService {
     public void analyzeGoalsFor(Workflow workflow) {
         Collection<Goal> goals = workflow.getGoals();
 
-        if (!workflow.hasBeenSatisfied()) {
+        if (!workflow.hasBeenSatisfied() &&
+            !workflow.hasBeenFinished()
+        ) {
             analyzerFor(workflow).analyze(workflow);
             goalRepository.save(goals);
         }

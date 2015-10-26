@@ -1,5 +1,6 @@
 package de.tud.feedback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.tud.feedback.Satisfiable;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -27,6 +28,10 @@ public class Workflow implements Satisfiable {
 
     @Relationship(type = "hasGoal", direction = Relationship.OUTGOING)
     private Set<Goal> goals = newHashSet();
+
+    @Property
+    @JsonIgnore
+    private boolean hasBeenFinished = false;
 
     @NotNull
     @Relationship(type = "runsWithin", direction = Relationship.OUTGOING)
@@ -87,6 +92,14 @@ public class Workflow implements Satisfiable {
     @Override
     public boolean hasBeenSatisfied() {
         return goals.stream().allMatch(Goal::hasBeenSatisfied);
+    }
+
+    public void setFinished(boolean hasBeenFinished) {
+        this.hasBeenFinished = hasBeenFinished;
+    }
+
+    public boolean hasBeenFinished() {
+        return hasBeenFinished;
     }
 
 }
