@@ -11,11 +11,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class AgentDelegatingMonitor implements Monitor {
+public class RealTimeAgentMonitor implements Monitor {
+
+    private static final long REAL_TIME_STEP_MILLIS = 1000L;
 
     private FeedbackPlugin plugin;
 
@@ -25,15 +28,26 @@ public class AgentDelegatingMonitor implements Monitor {
 
     private TaskExecutor tasks;
 
+    private TaskScheduler scheduler;
+
     @Override
     public void monitor(Context context) {
+        ContextUpdater.Listener listener = () ->
+                publisher.publishEvent(SymptomDetectedEvent.on(context));
+
         plugin.getMonitorAgents().forEach(agent -> {
             ContextUpdater updater = plugin.getContextUpdater(executor);
-            updater.workWith(() -> publisher.publishEvent(SymptomDetectedEvent.on(context)));
+            updater.workWith(listener);
             updater.workWith(context);
             agent.workWith(updater);
             tasks.execute(agent);
         });
+
+        realTimeIsGoingByFor(listener);
+    }
+
+    private void realTimeIsGoingByFor(ContextUpdater.Listener listener) {
+        scheduler.scheduleWithFixedDelay(() -> listener.contextUpdated(), REAL_TIME_STEP_MILLIS);
     }
 
     @Autowired
@@ -54,6 +68,11 @@ public class AgentDelegatingMonitor implements Monitor {
     @Autowired
     public void setApplicationEventPublisher(ApplicationEventPublisher delegatePublisher) {
         this.publisher = delegatePublisher;
+    }
+
+    @Autowired
+    public void setScheduler(TaskScheduler scheduler) {
+        this.scheduler = scheduler;
     }
 
 }
