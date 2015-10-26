@@ -2,7 +2,6 @@ package de.tud.feedback.service.impl;
 
 import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.annotation.GraphTransactional;
-import de.tud.feedback.annotation.LogDuration;
 import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.ContextImport;
@@ -38,7 +37,6 @@ public class PluginContextService implements ContextService {
     private Provider<Monitor> monitor;
 
     @Override
-    @LogDuration
     @GraphTransactional
     public void importAllOf(Context context) {
         context.getImports().forEach(contextImport -> {

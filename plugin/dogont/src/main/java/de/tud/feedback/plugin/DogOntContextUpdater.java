@@ -9,13 +9,14 @@ import de.tud.feedback.event.SymptomDetectedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import static de.tud.feedback.Utils.params;
 import static java.util.stream.Collectors.toMap;
 
 public class DogOntContextUpdater implements ContextUpdater {
 
-    private final String stateNodePrefix;
+    private final Function<String, String> stateNameMapper;
 
     private final CypherExecutor executor;
 
@@ -25,8 +26,8 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     private ApplicationEventPublisher publisher;
 
-    public DogOntContextUpdater(CypherExecutor executor, String stateNodePrefix) {
-        this.stateNodePrefix = stateNodePrefix;
+    public DogOntContextUpdater(CypherExecutor executor, Function<String, String> stateNameMapper) {
+        this.stateNameMapper = stateNameMapper;
         this.executor = executor;
     }
 
@@ -34,7 +35,7 @@ public class DogOntContextUpdater implements ContextUpdater {
     @LogInvocation
     @LogTimeSeries(context = "context.name")
     public void update(String item, Object state) {
-        final String stateName = stateNodePrefix + item;
+        final String stateName = stateNameMapper.apply(item);
 
         if (stateValueMapping == null) {
             stateValueMapping = resolveStateValueMapping();

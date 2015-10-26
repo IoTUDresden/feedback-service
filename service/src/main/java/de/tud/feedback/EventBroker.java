@@ -5,7 +5,9 @@ import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.ChangeRequestedEvent;
+import de.tud.feedback.event.ExecuteRequestEvent;
 import de.tud.feedback.event.SymptomDetectedEvent;
+import de.tud.feedback.loop.Executor;
 import de.tud.feedback.loop.Planner;
 import de.tud.feedback.repository.graph.CommandRepository;
 import de.tud.feedback.repository.graph.GoalRepository;
@@ -35,6 +37,8 @@ public class EventBroker {
 
     @Autowired Planner planner;
 
+    @Autowired Executor executor;
+
     @HandleAfterCreate
     public void importContextSourcesAfterContextCreation(Context context) {
         contextService.importAllOf(context);
@@ -49,6 +53,11 @@ public class EventBroker {
     @EventListener
     public void analyzeGoalsOn(SymptomDetectedEvent event) {
         workflowService.analyzeGoalsForWorkflowsWithin(event.context());
+    }
+
+    @EventListener
+    public void executeCommandOn(ExecuteRequestEvent event) {
+        executor.execute(event.command());
     }
 
     @HandleAfterDelete

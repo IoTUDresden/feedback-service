@@ -3,52 +3,30 @@ package de.tud.feedback.plugin.factory;
 import de.tud.feedback.plugin.OpenHabMonitorAgent;
 import de.tud.feedback.plugin.openhab.ItemUpdateHandler;
 import de.tud.feedback.plugin.openhab.OpenHabService;
-import feign.Feign;
-import feign.jackson.JacksonDecoder;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
 @Component
 public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabMonitorAgent> {
-
-    private String host;
-
-    private Integer port;
 
     private Double numberStateChangeDelta = 0.01;
 
     private Integer pollingSeconds = 1;
 
+    private OpenHabService service;
+
     @Override
     protected OpenHabMonitorAgent createInstance() throws Exception {
-        checkNotNull(host, "Host is missing");
-        checkNotNull(port, "Port is missing");
+        checkNotNull(service, "OpenHabService is missing");
 
         final ItemUpdateHandler handler = new ItemUpdateHandler(numberStateChangeDelta);
-        final OpenHabMonitorAgent agent = new OpenHabMonitorAgent(createService(), handler);
+        final OpenHabMonitorAgent agent = new OpenHabMonitorAgent(service, handler);
 
         agent.setPollingSeconds(pollingSeconds);
 
         return agent;
-    }
-
-    private OpenHabService createService() {
-        return Feign.builder()
-                .decoder(new JacksonDecoder())
-                .target(OpenHabService.class, format("http://%s:%s", host, port));
-    }
-
-    public OpenHabMonitorAgentFactoryBean setHost(String host) {
-        this.host = checkNotNull(host);
-        return this;
-    }
-
-    public OpenHabMonitorAgentFactoryBean setPort(Integer port) {
-        this.port = checkNotNull(port);
-        return this;
     }
 
     public OpenHabMonitorAgentFactoryBean setNumberStateChangeDelta(Double numberStateChangeDelta) {
@@ -58,6 +36,11 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
 
     public OpenHabMonitorAgentFactoryBean setPollingSeconds(Integer pollingSeconds) {
         this.pollingSeconds = checkNotNull(pollingSeconds);
+        return this;
+    }
+
+    public OpenHabMonitorAgentFactoryBean setService(OpenHabService service) {
+        this.service = checkNotNull(service);
         return this;
     }
 

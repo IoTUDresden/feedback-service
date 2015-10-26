@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class DelegatingMonitor implements Monitor {
+public class AgentDelegatingMonitor implements Monitor {
 
     private FeedbackPlugin plugin;
 

@@ -6,12 +6,8 @@ import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.plugin.openhab.ItemUpdateHandler;
 import de.tud.feedback.plugin.openhab.OpenHabItem;
 import de.tud.feedback.plugin.openhab.OpenHabService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OpenHabMonitorAgent implements MonitorAgent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OpenHabMonitorAgent.class);
 
     private final OpenHabService service;
 
@@ -34,7 +30,6 @@ public class OpenHabMonitorAgent implements MonitorAgent {
                 Thread.sleep(1000L * pollingSeconds);
 
             } catch (InterruptedException exception) {
-                LOG.info("Stopped");
                 break;
             }
         }

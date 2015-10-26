@@ -4,10 +4,12 @@ import de.tud.feedback.ContextImporter;
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.FeedbackPlugin;
+import de.tud.feedback.loop.CommandExecutor;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.loop.ObjectiveEvaluator;
 import de.tud.feedback.plugin.factory.*;
+import de.tud.feedback.plugin.openhab.OpenHabService;
 import de.tud.feedback.repository.CompensationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +44,8 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<DogOntCompensationRepository> compensationRepositoryProvider;
 
+    @Autowired Provider<OpenHabCommandExecutor> commandExecutorProvider;
+
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
         importerFactory.setExecutor(executor);
@@ -71,6 +75,11 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     }
 
     @Override
+    public CommandExecutor getExecutor() {
+        return commandExecutorProvider.get();
+    }
+
+    @Override
     public CompensationRepository getCompensationRepository(CypherExecutor executor) {
         compensationRepositoryFactory.setExecutor(executor);
         return compensationRepositoryProvider.get();
@@ -85,18 +94,38 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     }
 
     @Autowired
+    void configureOpenHabService(
+            OpenHabServiceFactoryBean factoryBean,
+            @Value("${openHab.host:localhost}") String host,
+            @Value("${openHab.port:8080}") int port
+    ) {
+        factoryBean
+                .setHost(host)
+                .setPort(port);
+    }
+
+    @Autowired
     void configureOpenHabMonitorAgents(
             OpenHabMonitorAgentFactoryBean factoryBean,
-            @Value("${openHab.host:localhost}") String host,
-            @Value("${openHab.port:8080}") int port,
+            OpenHabService service,
             @Value("${openHab.delta:0.01}") Double delta,
             @Value("${openHab.pollingSeconds:1}") Integer pollingSeconds
     ) {
         factoryBean
                 .setNumberStateChangeDelta(delta)
                 .setPollingSeconds(pollingSeconds)
-                .setHost(host)
-                .setPort(port);
+                .setService(service);
+    }
+
+    @Autowired
+    void configureOpenHabCommandExecutor(
+            OpenHabCommandExecutorFactoryBean factoryBean,
+            OpenHabService service,
+            @Value("${dogOnt.thingNodePrefix:Thing_}") String thingNodePrefix
+    ) {
+        factoryBean
+                .setItemNameMapper(s -> s.replace(thingNodePrefix, ""))
+                .setService(service);
     }
 
     @Autowired
@@ -104,7 +133,8 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
             DogOntContextUpdaterFactoryBean factoryBean,
             @Value("${dogOnt.stateNodePrefix:State_}") String stateNodePrefix
     ) {
-        factoryBean.setStateNodePrefix(stateNodePrefix);
+        factoryBean
+                .setStateNameMapper(s -> stateNodePrefix + s);
     }
 
 }

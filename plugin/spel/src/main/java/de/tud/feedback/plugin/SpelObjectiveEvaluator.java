@@ -1,6 +1,7 @@
 package de.tud.feedback.plugin;
 
 import de.tud.feedback.CypherExecutor;
+import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;
 import de.tud.feedback.loop.ObjectiveEvaluator;
@@ -26,6 +27,7 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
     }
 
     @Override
+    @LogInvocation
     public ObjectiveEvaluationResult evaluate(Objective objective) {
         Collection<Map<String, Object>> result = executor.execute(objective.getContextExpression(), params().build());
 

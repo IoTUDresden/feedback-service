@@ -1,5 +1,6 @@
 package de.tud.feedback;
 
+import de.tud.feedback.loop.CommandExecutor;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.loop.ObjectiveEvaluator;
@@ -15,10 +16,12 @@ public interface FeedbackPlugin {
 
     ObjectiveEvaluator getObjectiveEvaluator(CypherExecutor executor);
 
+    CompensationRepository getCompensationRepository(CypherExecutor executor);
+
     MismatchProvider getMismatchProvider();
 
     Collection<MonitorAgent> getMonitorAgents();
 
-    CompensationRepository getCompensationRepository(CypherExecutor executor);
+    CommandExecutor getExecutor();
 
 }

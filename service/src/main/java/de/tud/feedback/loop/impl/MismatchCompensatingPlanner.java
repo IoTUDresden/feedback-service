@@ -5,6 +5,7 @@ import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.domain.ContextMismatch;
 import de.tud.feedback.domain.Objective;
+import de.tud.feedback.event.ExecuteRequestEvent;
 import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.ChangeRequest;
 import de.tud.feedback.loop.MismatchProvider;
@@ -15,6 +16,7 @@ import de.tud.feedback.repository.graph.ObjectiveRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +30,8 @@ import static org.joda.time.DateTime.now;
 public class MismatchCompensatingPlanner implements Planner {
 
     private static final Logger LOG = LoggerFactory.getLogger(MismatchCompensatingPlanner.class);
+
+    private ApplicationEventPublisher publisher;
 
     private ObjectiveRepository objectiveRepository;
 
@@ -64,8 +68,6 @@ public class MismatchCompensatingPlanner implements Planner {
             if (!compensation.isPresent())
                 throw new RuntimeException("No suitable command found");
 
-            LOG.info("Compensation through " + compensation.get()); // TODO
-
             compensation.get().setObjective(objective);
             commandRepository.save(compensation.get());
 
@@ -73,6 +75,8 @@ public class MismatchCompensatingPlanner implements Planner {
             objective.getCommands().add(compensation.get());
             objective.setState(Objective.State.UNSATISFIED);
             objectiveRepository.save(objective);
+
+            publisher.publishEvent(ExecuteRequestEvent.on(compensation.get()));
 
         } catch (RuntimeException exception) {
             failOn(changeRequest, exception.getMessage());
@@ -119,6 +123,11 @@ public class MismatchCompensatingPlanner implements Planner {
     @Autowired
     public void setExecutor(SimpleCypherExecutor executor) {
         this.executor = executor;
+    }
+
+    @Autowired
+    public void setPublisher(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
     }
 
 }
