@@ -1,9 +1,10 @@
 server.port: 9000
 
 spring:
-  profiles.active: development,embeddedNeo4j,embeddedElasticsearch
+  profiles.active: development,embeddedNeo4j
 
   main.showBanner: false
   data.rest:
     returnBodyOnCreate: true
     returnBodyOnUpdate: true
+
