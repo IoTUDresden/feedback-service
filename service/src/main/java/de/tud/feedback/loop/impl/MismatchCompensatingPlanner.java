@@ -66,23 +66,28 @@ public class MismatchCompensatingPlanner implements Planner {
                     .filter(command -> isCompensating(mismatch, command))
                     .findAny();
 
-            if (!compensation.isPresent())
+            if (compensation.isPresent()) {
+                compensate(objective, compensation.get());
+            } else {
                 failOn(changeRequest);
-
-            compensation.get().setObjective(objective);
-            commandRepository.save(compensation.get());
-
-            objective.setCreated(now());
-            objective.getCommands().add(compensation.get());
-            objective.setState(Objective.State.UNSATISFIED);
-            objectiveRepository.save(objective);
-
-            publisher.publishEvent(ExecuteRequestedEvent.on(compensation.get()));
+            }
 
         } catch (RuntimeException exception) {
             LOG.error(format("%s failed due to %s", objective, exception.getMessage()));
             failOn(changeRequest);
         }
+    }
+
+    private void compensate(Objective objective, Command compensation) {
+        compensation.setObjective(objective);
+        commandRepository.save(compensation);
+
+        objective.setCreated(now());
+        objective.getCommands().add(compensation);
+        objective.setState(Objective.State.UNSATISFIED);
+        objectiveRepository.save(objective);
+
+        publisher.publishEvent(ExecuteRequestedEvent.on(compensation));
     }
 
     private boolean isCompensating(ContextMismatch mismatch, Command command) {
