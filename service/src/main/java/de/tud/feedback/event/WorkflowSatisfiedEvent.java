@@ -1,9 +1,10 @@
 package de.tud.feedback.event;
 
 import de.tud.feedback.domain.Workflow;
-import org.springframework.context.ApplicationEvent;
 
-public class WorkflowSatisfiedEvent extends ApplicationEvent {
+import static java.lang.String.format;
+
+public class WorkflowSatisfiedEvent extends LoopEvent {
 
     private WorkflowSatisfiedEvent(Object source) {
         super(source);
@@ -15,6 +16,11 @@ public class WorkflowSatisfiedEvent extends ApplicationEvent {
 
     public Workflow workflow() {
         return (Workflow) getSource();
+    }
+
+    @Override
+    public String toString() {
+        return format("%s(%s)", getClass().getSimpleName(), workflow());
     }
 
 }

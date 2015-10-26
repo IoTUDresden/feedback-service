@@ -1,9 +1,10 @@
 package de.tud.feedback.event;
 
 import de.tud.feedback.domain.Context;
-import org.springframework.context.ApplicationEvent;
 
-public class SymptomDetectedEvent extends ApplicationEvent {
+import static java.lang.String.format;
+
+public class SymptomDetectedEvent extends LoopEvent {
 
     private SymptomDetectedEvent(Object source) {
         super(source);
@@ -15,6 +16,11 @@ public class SymptomDetectedEvent extends ApplicationEvent {
 
     public Context context() {
         return (Context) getSource();
+    }
+
+    @Override
+    public String toString() {
+        return format("%s(%s)", getClass().getSimpleName(), context());
     }
 
 }

@@ -2,7 +2,6 @@ package de.tud.feedback.service.impl;
 
 import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.annotation.GraphTransactional;
-import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.ContextImport;
 import de.tud.feedback.domain.ContextNode;
@@ -36,6 +35,12 @@ public class PluginContextService implements ContextService {
 
     private Provider<Monitor> monitor;
 
+    @PostConstruct
+    public void beginUpdatesOnAllContexts() {
+        newArrayList(contexts.findAll())
+                .forEach(context -> monitor.get().monitor(context));
+    }
+
     @Override
     @GraphTransactional
     public void importAllOf(Context context) {
@@ -43,14 +48,8 @@ public class PluginContextService implements ContextService {
             contextImport.setContext(context);
             importContextFrom(contextImport);
         });
-    }
 
-    @Override
-    @LogInvocation
-    @PostConstruct
-    public void beginContextUpdates() { // LATER depending on specific context (see EventBroker)
-        newArrayList(contexts.findAll())
-                .forEach(context -> monitor.get().monitor(context));
+        monitor.get().monitor(context);
     }
 
     private void importContextFrom(ContextImport contextImport) {

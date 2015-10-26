@@ -1,12 +1,19 @@
 package de.tud.feedback;
 
 import de.tud.feedback.domain.Context;
-import org.springframework.context.ApplicationEventPublisherAware;
 
-public interface ContextUpdater extends ApplicationEventPublisherAware {
+public interface ContextUpdater {
 
     void update(String itemId, Object state);
 
     void workWith(Context context);
+
+    void workWith(Listener listener);
+
+    interface Listener {
+
+        void contextUpdated();
+
+    }
 
 }

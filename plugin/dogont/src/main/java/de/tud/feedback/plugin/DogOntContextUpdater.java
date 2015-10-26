@@ -5,8 +5,6 @@ import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.annotation.LogTimeSeries;
 import de.tud.feedback.domain.Context;
-import de.tud.feedback.event.SymptomDetectedEvent;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -24,7 +22,7 @@ public class DogOntContextUpdater implements ContextUpdater {
 
     private Map<String, Integer> stateValueMapping;
 
-    private ApplicationEventPublisher publisher;
+    private Listener listener;
 
     public DogOntContextUpdater(CypherExecutor executor, Function<String, String> stateNameMapper) {
         this.stateNameMapper = stateNameMapper;
@@ -52,7 +50,7 @@ public class DogOntContextUpdater implements ContextUpdater {
                             .put("value", state)
                             .build());
 
-            publisher.publishEvent(SymptomDetectedEvent.on(context));
+            listener.contextUpdated();
         }
     }
 
@@ -79,6 +77,11 @@ public class DogOntContextUpdater implements ContextUpdater {
         this.context = context;
     }
 
+    @Override
+    public void workWith(Listener listener) {
+        this.listener = listener;
+    }
+
     public Context getContext() {
         return context;
     }
@@ -86,11 +89,6 @@ public class DogOntContextUpdater implements ContextUpdater {
     @Override
     public String toString() {
         return getClass().getSimpleName();
-    }
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
-        this.publisher = publisher;
     }
 
 }

@@ -3,6 +3,7 @@ package de.tud.feedback.loop.impl;
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.domain.Context;
+import de.tud.feedback.event.SymptomDetectedEvent;
 import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.Monitor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class AgentDelegatingMonitor implements Monitor {
     public void monitor(Context context) {
         plugin.getMonitorAgents().forEach(agent -> {
             ContextUpdater updater = plugin.getContextUpdater(executor);
-            updater.setApplicationEventPublisher(publisher);
+            updater.workWith(() -> publisher.publishEvent(SymptomDetectedEvent.on(context)));
             updater.workWith(context);
             agent.workWith(updater);
             tasks.execute(agent);

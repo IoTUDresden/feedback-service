@@ -5,7 +5,8 @@ import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.domain.ContextMismatch;
 import de.tud.feedback.domain.Objective;
-import de.tud.feedback.event.ExecuteRequestEvent;
+import de.tud.feedback.event.ExecuteRequestedEvent;
+import de.tud.feedback.event.ObjectiveFailedEvent;
 import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.ChangeRequest;
 import de.tud.feedback.loop.MismatchProvider;
@@ -66,7 +67,7 @@ public class MismatchCompensatingPlanner implements Planner {
                     .findAny();
 
             if (!compensation.isPresent())
-                throw new RuntimeException("No suitable command found");
+                failOn(changeRequest);
 
             compensation.get().setObjective(objective);
             commandRepository.save(compensation.get());
@@ -76,10 +77,11 @@ public class MismatchCompensatingPlanner implements Planner {
             objective.setState(Objective.State.UNSATISFIED);
             objectiveRepository.save(objective);
 
-            publisher.publishEvent(ExecuteRequestEvent.on(compensation.get()));
+            publisher.publishEvent(ExecuteRequestedEvent.on(compensation.get()));
 
         } catch (RuntimeException exception) {
-            failOn(changeRequest, exception.getMessage());
+            LOG.error(format("%s failed due to %s", objective, exception.getMessage()));
+            failOn(changeRequest);
         }
     }
 
@@ -98,11 +100,11 @@ public class MismatchCompensatingPlanner implements Planner {
                 changeRequest.getResult().getContextVariables());
     }
 
-    private void failOn(ChangeRequest changeRequest, String cause) {
+    private void failOn(ChangeRequest changeRequest) {
         Objective objective = changeRequest.getObjective();
-        LOG.debug(format("Compensation of %s failed. %s", objective, cause));
         objective.setState(Objective.State.FAILED);
         objectiveRepository.save(objective);
+        publisher.publishEvent(ObjectiveFailedEvent.on(objective));
     }
 
     @Autowired

@@ -5,6 +5,7 @@ import de.tud.feedback.Satisfiable;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static java.lang.String.format;
 
 public class ObjectiveEvaluationResult implements Satisfiable {
 
@@ -55,6 +56,11 @@ public class ObjectiveEvaluationResult implements Satisfiable {
     @Override
     public boolean hasBeenSatisfied() {
         return satisfied;
+    }
+
+    @Override
+    public String toString() {
+        return format("%s(compensate = %s, satisfied = %s)", getClass().getSimpleName(), compensate, satisfied);
     }
 
 }

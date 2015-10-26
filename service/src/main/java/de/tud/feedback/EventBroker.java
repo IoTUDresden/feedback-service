@@ -5,7 +5,7 @@ import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.ChangeRequestedEvent;
-import de.tud.feedback.event.ExecuteRequestEvent;
+import de.tud.feedback.event.ExecuteRequestedEvent;
 import de.tud.feedback.event.SymptomDetectedEvent;
 import de.tud.feedback.loop.Executor;
 import de.tud.feedback.loop.Planner;
@@ -42,7 +42,6 @@ public class EventBroker {
     @HandleAfterCreate
     public void importContextSourcesAfterContextCreation(Context context) {
         contextService.importAllOf(context);
-        contextService.beginContextUpdates();
     }
 
     @EventListener
@@ -56,7 +55,7 @@ public class EventBroker {
     }
 
     @EventListener
-    public void executeCommandOn(ExecuteRequestEvent event) {
+    public void executeCommandOn(ExecuteRequestedEvent event) {
         executor.execute(event.command());
     }
 

@@ -2,7 +2,6 @@ package de.tud.feedback.plugin;
 
 import com.google.common.collect.ImmutableMap;
 import de.tud.feedback.CypherExecutor;
-import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.repository.CompensationRepository;
 
@@ -41,7 +40,6 @@ public class DogOntCompensationRepository implements CompensationRepository {
     }
 
     @Override
-    @LogInvocation
     public Collection<Command> findCommandsManipulating(Long testNodeId) {
         return executor.execute(QUERY, params()
                 .put("stateId", testNodeId)
