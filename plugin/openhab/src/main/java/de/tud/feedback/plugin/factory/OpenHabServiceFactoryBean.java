@@ -4,12 +4,10 @@ import de.tud.feedback.plugin.openhab.OpenHabService;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
-@Component
 public class OpenHabServiceFactoryBean extends AbstractFactoryBean<OpenHabService> {
 
     private String host;

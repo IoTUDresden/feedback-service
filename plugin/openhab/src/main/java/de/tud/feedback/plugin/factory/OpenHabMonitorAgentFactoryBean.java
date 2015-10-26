@@ -4,11 +4,9 @@ import de.tud.feedback.plugin.OpenHabMonitorAgent;
 import de.tud.feedback.plugin.openhab.ItemUpdateHandler;
 import de.tud.feedback.plugin.openhab.OpenHabService;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Component
 public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabMonitorAgent> {
 
     private Double numberStateChangeDelta = 0.01;

@@ -5,11 +5,9 @@ import de.tud.feedback.impl.LabelBasedGraphOperations;
 import de.tud.feedback.plugin.RdfContextImporter;
 import de.tud.feedback.plugin.rdf.GraphOperationsRdfHandler;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Component
 public class RdfContextImporterFactoryBean extends AbstractFactoryBean<RdfContextImporter> {
 
     private CypherExecutor executor;

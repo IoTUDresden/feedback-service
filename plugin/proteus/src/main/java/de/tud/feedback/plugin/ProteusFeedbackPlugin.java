@@ -8,13 +8,13 @@ import de.tud.feedback.loop.CommandExecutor;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.loop.ObjectiveEvaluator;
-import de.tud.feedback.plugin.factory.*;
-import de.tud.feedback.plugin.openhab.OpenHabService;
+import de.tud.feedback.plugin.factory.DogOntCompensationRepositoryFactoryBean;
+import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
+import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
+import de.tud.feedback.plugin.factory.SpelObjectiveEvaluatorFactoryBean;
 import de.tud.feedback.repository.CompensationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.inject.Provider;
 import java.util.Collection;
@@ -23,8 +23,6 @@ import static com.google.common.collect.Lists.newArrayList;
 
 @Component
 public class ProteusFeedbackPlugin implements FeedbackPlugin {
-
-    public static final String NAME = "proteus";
 
     @Autowired Provider<RdfContextImporter> importerProvider;
 
@@ -85,56 +83,5 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
         return compensationRepositoryProvider.get();
     }
 
-    @Autowired
-    void configureRdfContextImporters(
-            RdfContextImporterFactoryBean factoryBean
-    ) {
-        factoryBean
-                .setNodeLabel(StringUtils.capitalize(ProteusFeedbackPlugin.NAME));
-    }
-
-    @Autowired
-    void configureOpenHabService(
-            OpenHabServiceFactoryBean factoryBean,
-            @Value("${openHab.host:localhost}") String host,
-            @Value("${openHab.port:8080}") int port
-    ) {
-        factoryBean
-                .setHost(host)
-                .setPort(port);
-    }
-
-    @Autowired
-    void configureOpenHabMonitorAgents(
-            OpenHabMonitorAgentFactoryBean factoryBean,
-            OpenHabService service,
-            @Value("${openHab.delta:0.01}") Double delta,
-            @Value("${openHab.pollingSeconds:1}") Integer pollingSeconds
-    ) {
-        factoryBean
-                .setNumberStateChangeDelta(delta)
-                .setPollingSeconds(pollingSeconds)
-                .setService(service);
-    }
-
-    @Autowired
-    void configureOpenHabCommandExecutor(
-            OpenHabCommandExecutorFactoryBean factoryBean,
-            OpenHabService service,
-            @Value("${dogOnt.thingNodePrefix:Thing_}") String thingNodePrefix
-    ) {
-        factoryBean
-                .setItemNameMapper(s -> s.replace(thingNodePrefix, ""))
-                .setService(service);
-    }
-
-    @Autowired
-    void configureDogOntContextUpdaters(
-            DogOntContextUpdaterFactoryBean factoryBean,
-            @Value("${dogOnt.stateNodePrefix:State_}") String stateNodePrefix
-    ) {
-        factoryBean
-                .setStateNameMapper(s -> stateNodePrefix + s);
-    }
 
 }

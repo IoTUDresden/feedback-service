@@ -3,13 +3,11 @@ package de.tud.feedback.plugin.factory;
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.plugin.DogOntContextUpdater;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Component
 public class DogOntContextUpdaterFactoryBean extends AbstractFactoryBean<DogOntContextUpdater> {
 
     private CypherExecutor executor;
