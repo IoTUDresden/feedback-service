@@ -5,6 +5,7 @@ import de.tud.feedback.repository.graph.WorkflowRepository;
 import org.neo4j.ogm.session.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -13,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.server.Neo4jServer;
 import org.springframework.data.neo4j.server.RemoteServer;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,12 @@ public abstract class Neo4jConfiguration extends org.springframework.data.neo4j.
     @Override
     public SessionFactory getSessionFactory() {
         return new SessionFactory(Workflow.class.getPackage().getName());
+    }
+
+    @Override
+    @Qualifier("neo4jTransactionManager")
+    public PlatformTransactionManager transactionManager() throws Exception {
+        return super.transactionManager();
     }
 
     @Configuration

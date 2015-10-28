@@ -1,5 +1,9 @@
 package de.tud.feedback.loop;
 
-public interface Executor extends CommandExecutor {
+import de.tud.feedback.domain.Command;
+
+public interface Executor {
+
+    void execute(Command command);
 
 }

@@ -3,16 +3,17 @@ package de.tud.feedback.loop.impl;
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.domain.Context;
-import de.tud.feedback.event.SymptomDetectedEvent;
 import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.Monitor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import de.tud.feedback.loop.MonitorAgent;
+import de.tud.feedback.service.LoopService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
 
 @Component
 @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -20,59 +21,43 @@ public class RealTimeAgentMonitor implements Monitor {
 
     private static final long REAL_TIME_STEP_MILLIS = 1000L;
 
-    private FeedbackPlugin plugin;
+    private final Collection<MonitorAgent> agents;
 
-    private SimpleCypherExecutor executor;
+    private final ContextUpdater updater;
 
-    private ApplicationEventPublisher publisher;
+    private final TaskExecutor tasks;
 
-    private TaskExecutor tasks;
+    private final TaskScheduler scheduler;
 
-    private TaskScheduler scheduler;
+    private final LoopService loopService;
+
+    public RealTimeAgentMonitor(
+            FeedbackPlugin plugin, LoopService loopService, SimpleCypherExecutor executor,
+            TaskExecutor tasks, TaskScheduler scheduler) {
+        this.tasks = tasks;
+        this.scheduler = scheduler;
+        this.loopService = loopService;
+
+        this.updater = plugin.getContextUpdater(executor);
+        this.agents = plugin.getMonitorAgents();
+    }
 
     @Override
     public void monitor(Context context) {
         ContextUpdater.Listener listener = () ->
-                publisher.publishEvent(SymptomDetectedEvent.on(context));
+                loopService.analyzeGoalsForWorkflowsWithin(context);
 
-        plugin.getMonitorAgents().forEach(agent -> {
-            ContextUpdater updater = plugin.getContextUpdater(executor);
-            updater.workWith(listener);
-            updater.workWith(context);
-            agent.workWith(updater);
-            tasks.execute(agent);
-        });
+        updater.workWith(listener);
+        updater.workWith(context);
+
+        agents.forEach(agent -> agent.workWith(updater));
+        agents.stream().forEach(tasks::execute);
 
         realTimeIsGoingByFor(listener);
     }
 
     private void realTimeIsGoingByFor(ContextUpdater.Listener listener) {
-        scheduler.scheduleWithFixedDelay(() -> listener.contextUpdated(), REAL_TIME_STEP_MILLIS);
-    }
-
-    @Autowired
-    public void setTaskExecutor(TaskExecutor tasks) {
-        this.tasks = tasks;
-    }
-
-    @Autowired
-    public void setFeedbackPlugin(FeedbackPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    @Autowired
-    public void setCypherExecutor(SimpleCypherExecutor executor) {
-        this.executor = executor;
-    }
-
-    @Autowired
-    public void setApplicationEventPublisher(ApplicationEventPublisher delegatePublisher) {
-        this.publisher = delegatePublisher;
-    }
-
-    @Autowired
-    public void setScheduler(TaskScheduler scheduler) {
-        this.scheduler = scheduler;
+        scheduler.scheduleWithFixedDelay(listener::contextUpdated, REAL_TIME_STEP_MILLIS);
     }
 
 }

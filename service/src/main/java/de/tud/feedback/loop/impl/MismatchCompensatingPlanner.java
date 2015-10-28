@@ -1,27 +1,22 @@
 package de.tud.feedback.loop.impl;
 
-import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.FeedbackPlugin;
-import de.tud.feedback.annotation.GraphTransactional;
+import de.tud.feedback.domain.ChangeRequest;
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.domain.ContextMismatch;
 import de.tud.feedback.domain.Objective;
-import de.tud.feedback.event.ExecuteRequestedEvent;
-import de.tud.feedback.event.ObjectiveFailedEvent;
 import de.tud.feedback.graph.SimpleCypherExecutor;
-import de.tud.feedback.loop.ChangeRequest;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.Planner;
 import de.tud.feedback.repository.CompensationRepository;
 import de.tud.feedback.repository.graph.CommandRepository;
-import de.tud.feedback.repository.graph.ObjectiveRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -29,33 +24,27 @@ import static java.lang.String.format;
 import static org.joda.time.DateTime.now;
 
 @Component
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class MismatchCompensatingPlanner implements Planner {
 
     private static final Logger LOG = LoggerFactory.getLogger(MismatchCompensatingPlanner.class);
 
-    private ApplicationEventPublisher publisher;
+    private final CommandRepository commandRepository;
 
-    private ObjectiveRepository objectiveRepository;
+    private final CompensationRepository compensationRepository;
 
-    private CompensationRepository compensationRepository;
+    private final MismatchProvider mismatchProvider;
 
-    private CommandRepository commandRepository;
-
-    private MismatchProvider mismatchProvider;
-
-    private CypherExecutor executor;
-
-    private FeedbackPlugin plugin;
-
-    @PostConstruct
-    public void init() {
-        compensationRepository = plugin.getCompensationRepository(executor);
+    @Autowired
+    public MismatchCompensatingPlanner(
+            FeedbackPlugin plugin, CommandRepository commandRepository, SimpleCypherExecutor executor) {
+        this.commandRepository = commandRepository;
         mismatchProvider = plugin.getMismatchProvider();
+        compensationRepository = plugin.getCompensationRepository(executor);
     }
 
     @Override
-    @GraphTransactional
-    public void plan(ChangeRequest changeRequest) {
+    public Optional<Command> plan(ChangeRequest changeRequest) {
         Objective objective = changeRequest.getObjective();
         ContextMismatch mismatch = mismatchWithin(changeRequest);
         Long measuringNodeId = changeRequest.getResult().getMeasuringNodeId();
@@ -69,28 +58,26 @@ public class MismatchCompensatingPlanner implements Planner {
                     .findAny();
 
             if (compensation.isPresent()) {
-                compensate(objective, compensation.get());
+                prepare(compensation.get(), objective);
+                return compensation;
+
             } else {
-                failOn(objective);
+                objective.setState(Objective.State.FAILED);
             }
 
         } catch (RuntimeException exception) {
             LOG.error(format("%s failed due to %s", objective, exception.getMessage()));
-            failOn(objective);
-
-        } finally {
-            objectiveRepository.save(objective);
+            objective.setState(Objective.State.FAILED);
         }
+
+        return Optional.empty();
     }
 
-    private void compensate(Objective objective, Command compensation) {
-        objective.getCommands().add(compensation);
+    private void prepare(Command compensation, Objective objective) {
         compensation.setObjective(objective);
-        commandRepository.save(compensation);
-
+        objective.getCommands().add(compensation);
         objective.setCreated(now());
         objective.setState(Objective.State.UNSATISFIED);
-        publisher.publishEvent(ExecuteRequestedEvent.on(compensation));
     }
 
     private boolean isCompensating(ContextMismatch mismatch, Command command) {
@@ -106,36 +93,6 @@ public class MismatchCompensatingPlanner implements Planner {
         return mismatchProvider.getMismatch(
                 changeRequest.getObjective().getSatisfiedExpression(),
                 changeRequest.getResult().getContextVariables());
-    }
-
-    private void failOn(Objective objective) {
-        objective.setState(Objective.State.FAILED);
-        publisher.publishEvent(ObjectiveFailedEvent.on(objective));
-    }
-
-    @Autowired
-    public void setObjectiveRepository(ObjectiveRepository objectiveRepository) {
-        this.objectiveRepository = objectiveRepository;
-    }
-
-    @Autowired
-    public void setCommandRepository(CommandRepository commandRepository) {
-        this.commandRepository = commandRepository;
-    }
-
-    @Autowired
-    public void setFeedbackPlugin(FeedbackPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    @Autowired
-    public void setExecutor(SimpleCypherExecutor executor) {
-        this.executor = executor;
-    }
-
-    @Autowired
-    public void setPublisher(ApplicationEventPublisher publisher) {
-        this.publisher = publisher;
     }
 
 }

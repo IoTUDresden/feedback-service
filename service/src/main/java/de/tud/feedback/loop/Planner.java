@@ -1,7 +1,10 @@
 package de.tud.feedback.loop;
 
+import de.tud.feedback.domain.ChangeRequest;
+import de.tud.feedback.domain.Command;
+
 public interface Planner {
 
-    void plan(ChangeRequest changeRequest);
+    java.util.Optional<Command> plan(ChangeRequest changeRequest);
 
 }
