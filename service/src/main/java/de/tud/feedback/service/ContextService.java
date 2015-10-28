@@ -6,4 +6,6 @@ public interface ContextService {
 
     void importAllOf(Context context);
 
+    void deleteImportsFor(Context context);
+
 }

@@ -25,19 +25,19 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class PluginContextService implements ContextService {
 
-    private ContextImportRepository imports;
+    private ContextImportRepository contextImportRepository;
 
     private FeedbackPlugin plugin;
 
     private Provider<CollectingCypherExecutor> executorProvider;
 
-    private ContextRepository contexts;
+    private ContextRepository contextRepository;
 
     private Provider<Monitor> monitor;
 
     @PostConstruct
     public void beginUpdatesOnAllContexts() {
-        newArrayList(contexts.findAll())
+        newArrayList(contextRepository.findAll())
                 .forEach(context -> monitor.get().monitor(context));
     }
 
@@ -52,13 +52,18 @@ public class PluginContextService implements ContextService {
         monitor.get().monitor(context);
     }
 
+    @Override
+    public void deleteImportsFor(Context context) {
+        contextImportRepository.deleteAllWithin(context);
+    }
+
     private void importContextFrom(ContextImport contextImport) {
         final CollectingCypherExecutor executor = executorProvider.get();
 
         plugin.getContextImporter(executor).importContextFrom(contextImport);
         partition(entranceNodesFrom(executor.createdNodes()), 10).forEach(nodes -> {
             contextImport.getContextNodes().addAll(nodes);
-            imports.save(contextImport);
+            contextImportRepository.save(contextImport);
         });
     }
 
@@ -69,8 +74,8 @@ public class PluginContextService implements ContextService {
     }
 
     @Autowired
-    public void setContextImports(ContextImportRepository repository) {
-        imports = repository;
+    public void setContextImportRepository(ContextImportRepository repository) {
+        contextImportRepository = repository;
     }
 
     @Autowired
@@ -89,8 +94,8 @@ public class PluginContextService implements ContextService {
     }
 
     @Autowired
-    public void setContexts(ContextRepository contexts) {
-        this.contexts = contexts;
+    public void setContextRepository(ContextRepository contextRepository) {
+        this.contextRepository = contextRepository;
     }
 
 }

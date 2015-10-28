@@ -1,6 +1,5 @@
 package de.tud.feedback.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.tud.feedback.Satisfiable;
 import org.joda.time.DateTime;
@@ -51,7 +50,6 @@ public class Objective implements Satisfiable {
     @Convert(graphPropertyType = String.class)
     private DateTime created = now();
 
-    @JsonIgnore
     @Relationship(type = "executedFor", direction = Relationship.INCOMING)
     private Set<Command> commands = newHashSet();
 
@@ -61,7 +59,6 @@ public class Objective implements Satisfiable {
     @Relationship(type = "hasObjective", direction = Relationship.INCOMING)
     private Goal goal;
 
-    @JsonIgnore
     public void setCommands(Set<Command> commands) {
         try {
             this.commands = checkNotNull(commands);
@@ -118,7 +115,6 @@ public class Objective implements Satisfiable {
         return state;
     }
 
-    @JsonIgnore
     public void setState(State state) {
         this.state = state;
     }
@@ -140,7 +136,6 @@ public class Objective implements Satisfiable {
         return created;
     }
 
-    @JsonIgnore
     public void setCreated(DateTime created) {
         this.created = created;
     }

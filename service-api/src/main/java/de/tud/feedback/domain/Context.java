@@ -1,6 +1,5 @@
 package de.tud.feedback.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.neo4j.ogm.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -27,7 +26,6 @@ public class Context {
     @Relationship(type = "for", direction = Relationship.INCOMING)
     private Set<ContextImport> imports = newHashSet();
 
-    @JsonIgnore
     @Relationship(type = "runsWithin", direction = Relationship.INCOMING)
     private Set<Workflow> workflows;
 

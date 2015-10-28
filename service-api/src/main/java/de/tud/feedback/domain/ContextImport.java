@@ -42,7 +42,6 @@ public class ContextImport {
     @Relationship(type = "within", direction = Relationship.INCOMING)
     private Set<ContextNode> contextNodes = newHashSet();
 
-    @JsonIgnore
     @Relationship(type = "for", direction = Relationship.OUTGOING)
     private Context context;
 

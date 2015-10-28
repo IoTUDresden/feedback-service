@@ -1,6 +1,5 @@
 package de.tud.feedback.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.tud.feedback.Satisfiable;
 import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
@@ -80,7 +79,6 @@ public class Goal implements Satisfiable {
         return created;
     }
 
-    @JsonIgnore
     public void setCreated(DateTime created) {
         this.created = created;
     }
