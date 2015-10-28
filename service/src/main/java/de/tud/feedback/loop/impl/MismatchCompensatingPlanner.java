@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.lang.String.format;
 import static org.joda.time.DateTime.now;
@@ -48,18 +48,21 @@ public class MismatchCompensatingPlanner implements Planner {
         Objective objective = changeRequest.getObjective();
         ContextMismatch mismatch = mismatchWithin(changeRequest);
         Long measuringNodeId = changeRequest.getResult().getMeasuringNodeId();
-        Collection<Command> executedCommands = commandRepository.findCommandsExecutedFor(objective);
-        Collection<Command> manipulatingCommands = compensationRepository.findCommandsManipulating(measuringNodeId);
+        Set<Command> executedCommands = commandRepository.findCommandsExecutedFor(objective);
+        Set<Command> manipulatingCommands = compensationRepository.findCommandsManipulating(measuringNodeId);
 
         try {
-            Optional<Command> compensation = manipulatingCommands.stream()
-                    .filter(command -> command.isRepeatable() || !executedCommands.contains(command))
-                    .filter(command -> isCompensating(mismatch, command))
+            Optional<Command> command = manipulatingCommands.stream()
+                    .filter(it -> it.isRepeatable() || !executedCommands.contains(it))
+                    .filter(it -> isCompensating(mismatch, it))
                     .findAny();
 
-            if (compensation.isPresent()) {
-                prepare(compensation.get(), objective);
-                return compensation;
+            if (command.isPresent()) {
+                Command compensation = executedCommands.stream()
+                        .filter(it -> it.equals(command.get()))
+                        .findAny().orElse(command.get());
+
+                return Optional.of(prepared(compensation, objective));
 
             } else {
                 objective.setState(Objective.State.FAILED);
@@ -73,11 +76,12 @@ public class MismatchCompensatingPlanner implements Planner {
         return Optional.empty();
     }
 
-    private void prepare(Command compensation, Objective objective) {
+    private Command prepared(Command compensation, Objective objective) {
         compensation.setObjective(objective);
         objective.getCommands().add(compensation);
         objective.setCreated(now());
         objective.setState(Objective.State.UNSATISFIED);
+        return compensation;
     }
 
     private boolean isCompensating(ContextMismatch mismatch, Command command) {

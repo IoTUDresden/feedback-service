@@ -1,11 +1,9 @@
 package de.tud.feedback.loop;
 
-import de.tud.feedback.domain.Workflow;
-
 import java.util.concurrent.Callable;
 
-public interface LoopIteration extends Callable<Void> {
+public interface LoopIteration<T> extends Callable<T> {
 
-    LoopIteration on(Workflow workflow);
+    LoopIteration<T> on(T type);
 
 }

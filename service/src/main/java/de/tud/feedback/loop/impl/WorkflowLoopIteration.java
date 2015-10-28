@@ -7,16 +7,21 @@ import de.tud.feedback.loop.Analyzer;
 import de.tud.feedback.loop.Executor;
 import de.tud.feedback.loop.LoopIteration;
 import de.tud.feedback.loop.Planner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 @Component
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class SequentialLoopIteration implements LoopIteration {
+@Scope("prototype")
+public class WorkflowLoopIteration implements LoopIteration<Workflow> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WorkflowLoopIteration.class);
 
     private final Analyzer analyzer;
 
@@ -27,7 +32,7 @@ public class SequentialLoopIteration implements LoopIteration {
     private Workflow workflow;
 
     @Autowired
-    public SequentialLoopIteration(Analyzer analyzer, Planner planner, Executor executor) {
+    public WorkflowLoopIteration(Analyzer analyzer, Planner planner, Executor executor) {
         this.analyzer = analyzer;
         this.planner = planner;
         this.executor = executor;
@@ -37,22 +42,24 @@ public class SequentialLoopIteration implements LoopIteration {
         Optional<ChangeRequest> changeRequest = analyzer.analyze(workflow);
 
         if (changeRequest.isPresent()) {
+            LOG.info(format("Plan %s", changeRequest.get()));
             Optional<Command> command = planner.plan(changeRequest.get());
 
             if (command.isPresent()) {
+                LOG.info(format("Exec %s", command.get()));
                 executor.execute(command.get());
             }
         }
     }
 
     @Override
-    public Void call() throws Exception {
+    public Workflow call() throws Exception {
         stepThrough();
-        return null;
+        return workflow;
     }
 
     @Override
-    public LoopIteration on(Workflow workflow) {
+    public LoopIteration<Workflow> on(Workflow workflow) {
         this.workflow = workflow;
         return this;
     }

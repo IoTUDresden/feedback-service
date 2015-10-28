@@ -2,10 +2,10 @@ package de.tud.feedback.repository;
 
 import de.tud.feedback.domain.Command;
 
-import java.util.Collection;
+import java.util.Set;
 
 public interface CompensationRepository {
 
-    Collection<Command> findCommandsManipulating(Long testNodeId);
+    Set<Command> findCommandsManipulating(Long testNodeId);
 
 }

@@ -5,8 +5,8 @@ import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.repository.CompensationRepository;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import static de.tud.feedback.Utils.params;
 import static java.util.stream.Collectors.toSet;
@@ -35,7 +35,7 @@ public class DogOntCompensationRepository implements CompensationRepository {
     }
 
     @Override
-    public Collection<Command> findCommandsManipulating(Long testNodeId) {
+    public Set<Command> findCommandsManipulating(Long testNodeId) {
         return executor.execute(query, params()
                     .put("stateId", testNodeId)
                     .build())

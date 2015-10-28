@@ -8,13 +8,13 @@ import de.tud.feedback.loop.Analyzer;
 import de.tud.feedback.loop.ObjectiveEvaluator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
-@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Scope("prototype")
 public class ObjectiveEvaluatingAnalyzer implements Analyzer {
 
     private final ObjectiveEvaluator evaluator;
@@ -48,6 +48,7 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
                     .stream()
                     .flatMap(goal -> goal.getObjectives().stream())
                     .map(this::toChangeRequest)
+                    .filter(Objects::nonNull)
                     .findAny();
         }
     }

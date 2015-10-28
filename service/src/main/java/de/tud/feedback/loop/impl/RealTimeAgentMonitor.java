@@ -7,6 +7,7 @@ import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.Monitor;
 import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.service.LoopService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.task.TaskExecutor;
@@ -31,6 +32,7 @@ public class RealTimeAgentMonitor implements Monitor {
 
     private final LoopService loopService;
 
+    @Autowired
     public RealTimeAgentMonitor(
             FeedbackPlugin plugin, LoopService loopService, SimpleCypherExecutor executor,
             TaskExecutor tasks, TaskScheduler scheduler) {
