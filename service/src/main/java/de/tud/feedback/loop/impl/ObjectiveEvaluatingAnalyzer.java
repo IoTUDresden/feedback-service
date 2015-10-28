@@ -2,6 +2,7 @@ package de.tud.feedback.loop.impl;
 
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.FeedbackPlugin;
+import de.tud.feedback.annotation.GraphTransactional;
 import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.Objective.State;
@@ -39,6 +40,7 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
     }
 
     @Override
+    @GraphTransactional
     public void analyze(Workflow workflow) {
         boolean allGoalsHaveBeenSatisfied = workflow.getGoals()
                 .stream()

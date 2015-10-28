@@ -1,6 +1,7 @@
 package de.tud.feedback.loop.impl;
 
 import de.tud.feedback.FeedbackPlugin;
+import de.tud.feedback.annotation.GraphTransactional;
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.loop.CommandExecutor;
 import de.tud.feedback.loop.Executor;
@@ -22,6 +23,7 @@ public class DelegatingExecutor implements Executor {
     private CommandRepository commandRepository;
 
     @Override
+    @GraphTransactional
     public void execute(Command command) {
         try {
             commandExecutor.execute(command);

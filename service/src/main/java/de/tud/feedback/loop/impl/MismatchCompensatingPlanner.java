@@ -2,6 +2,7 @@ package de.tud.feedback.loop.impl;
 
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.FeedbackPlugin;
+import de.tud.feedback.annotation.GraphTransactional;
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.domain.ContextMismatch;
 import de.tud.feedback.domain.Objective;
@@ -53,6 +54,7 @@ public class MismatchCompensatingPlanner implements Planner {
     }
 
     @Override
+    @GraphTransactional
     public void plan(ChangeRequest changeRequest) {
         Objective objective = changeRequest.getObjective();
         ContextMismatch mismatch = mismatchWithin(changeRequest);

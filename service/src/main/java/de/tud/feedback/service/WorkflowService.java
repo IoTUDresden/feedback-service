@@ -9,4 +9,6 @@ public interface WorkflowService {
 
     void finish(Workflow workflow);
 
+    void deleteCascade(Workflow workflow);
+
 }

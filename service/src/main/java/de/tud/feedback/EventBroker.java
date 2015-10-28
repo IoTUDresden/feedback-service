@@ -1,8 +1,6 @@
 package de.tud.feedback;
 
 import de.tud.feedback.domain.Context;
-import de.tud.feedback.domain.Goal;
-import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.ChangeRequestedEvent;
 import de.tud.feedback.event.ExecuteRequestedEvent;
@@ -21,9 +19,6 @@ import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
-
-import java.util.Collection;
-import java.util.Set;
 
 @Component
 @RepositoryEventHandler
@@ -70,16 +65,7 @@ public class EventBroker {
 
     @HandleBeforeDelete
     public void cascadingDelete(Workflow workflow) {
-        Set<Goal> goals = goalRepository.findGoalsFor(workflow);
-
-        goals.forEach(goal -> {
-            Collection<Objective> objectives = goal.getObjectives();
-
-            objectives.forEach(objective -> commandRepository.delete(objective.getCommands()));
-            objectiveRepository.delete(objectives);
-        });
-
-        goalRepository.delete(goals);
+        workflowService.deleteCascade(workflow);
     }
 
 }
