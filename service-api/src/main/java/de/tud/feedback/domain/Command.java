@@ -23,6 +23,9 @@ public class Command {
     @Property
     private String name;
 
+    @Property
+    private boolean repeatable;
+
     @Relationship(type = "executedFor", direction = Relationship.OUTGOING)
     private Objective objective;
 
@@ -58,6 +61,15 @@ public class Command {
 
     public Command setNameTo(String name) {
         this.name = name;
+        return this;
+    }
+
+    public boolean isRepeatable() {
+        return repeatable;
+    }
+
+    public Command setRepeatable(boolean repeatable) {
+        this.repeatable = repeatable;
         return this;
     }
 

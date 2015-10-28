@@ -18,9 +18,12 @@ import de.tud.feedback.service.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
-import org.springframework.data.rest.core.annotation.HandleAfterDelete;
+import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.Set;
 
 @Component
 @RepositoryEventHandler
@@ -65,19 +68,18 @@ public class EventBroker {
         contextService.importAllOf(context);
     }
 
-    @HandleAfterDelete
-    public void deleteWorkflowGoals(Workflow workflow) {
-        goalRepository.delete(workflow.getGoals());
-    }
+    @HandleBeforeDelete
+    public void cascadingDelete(Workflow workflow) {
+        Set<Goal> goals = goalRepository.findGoalsFor(workflow);
 
-    @HandleAfterDelete
-    public void deleteGoalObjectives(Goal goal) {
-        objectiveRepository.delete(goal.getObjectives());
-    }
+        goals.forEach(goal -> {
+            Collection<Objective> objectives = goal.getObjectives();
 
-    @HandleAfterDelete
-    public void deleteObjectiveCommands(Objective objective) {
-        commandRepository.delete(objective.getCommands());
+            objectives.forEach(objective -> commandRepository.delete(objective.getCommands()));
+            objectiveRepository.delete(objectives);
+        });
+
+        goalRepository.delete(goals);
     }
 
 }

@@ -7,13 +7,10 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import java.util.concurrent.Executor;
 
 @EnableAsync
 @EnableCaching
@@ -30,17 +27,13 @@ public class ServiceConfiguration {
     }
 
     @Bean
-    public TaskExecutor taskExecutor() {
+    public ConcurrentTaskScheduler taskScheduler() {
+        ConcurrentTaskScheduler taskScheduler = new ConcurrentTaskScheduler();
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        taskScheduler.setConcurrentExecutor(executor);
         executor.setCorePoolSize(10);
-        return executor;
-    }
-
-    @Bean
-    public TaskScheduler taskScheduler(Executor executor) {
-        ConcurrentTaskScheduler scheduler = new ConcurrentTaskScheduler();
-        scheduler.setConcurrentExecutor(executor);
-        return scheduler;
+        executor.initialize();
+        return taskScheduler;
     }
 
 }

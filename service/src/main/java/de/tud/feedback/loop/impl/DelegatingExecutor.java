@@ -2,15 +2,12 @@ package de.tud.feedback.loop.impl;
 
 import de.tud.feedback.FeedbackPlugin;
 import de.tud.feedback.domain.Command;
-import de.tud.feedback.domain.Objective;
-import de.tud.feedback.event.ObjectiveFailedEvent;
 import de.tud.feedback.loop.CommandExecutor;
 import de.tud.feedback.loop.Executor;
-import de.tud.feedback.repository.graph.ObjectiveRepository;
+import de.tud.feedback.repository.graph.CommandRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import static java.lang.String.format;
@@ -22,9 +19,7 @@ public class DelegatingExecutor implements Executor {
 
     private CommandExecutor commandExecutor;
 
-    private ObjectiveRepository objectiveRepository;
-
-    private ApplicationEventPublisher publisher;
+    private CommandRepository commandRepository;
 
     @Override
     public void execute(Command command) {
@@ -32,14 +27,9 @@ public class DelegatingExecutor implements Executor {
             commandExecutor.execute(command);
         } catch (RuntimeException exception) {
             LOG.error(format("%s failed. %s", command, exception.getMessage()));
-            failOn(command.getObjective());
+            command.setRepeatable(false);
+            commandRepository.save(command);
         }
-    }
-
-    private void failOn(Objective objective) {
-        objective.setState(Objective.State.FAILED);
-        objectiveRepository.save(objective);
-        publisher.publishEvent(ObjectiveFailedEvent.on(objective));
     }
 
     @Autowired
@@ -48,13 +38,8 @@ public class DelegatingExecutor implements Executor {
     }
 
     @Autowired
-    public void setObjectiveRepository(ObjectiveRepository objectiveRepository) {
-        this.objectiveRepository = objectiveRepository;
-    }
-
-    @Autowired
-    public void setPublisher(ApplicationEventPublisher publisher) {
-        this.publisher = publisher;
+    public void setCommandRepository(CommandRepository commandRepository) {
+        this.commandRepository = commandRepository;
     }
 
 }

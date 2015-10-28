@@ -12,7 +12,7 @@ import java.util.Set;
 @RepositoryRestResource
 public interface GoalRepository extends GraphRepository<Goal> {
 
-    @Query( "MATCH p = (o:Objective)<-[:hasObjective]-(g:Goal)<-[:hasGoal]-(w:Workflow) " +
+    @Query( "MATCH p = (c:Command)-[:executedFor]->(o:Objective)<-[:hasObjective]-(g:Goal)<-[:hasGoal]-(w:Workflow) " +
             "WHERE ID(w) = {workflowId} " +
             "RETURN p")
     Set<Goal> findGoalsFor(@Param("workflowId") Workflow workflow);

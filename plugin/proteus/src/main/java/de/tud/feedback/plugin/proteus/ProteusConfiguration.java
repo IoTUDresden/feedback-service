@@ -5,6 +5,7 @@ import de.tud.feedback.plugin.openhab.OpenHabService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
 
 @Configuration
 public class ProteusConfiguration {
@@ -12,6 +13,11 @@ public class ProteusConfiguration {
     @Bean
     public RdfContextImporterFactoryBean rdfContextImporterFactoryBean() {
         return new RdfContextImporterFactoryBean().setNodeLabel("Proteus");
+    }
+    
+    @Bean
+    public DogOntCompensationRepositoryFactoryBean dogOntCompensationRepositoryFactoryBean(ResourceLoader loader) {
+        return new DogOntCompensationRepositoryFactoryBean().setLoader(loader);
     }
 
     @Bean

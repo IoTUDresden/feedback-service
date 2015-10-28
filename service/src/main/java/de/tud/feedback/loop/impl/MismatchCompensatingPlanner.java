@@ -62,31 +62,32 @@ public class MismatchCompensatingPlanner implements Planner {
 
         try {
             Optional<Command> compensation = manipulatingCommands.stream()
-                    .filter(command -> !executedCommands.contains(command))
+                    .filter(command -> command.isRepeatable() || !executedCommands.contains(command))
                     .filter(command -> isCompensating(mismatch, command))
                     .findAny();
 
             if (compensation.isPresent()) {
                 compensate(objective, compensation.get());
             } else {
-                failOn(changeRequest);
+                failOn(objective);
             }
 
         } catch (RuntimeException exception) {
             LOG.error(format("%s failed due to %s", objective, exception.getMessage()));
-            failOn(changeRequest);
+            failOn(objective);
+
+        } finally {
+            objectiveRepository.save(objective);
         }
     }
 
     private void compensate(Objective objective, Command compensation) {
+        objective.getCommands().add(compensation);
         compensation.setObjective(objective);
         commandRepository.save(compensation);
 
         objective.setCreated(now());
-        objective.getCommands().add(compensation);
         objective.setState(Objective.State.UNSATISFIED);
-        objectiveRepository.save(objective);
-
         publisher.publishEvent(ExecuteRequestedEvent.on(compensation));
     }
 
@@ -105,10 +106,8 @@ public class MismatchCompensatingPlanner implements Planner {
                 changeRequest.getResult().getContextVariables());
     }
 
-    private void failOn(ChangeRequest changeRequest) {
-        Objective objective = changeRequest.getObjective();
+    private void failOn(Objective objective) {
         objective.setState(Objective.State.FAILED);
-        objectiveRepository.save(objective);
         publisher.publishEvent(ObjectiveFailedEvent.on(objective));
     }
 
