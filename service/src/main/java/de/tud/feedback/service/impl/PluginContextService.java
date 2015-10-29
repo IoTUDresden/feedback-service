@@ -11,6 +11,7 @@ import de.tud.feedback.repository.graph.ContextImportRepository;
 import de.tud.feedback.repository.graph.ContextRepository;
 import de.tud.feedback.service.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -41,6 +42,7 @@ public class PluginContextService implements ContextService {
                 .forEach(context -> monitor.get().monitor(context));
     }
 
+    @Async
     @Override
     @GraphTransactional
     public void importAllOf(Context context) {

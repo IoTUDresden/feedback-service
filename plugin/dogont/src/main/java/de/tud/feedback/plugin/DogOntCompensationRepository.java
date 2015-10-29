@@ -48,27 +48,29 @@ public class DogOntCompensationRepository implements CompensationRepository {
     private boolean isRepeatable(Map<String, Object> attributes) {
         String command = commandFrom(attributes);
         String unit = unitFrom(attributes);
-        Double state;
 
         switch (unit) {
             case "percent":
-                state = numberFrom(attributes);
-                return (0 < state && state < 100) && !OFF.equals(command) && !ON.equals(command);
+                return wontExceedBoundary(command, numberFrom(attributes), 0, 100);
 
             case "degree-Celsius":
-                state = numberFrom(attributes);
-                return (0 < state && state < 50) && !OFF.equals(command) && !ON.equals(command);
+                return wontExceedBoundary(command, numberFrom(attributes), 0, 50);
 
             default: return false;
         }
+    }
+
+    private boolean wontExceedBoundary(String command, int state, int lowerBoundary, int upperBoundary) {
+        return  !(state == upperBoundary && ( ON.equals(command) ||   UP.equals(command))) &&
+                !(state == lowerBoundary && (OFF.equals(command) || DOWN.equals(command)));
     }
 
     private String commandFrom(Map<String, Object> attributes) {
         return String.valueOf(attributes.get("commandType"));
     }
 
-    private Double numberFrom(Map<String, Object> attributes) {
-        return Double.valueOf(String.valueOf(attributes.get("actuatorState")));
+    private int numberFrom(Map<String, Object> attributes) {
+        return Double.valueOf(String.valueOf(attributes.get("actuatorState"))).intValue();
     }
 
     private String unitFrom(Map<String, Object> attributes) {

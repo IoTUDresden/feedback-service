@@ -82,6 +82,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
     @Override
     public void onFailure(Throwable exception) {
         LOG.error(format("Iteration failed with %s", exception.getMessage()), exception);
+        runningIterations.clear(); // LATER do not delete all running iterations
     }
 
 }
