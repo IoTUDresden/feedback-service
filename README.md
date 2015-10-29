@@ -34,7 +34,7 @@ Content-Type: application/json
 } 
 ```
 
-### Create a Process
+### Create a Workflow
 
 ```
 POST /workflows HTTP/1.1
@@ -56,17 +56,18 @@ Content-Type: application/json
 
 {
     "name": "enough light for cooking",
-    "workflow": "http://localhost:9000/workflows/6339",
+    "workflow": "http://localhost:9000/workflows/12916",
     "objectives": [{
-        "name": "light in kitchen > 1000 lux within ten seconds",
-        "satisfied": "#lightIntensity > 1000",
-        "compensate": "#objective.created.isBefore(#now.minusSeconds(10))",
-        "testNodeId": "#stateId",
-        "context": [
-            "MATCH (thing)-[:isIn]->({ name: 'Kitchen_Mueller' })",
+        "name": "kitchen light intensity > 865 lux within two seconds",
+        "satisfiedExpression": "#lightIntensity > 865",
+        "compensateExpression": "#objective.created.isBefore(#now.minusSeconds(2))",
+        "testNodeIdExpression": "#stateId",
+        "contextExpressions": [
+            "MATCH (thing)-[:type]->(sensor {name: 'LightSensor'})",
+            "MATCH (thing)-[:isIn]->(room {name: 'Kitchen_Mueller'})",
             "MATCH (thing)-[:hasState]->(state:LightIntensityState)",
             "MATCH (state)-[:hasStateValue]->(value)",
-            "RETURN avg(toFloat(value.realStateValue)) AS lightIntensity, ID(state) AS stateId"
+            "RETURN avg(toFloat(value.realStateValue)) AS lightIntensity, head(collect(id(state))) AS stateId"
         ]
     }]
 }
