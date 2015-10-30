@@ -1,6 +1,8 @@
 package de.tud.feedback.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -40,9 +42,11 @@ public class ContextImport {
 
     @JsonIgnore
     @Relationship(type = "within", direction = Relationship.INCOMING)
+    @JsonBackReference
     private Set<ContextNode> contextNodes = newHashSet();
 
     @Relationship(type = "for", direction = Relationship.OUTGOING)
+    @JsonManagedReference
     private Context context;
 
     public Context getContext() {

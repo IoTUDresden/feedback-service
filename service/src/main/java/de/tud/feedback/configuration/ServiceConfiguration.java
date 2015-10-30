@@ -17,7 +17,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class ServiceConfiguration {
 
     @Bean
-    public ConcurrentTaskScheduler taskScheduler() {
+    public ConcurrentTaskScheduler taskExecutor() {
         ConcurrentTaskScheduler taskScheduler = new ConcurrentTaskScheduler();
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         taskScheduler.setConcurrentExecutor(executor);

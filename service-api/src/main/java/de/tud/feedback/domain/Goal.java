@@ -1,5 +1,7 @@
 package de.tud.feedback.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import de.tud.feedback.Satisfiable;
 import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
@@ -34,10 +36,12 @@ public class Goal implements Satisfiable {
 
     @NotNull
     @Relationship(type = "hasObjective", direction = Relationship.OUTGOING)
+    @JsonManagedReference
     private Set<Objective> objectives = newHashSet();
 
     @NotNull
     @Relationship(type = "hasGoal", direction = Relationship.INCOMING)
+    @JsonBackReference
     private Workflow workflow;
 
     public Collection<Objective> getObjectives() {

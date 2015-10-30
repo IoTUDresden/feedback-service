@@ -1,5 +1,7 @@
 package de.tud.feedback.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -27,6 +29,7 @@ public class Command {
     private boolean repeatable;
 
     @Relationship(type = "executedFor", direction = Relationship.OUTGOING)
+    @JsonManagedReference
     private Objective objective;
 
     public Objective getObjective() {
