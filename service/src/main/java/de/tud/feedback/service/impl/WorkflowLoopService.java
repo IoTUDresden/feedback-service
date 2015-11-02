@@ -2,14 +2,15 @@ package de.tud.feedback.service.impl;
 
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.Workflow;
+import de.tud.feedback.event.WorkflowDoneEvent;
 import de.tud.feedback.loop.LoopIteration;
 import de.tud.feedback.repository.graph.WorkflowRepository;
 import de.tud.feedback.service.LoopService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.task.AsyncListenableTaskExecutor;
-import org.springframework.messaging.core.MessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
@@ -33,7 +34,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
 
     private final AsyncListenableTaskExecutor tasks;
 
-    private final MessageSendingOperations<String> messagingTemplate;
+    private final ApplicationEventPublisher publisher;
 
     private final Set<String> runningIterations = newConcurrentHashSet();
 
@@ -42,12 +43,12 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
             AsyncListenableTaskExecutor taskExecutor,
             WorkflowRepository workflowRepository,
             Provider<LoopIteration<Workflow>> loopIterationProvider,
-            MessageSendingOperations<String> messagingTemplate) {
+            ApplicationEventPublisher publisher) {
 
         this.tasks = taskExecutor;
         this.workflowRepository = workflowRepository;
         this.loopIterationProvider = loopIterationProvider;
-        this.messagingTemplate = messagingTemplate;
+        this.publisher = publisher;
     }
 
     @Override
@@ -84,7 +85,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
         }
 
         if (workflow.hasBeenFinished() || workflow.hasBeenSatisfied()) {
-            messagingTemplate.convertAndSend(format("/workflows/%s", workflow.getId()), workflow);
+            publisher.publishEvent(WorkflowDoneEvent.on(workflow));
         }
     }
 
