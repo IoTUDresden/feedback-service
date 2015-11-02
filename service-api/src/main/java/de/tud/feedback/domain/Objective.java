@@ -52,14 +52,14 @@ public class Objective implements Satisfiable {
     private DateTime created = now();
 
     @Relationship(type = "executedFor", direction = Relationship.INCOMING)
-    @JsonBackReference
+    @JsonBackReference("objective-command")
     private Set<Command> commands = newHashSet();
 
     @Property
     private State state = State.UNSATISFIED;
 
     @Relationship(type = "hasObjective", direction = Relationship.INCOMING)
-    @JsonBackReference
+    @JsonBackReference("goal-objective")
     private Goal goal;
 
     public void setCommands(Set<Command> commands) {

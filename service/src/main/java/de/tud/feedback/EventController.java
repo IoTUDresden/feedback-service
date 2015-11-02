@@ -32,15 +32,23 @@ public class EventController {
 
     @RequestMapping("/events/workflows/{workflowId}")
     public SseEmitter subscribeToEventsFor(@PathVariable Long workflowId) {
-        if (!sseEmitters.containsKey(workflowId))
-            sseEmitters.put(workflowId, new SseEmitter());
+        // FIXME multiple subscribers
+        // if (!sseEmitters.containsKey(workflowId))
+        //    sseEmitters.put(workflowId, new SseEmitter());
 
-        return sseEmitters.get(workflowId);
+        SseEmitter emitter = new SseEmitter();
+        sseEmitters.put(workflowId, emitter);
+        return emitter;
     }
 
     @EventListener
     public void emitServerSentEventOn(WorkflowUpdateEvent event) throws IOException {
         Workflow workflow = event.getWorkflow();
+
+        // FIXME cyclic serialization reference (multiple ObjectMappers suck)
+        workflow.setContext(null);
+        workflow.setGoals(null);
+
         sseEmitters.get(workflow.getId()).send(workflow);
     }
 

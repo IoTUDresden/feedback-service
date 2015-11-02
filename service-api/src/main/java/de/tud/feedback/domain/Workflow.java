@@ -1,7 +1,6 @@
 package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.tud.feedback.Satisfiable;
 import org.neo4j.ogm.annotation.GraphId;
@@ -28,16 +27,14 @@ public class Workflow implements Satisfiable {
     @Property
     private String name;
 
-    @Relationship(type = "hasGoal", direction = Relationship.OUTGOING)
-    @JsonManagedReference
-    private Set<Goal> goals = newHashSet();
-
     @Property
     private boolean hasBeenFinished;
 
+    @Relationship(type = "hasGoal", direction = Relationship.OUTGOING)
+    private Set<Goal> goals = newHashSet();
+
     @NotNull
     @Relationship(type = "runsWithin", direction = Relationship.OUTGOING)
-    @JsonManagedReference
     private Context context;
 
     @JsonProperty("name")
@@ -49,6 +46,7 @@ public class Workflow implements Satisfiable {
         this.name = name;
     }
 
+    @JsonIgnore
     public Collection<Goal> getGoals() {
         return goals;
     }

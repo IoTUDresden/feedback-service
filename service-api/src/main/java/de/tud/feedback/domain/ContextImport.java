@@ -28,6 +28,7 @@ public class ContextImport {
 
     @NotNull
     @Property
+    @JsonIgnore
     @Convert(graphPropertyType = String.class)
     private Resource source;
 
@@ -42,11 +43,11 @@ public class ContextImport {
 
     @JsonIgnore
     @Relationship(type = "within", direction = Relationship.INCOMING)
-    @JsonBackReference
+    @JsonBackReference("import-node")
     private Set<ContextNode> contextNodes = newHashSet();
 
     @Relationship(type = "for", direction = Relationship.OUTGOING)
-    @JsonManagedReference
+    @JsonManagedReference("context-import")
     private Context context;
 
     public Context getContext() {

@@ -1,6 +1,5 @@
 package de.tud.feedback.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.neo4j.ogm.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -25,11 +24,9 @@ public class Context {
 
     @NotNull
     @Relationship(type = "for", direction = Relationship.INCOMING)
-    @JsonBackReference
     private Set<ContextImport> imports = newHashSet();
 
     @Relationship(type = "runsWithin", direction = Relationship.INCOMING)
-    @JsonBackReference
     private Set<Workflow> workflows;
 
     public String getName() {
