@@ -2,11 +2,9 @@ package de.tud.feedback;
 
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.Workflow;
-import de.tud.feedback.event.WorkflowDoneEvent;
-import de.tud.feedback.repository.graph.WorkflowRepository;
+import de.tud.feedback.event.WorkflowUpdateEvent;
 import de.tud.feedback.service.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
@@ -41,7 +39,7 @@ public class EventController {
     }
 
     @EventListener
-    public void emitServerSentEventOn(WorkflowDoneEvent event) throws IOException {
+    public void emitServerSentEventOn(WorkflowUpdateEvent event) throws IOException {
         Workflow workflow = event.getWorkflow();
         sseEmitters.get(workflow.getId()).send(workflow);
     }

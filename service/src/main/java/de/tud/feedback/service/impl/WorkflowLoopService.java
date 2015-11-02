@@ -2,7 +2,7 @@ package de.tud.feedback.service.impl;
 
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.Workflow;
-import de.tud.feedback.event.WorkflowDoneEvent;
+import de.tud.feedback.event.WorkflowUpdateEvent;
 import de.tud.feedback.loop.LoopIteration;
 import de.tud.feedback.repository.graph.WorkflowRepository;
 import de.tud.feedback.service.LoopService;
@@ -85,7 +85,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
         }
 
         if (workflow.hasBeenFinished() || workflow.hasBeenSatisfied()) {
-            publisher.publishEvent(WorkflowDoneEvent.on(workflow));
+            publisher.publishEvent(WorkflowUpdateEvent.on(workflow));
         }
     }
 
