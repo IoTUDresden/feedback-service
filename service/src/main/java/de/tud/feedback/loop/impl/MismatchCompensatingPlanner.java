@@ -47,9 +47,9 @@ public class MismatchCompensatingPlanner implements Planner {
     public Optional<Command> plan(ChangeRequest changeRequest) {
         Objective objective = changeRequest.getObjective();
         ContextMismatch mismatch = mismatchWithin(changeRequest);
-        Long measuringNodeId = changeRequest.getResult().getMeasuringNodeId();
+        Long testNodeId = changeRequest.getResult().getTestNodeId();
         Set<Command> executedCommands = commandRepository.findCommandsExecutedFor(objective);
-        Set<Command> manipulatingCommands = compensationRepository.findCommandsManipulating(measuringNodeId);
+        Set<Command> manipulatingCommands = compensationRepository.findCommandsManipulating(testNodeId);
 
         try {
             Optional<Command> command = manipulatingCommands.stream()

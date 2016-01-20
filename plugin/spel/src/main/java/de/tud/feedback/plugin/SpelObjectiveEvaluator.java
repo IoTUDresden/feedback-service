@@ -37,7 +37,7 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
 
         return ObjectiveEvaluationResult.build()
                 .setContextVariables(expressionResult)
-                .setMeasuringNodeIdTo(evaluateTestNodeId(objective, expressionResult))
+                .setTestNodeIdTo(evaluateTestNodeId(objective, expressionResult))
                 .setCompensateTo(evaluateCompensationRule(objective))
                 .setSatisfiedTo(evaluateSatisfiedRule(objective, expressionResult));
     }
