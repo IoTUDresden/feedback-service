@@ -1,7 +1,7 @@
 package de.tud.feedback.plugin.factory;
 
 import de.tud.feedback.plugin.OpenHabMonitorAgent;
-import de.tud.feedback.plugin.openhab.RelevancyFilter;
+import de.tud.feedback.plugin.openhab.SignificanceFilter;
 import de.tud.feedback.plugin.openhab.OpenHabService;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
@@ -19,7 +19,7 @@ public class OpenHabMonitorAgentFactoryBean extends AbstractFactoryBean<OpenHabM
     protected OpenHabMonitorAgent createInstance() throws Exception {
         checkNotNull(service, "OpenHabService is missing");
 
-        final RelevancyFilter handler = new RelevancyFilter(numberStateChangeDelta);
+        final SignificanceFilter handler = new SignificanceFilter(numberStateChangeDelta);
         final OpenHabMonitorAgent agent = new OpenHabMonitorAgent(service, handler);
 
         agent.setPollingSeconds(pollingSeconds);

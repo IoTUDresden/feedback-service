@@ -5,7 +5,7 @@ import java.util.Map;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.Math.abs;
 
-public class RelevancyFilter {
+public class SignificanceFilter {
 
     private final Map<String, OpenHabItem> cache = newHashMap();
 
@@ -15,11 +15,11 @@ public class RelevancyFilter {
 
     private final Double delta;
 
-    public RelevancyFilter(Double delta) {
+    public SignificanceFilter(Double delta) {
         this.delta = delta;
     }
 
-    public boolean isRelevant(OpenHabItem item) {
+    public boolean containsSignificantChange(OpenHabItem item) {
         boolean isRelevant = (!cacheContains(item) || containsSignificantStateChange(item));
         updateCached(item);
         return isRelevant;
@@ -50,11 +50,8 @@ public class RelevancyFilter {
         double current = (number / max);
         normalized.put(item, current);
 
-        //noinspection SimplifiableIfStatement
-        if (current == last && last == 1.0)
-            return true;
-        else
-            return abs(current - last) > delta;
+        if (current == last && last == 1.0) return true;
+        else return abs(current - last) > delta;
     }
 
     private boolean hasNumberState(OpenHabItem item) {

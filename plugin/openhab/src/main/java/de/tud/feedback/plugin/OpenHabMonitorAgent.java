@@ -3,7 +3,7 @@ package de.tud.feedback.plugin;
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.loop.MonitorAgent;
-import de.tud.feedback.plugin.openhab.RelevancyFilter;
+import de.tud.feedback.plugin.openhab.SignificanceFilter;
 import de.tud.feedback.plugin.openhab.OpenHabItem;
 import de.tud.feedback.plugin.openhab.OpenHabService;
 
@@ -11,13 +11,13 @@ public class OpenHabMonitorAgent implements MonitorAgent {
 
     private final OpenHabService service;
 
-    private final RelevancyFilter filter;
+    private final SignificanceFilter filter;
 
     private ContextUpdater updater;
 
     private Integer pollingSeconds = 2;
 
-    public OpenHabMonitorAgent(OpenHabService service, RelevancyFilter filter) {
+    public OpenHabMonitorAgent(OpenHabService service, SignificanceFilter filter) {
         this.service = service;
         this.filter = filter;
     }
@@ -41,7 +41,7 @@ public class OpenHabMonitorAgent implements MonitorAgent {
         service.getAllItems().stream()
                 .filter(OpenHabItem::hasValidState)
                 .filter(OpenHabItem::isUsefulItem)
-                .filter(filter::isRelevant)
+                .filter(filter::containsSignificantChange)
                 .forEach(it -> updater.update(it.getName(), it.getState()));
     }
 
