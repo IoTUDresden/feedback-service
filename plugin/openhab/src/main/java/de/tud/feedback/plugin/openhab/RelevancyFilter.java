@@ -1,13 +1,11 @@
 package de.tud.feedback.plugin.openhab;
 
-import de.tud.feedback.ContextUpdater;
-
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.Math.abs;
 
-public class ItemUpdateHandler {
+public class RelevancyFilter {
 
     private final Map<String, OpenHabItem> cache = newHashMap();
 
@@ -17,21 +15,14 @@ public class ItemUpdateHandler {
 
     private final Double delta;
 
-    private ContextUpdater updater;
-
-    public ItemUpdateHandler(Double delta) {
+    public RelevancyFilter(Double delta) {
         this.delta = delta;
     }
 
-    public void setUpdater(ContextUpdater updater) {
-        this.updater = updater;
-    }
-
-    public void handle(OpenHabItem item) {
-        if (!cacheContains(item) || containsSignificantStateChange(item))
-            update(item);
-
-        cache(item);
+    public boolean isRelevant(OpenHabItem item) {
+        boolean isRelevant = (!cacheContains(item) || containsSignificantStateChange(item));
+        updateCached(item);
+        return isRelevant;
     }
 
     @SuppressWarnings("SimplifiableIfStatement")
@@ -80,15 +71,11 @@ public class ItemUpdateHandler {
         return cache.get(item.getLink());
     }
 
-    private void update(OpenHabItem item) {
-        updater.update(item.getName(), item.getState());
-    }
-
     private boolean cacheContains(OpenHabItem item) {
         return cache.containsKey(item.getLink());
     }
 
-    private OpenHabItem cache(OpenHabItem item) {
+    private OpenHabItem updateCached(OpenHabItem item) {
         return cache.put(item.getLink(), item);
     }
 

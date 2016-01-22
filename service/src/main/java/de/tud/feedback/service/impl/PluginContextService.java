@@ -38,8 +38,7 @@ public class PluginContextService implements ContextService {
 
     @PostConstruct
     public void beginUpdatesOnAllContexts() {
-        newArrayList(contextRepository.findAll())
-                .forEach(context -> monitor.get().monitor(context));
+        newArrayList(contextRepository.findAll()).forEach(this::startMonitoring);
     }
 
     @Async
@@ -51,12 +50,16 @@ public class PluginContextService implements ContextService {
             importContextFrom(contextImport);
         });
 
-        monitor.get().monitor(context);
+        startMonitoring(context);
     }
 
     @Override
     public void deleteImportsFor(Context context) {
         contextImportRepository.deleteAllWithin(context);
+    }
+
+    private void startMonitoring(Context context) {
+        monitor.get().monitor(context);
     }
 
     private void importContextFrom(ContextImport contextImport) {
