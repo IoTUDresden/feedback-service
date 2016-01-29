@@ -1,7 +1,7 @@
 server.port: 9000
 
 spring:
-  profiles.active: development,embeddedNeo4j
+  profiles.active: development
 
   main.showBanner: false
   data.rest:

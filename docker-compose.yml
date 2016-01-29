@@ -1,0 +1,21 @@
+gradle:
+   image: niaquinto/gradle:2.7
+   container_name: gradle
+   volumes:
+     - ~/.m2:/root/.m2
+
+elasticsearch:
+   image: elasticsearch:1.7.4
+   container_name: elasticsearch
+   
+neo4j:
+   image: neo4j:2.3.2
+   container_name: neo4j
+   environment:
+     - NEO4J_AUTH=none
+
+feedback:
+  build: .
+  container_name: service
+  volumes:
+    - ./:/tmp

@@ -12,3 +12,5 @@ target
 .gradle
 data
 local.yml
+spring.log
+gradle_download*

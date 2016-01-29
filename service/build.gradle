@@ -7,7 +7,6 @@ jar {
 
 dependencies {
     compile project(':service-api')
-    compile project(':knowledge/neo4j')
 
     compile 'org.springframework.boot:spring-boot-starter-data-rest',
             'org.springframework.boot:spring-boot-starter-data-elasticsearch',
@@ -18,3 +17,6 @@ dependencies {
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
+
+bootRun { systemProperties = System.properties }
+
