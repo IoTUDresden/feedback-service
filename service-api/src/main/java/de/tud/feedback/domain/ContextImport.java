@@ -3,6 +3,7 @@ package de.tud.feedback.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
@@ -47,7 +48,6 @@ public class ContextImport {
     private Set<ContextNode> contextNodes = newHashSet();
 
     @Relationship(type = "for", direction = Relationship.OUTGOING)
-    @JsonManagedReference("context-import")
     private Context context;
 
     public Context getContext() {
@@ -66,10 +66,12 @@ public class ContextImport {
         this.mimeType = mimeType;
     }
 
+    @JsonProperty("source")
     public Resource getSource() {
         return source;
     }
 
+    @JsonProperty("source")
     public void setSource(Resource source) {
         this.source = source;
     }

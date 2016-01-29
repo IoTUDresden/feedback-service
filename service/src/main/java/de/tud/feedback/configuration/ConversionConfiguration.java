@@ -24,7 +24,7 @@ public class ConversionConfiguration {
             SessionFactory neo4jSessionFactory,
             @Qualifier("customConverter") Collection<Converter> converters
     ) {
-        GenericConversionService conversionService
+        MetaDataDrivenConversionService conversionService
                 = new MetaDataDrivenConversionService(neo4jSessionFactory.metaData());
 
         converters.forEach(conversionService::addConverter);

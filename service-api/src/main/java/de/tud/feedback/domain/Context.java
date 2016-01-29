@@ -4,9 +4,11 @@ import org.neo4j.ogm.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 
@@ -24,7 +26,7 @@ public class Context {
 
     @NotNull
     @Relationship(type = "for", direction = Relationship.INCOMING)
-    private Set<ContextImport> imports = newHashSet();
+    private List<ContextImport> imports = newArrayList();
 
     @Relationship(type = "runsWithin", direction = Relationship.INCOMING)
     private Set<Workflow> workflows;
@@ -37,15 +39,15 @@ public class Context {
         this.name = name;
     }
 
-    public Collection<ContextImport> getImports() {
+    public List<ContextImport> getImports() {
         return imports;
     }
 
-    public void setImports(Set<ContextImport> imports) {
+    public void setImports(List<ContextImport> imports) {
         try {
             this.imports = checkNotNull(imports);
         } catch (NullPointerException exception) {
-            this.imports = newHashSet();
+            this.imports = newArrayList();
         }
     }
 

@@ -6,7 +6,8 @@
 
     <logger name="org.springframework.data.neo4j.mapping.Neo4jPersistentProperty" level="ERROR"/>
     <logger name="org.neo4j.ogm.authentication" level="ERROR"/>
-    <logger name="de.tud" level="DEBUG"/>
+    <logger name="org.elasticsearch" level="ERROR" />
+    <logger name="de.tud" level="INFO"/>
 
     <root level="WARN">
         <appender-ref ref="CONSOLE" />

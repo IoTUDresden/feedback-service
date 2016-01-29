@@ -3,11 +3,16 @@ package de.tud.feedback.plugin;
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.loop.MonitorAgent;
-import de.tud.feedback.plugin.openhab.SignificanceFilter;
 import de.tud.feedback.plugin.openhab.OpenHabItem;
 import de.tud.feedback.plugin.openhab.OpenHabService;
+import de.tud.feedback.plugin.openhab.SignificanceFilter;
+import feign.RetryableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OpenHabMonitorAgent implements MonitorAgent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(OpenHabMonitorAgent.class);
 
     private final OpenHabService service;
 
@@ -31,7 +36,12 @@ public class OpenHabMonitorAgent implements MonitorAgent {
                 processOpenHabItems();
                 Thread.sleep(1000L * pollingSeconds);
 
+            } catch (RetryableException exception) {
+                LOG.error("OpenHAB refused connection");
+                break;
+
             } catch (InterruptedException exception) {
+                LOG.info("Shutting down");
                 break;
             }
         }
