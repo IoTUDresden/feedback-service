@@ -19,3 +19,6 @@ feedback:
   container_name: service
   volumes:
     - ./:/tmp
+  environment:
+    - SPRING_DATA_ELASTICSEARCH_CLUSTER-NODES=elasticsearch:9300
+    - SERVICE_KNOWLEDGE_NEO4J_URL=http://neo4j:7474
