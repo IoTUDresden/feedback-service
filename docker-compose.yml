@@ -1,18 +1,21 @@
 gradle:
-   image: niaquinto/gradle:2.7
-   container_name: gradle
-   volumes:
-     - ~/.m2:/root/.m2
+  image: niaquinto/gradle:2.7
+  container_name: gradle
+  volumes:
+    - ~/.m2:/root/.m2
 
 elasticsearch:
-   image: elasticsearch:1.7.4
-   container_name: elasticsearch
+  image: elasticsearch:1.7.4
+  container_name: elasticsearch
 
 neo4j:
-   image: neo4j:2.3.2
-   container_name: neo4j
-   environment:
-     NEO4J_AUTH: none
+  image: neo4j:2.3.2
+  container_name: neo4j
+  environment:
+    NEO4J_AUTH: none
+
+  ports:
+    - "7474:7474"
 
 mapek:
   build: .
