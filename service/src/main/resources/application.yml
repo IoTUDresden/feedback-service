@@ -8,3 +8,4 @@ spring:
     returnBodyOnCreate: true
     returnBodyOnUpdate: true
 
+metrics.reporter.elasticsearch.interval: 1

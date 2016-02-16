@@ -1,8 +1,10 @@
 package de.tud.feedback.aspect;
 
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.MetricRegistry;
+import com.google.common.hash.Hashing;
+import com.google.common.primitives.Doubles;
 import de.tud.feedback.annotation.LogTimeSeries;
-import de.tud.feedback.index.HistoricalState;
-import de.tud.feedback.repository.index.HistoricalStateRepository;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -15,7 +17,10 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Calendar;
+import java.nio.charset.Charset;
+import java.util.Set;
+
+import static com.google.common.collect.Sets.newHashSet;
 
 @Aspect
 @Component
@@ -23,7 +28,12 @@ public class TimeSeriesAspect {
 
     private final ExpressionParser parser = new SpelExpressionParser();
 
-    private HistoricalStateRepository repository;
+    private final MetricRegistry metrics;
+
+    @Autowired
+    public TimeSeriesAspect(MetricRegistry metrics) {
+        this.metrics = metrics;
+    }
 
     @Pointcut("execution(* de.tud..*(..)) && @annotation(de.tud.feedback.annotation.LogTimeSeries)")
     public void timeSeriesAnnotatedMethods() {}
@@ -33,16 +43,38 @@ public class TimeSeriesAspect {
         StandardEvaluationContext context = new StandardEvaluationContext(point.getTarget());
         LogTimeSeries annotation = methodFrom(point).getAnnotation(LogTimeSeries.class);
         Object[] arguments = point.getArgs();
-        HistoricalState item = new HistoricalState();
-
         context.setVariable("args", arguments);
 
-        item.setContext(getValue(annotation.context(), context));
-        item.setItem(getValue(annotation.item(), context));
-        item.setState(getValue(annotation.state(), context));
-        item.setTime(Calendar.getInstance().getTime());
+        persist(getValue(annotation.context(), context),
+                getValue(annotation.item(), context),
+                getValue(annotation.state(), context));
+    }
 
-        repository.save(item);
+    private void persist(String context, String item, String stringState) {
+        String metric = MetricRegistry.name("context", context, item);
+        Double doubleState = Doubles.tryParse(stringState);
+
+        if (!isRegistered(metric))
+            register(metric);
+
+        save(metric, doubleState != null ? doubleState : checksumFor(stringState));
+    }
+
+    private Integer checksumFor(String stringState) {
+        return Hashing.adler32().hashString(stringState, Charset.defaultCharset()).asInt() % 100;
+    }
+
+    private void register(String metric) {
+        metrics.register(metric, new ModifiableGauge<>());
+    }
+
+    private boolean isRegistered(String metric) {
+        return metrics.getGauges().containsKey(metric);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void save(String metric, Object state) {
+        ((ModifiableGauge) metrics.getGauges().get(metric)).setValue(state);
     }
 
     private String getValue(String expression, StandardEvaluationContext context) {
@@ -53,9 +85,19 @@ public class TimeSeriesAspect {
         return MethodSignature.class.cast(point.getSignature()).getMethod();
     }
 
-    @Autowired
-    public void setRepository(HistoricalStateRepository repository) {
-        this.repository = repository;
+    private static class ModifiableGauge<T> implements Gauge<T> {
+
+        private T value;
+
+        @Override
+        public T getValue() {
+            return value;
+        }
+
+        public void setValue(T value) {
+            this.value = value;
+        }
+
     }
 
 }

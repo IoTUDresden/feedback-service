@@ -20,7 +20,9 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter implements En
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsConfiguration.class);
 
-    String elasticsearchNodes;
+    private String elasticsearchNodes;
+
+    private Integer elasticsearchInterval;
 
     @Override
     public void configureReporters(MetricRegistry metricRegistry) {
@@ -45,9 +47,8 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter implements En
             registerReporter(ElasticsearchReporter
                     .forRegistry(metricRegistry)
                     .hosts(elasticsearchNodes.split(","))
-                    .index("mapek")
-                    .build())
-                    .start(10, TimeUnit.SECONDS);
+                    .index("mapek").build())
+                    .start(elasticsearchInterval, TimeUnit.SECONDS);
 
             LOG.info("Metrics will be reported to elasticsearch");
 
@@ -59,6 +60,8 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter implements En
     @Override
     public void setEnvironment(Environment environment) {
         elasticsearchNodes = environment.getProperty("metrics.reporter.elasticsearch.nodes");
+        elasticsearchInterval = environment
+                .getRequiredProperty("metrics.reporter.elasticsearch.interval", Integer.class);
     }
 
 }
