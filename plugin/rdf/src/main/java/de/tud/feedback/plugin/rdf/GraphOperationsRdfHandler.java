@@ -1,5 +1,6 @@
 package de.tud.feedback.plugin.rdf;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import de.tud.feedback.GraphOperations;
 import org.openrdf.model.*;
@@ -7,11 +8,23 @@ import org.openrdf.model.impl.URIImpl;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
+import java.util.List;
+import java.util.Set;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+
 public class GraphOperationsRdfHandler extends RDFHandlerBase {
 
     private static final String TYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 
+    public static final Joiner COMMA_JOINER = Joiner.on(",");
+
     private final GraphOperations operations;
+
+    private final Set<String> nodesCreated = newHashSet();
+
+    private final Set<String> connectionsCreated = newHashSet();
 
     public GraphOperationsRdfHandler(GraphOperations operations) {
         this.operations = operations;
@@ -32,7 +45,7 @@ public class GraphOperationsRdfHandler extends RDFHandlerBase {
     }
 
     private void handleTriplet(URI subject, URI predicate, Value object) {
-        create(subject);
+        createNode(subject);
 
         if (isType(predicate)) {
             handleType(subject, predicate, object);
@@ -50,18 +63,38 @@ public class GraphOperationsRdfHandler extends RDFHandlerBase {
     }
 
     private void handleResource(URI subject, URI predicate, URI object) {
-        create(object);
-        operations.createConnection(uriOf(predicate), nameFor(predicate), uriOf(subject), uriOf(object));
+        createNode(object);
+        createConnection(subject, predicate, object);
     }
 
     private void handleType(URI subject, URI predicate, Value object) {
         operations.setAdditionalLabel(uriOf(subject), nameFor((URI) object));
-        operations.createConnection(uriOf(predicate), nameFor(predicate), uriOf(subject), uriOf(object));
+        createConnection(subject, predicate, (URI) object);
     }
 
-    private void create(URI node) {
-        operations.createNode(uriOf(node));
-        operations.setNodeProperty(uriOf(node), "name", nameFor(node));
+    private void createNode(URI node) {
+        String nodeUri = uriOf(node);
+
+        if (!nodesCreated.contains(nodeUri)) {
+            operations.createNode(nodeUri);
+            operations.setNodeProperty(nodeUri, "name", nameFor(node));
+            nodesCreated.add(nodeUri);
+        }
+    }
+
+    private void createConnection(URI subject, URI predicate, URI object) {
+        String uriOfPredicate = uriOf(predicate);
+        String nameForPredicate = nameFor(predicate);
+        String uriOfSubject = uriOf(subject);
+        String uriOfObject = uriOf(object);
+
+        String connection = COMMA_JOINER.join(new String[] {
+                uriOfPredicate, nameForPredicate, uriOfSubject, uriOfObject });
+
+        if (!connectionsCreated.contains(connection)) {
+            operations.createConnection(uriOfPredicate, nameForPredicate, uriOfSubject, uriOfObject);
+            connectionsCreated.add(connection);
+        }
     }
 
     private boolean isType(URI predicate) {
