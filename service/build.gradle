@@ -15,6 +15,9 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8',
             'org.restlet.jse:org.restlet:2.3.5'
 
+    compile 'org.elasticsearch:metrics-elasticsearch-reporter:2.0',
+            'io.dropwizard.metrics:metrics-jvm:3.1.2'
+
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 

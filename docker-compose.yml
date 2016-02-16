@@ -8,6 +8,15 @@ elasticsearch:
   image: elasticsearch:1.7.4
   container_name: elasticsearch
 
+kibana:
+  image: kibana:4.1.5
+  container_name: kibana
+  environment:
+    ELASTICSEARCH_URL: http://elasticsearch:9200
+
+  ports:
+    - "5601:5601"
+
 neo4j:
   image: neo4j:2.3.2
   container_name: neo4j
@@ -26,6 +35,7 @@ mapek:
 
   environment:
     SPRING_DATA_ELASTICSEARCH_CLUSTER-NODES: elasticsearch:9300
+    METRICS_REPORTER_ELASTICSEARCH_NODES: elasticsearch:9200
     SERVICE_KNOWLEDGE_NEO4J_URL: http://neo4j:7474
     SERVER_PORT: 9000
 
