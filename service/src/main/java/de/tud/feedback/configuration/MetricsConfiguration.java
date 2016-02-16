@@ -20,7 +20,7 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter implements En
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsConfiguration.class);
 
-    String[] elasticsearchNodes;
+    String elasticsearchNodes;
 
     @Override
     public void configureReporters(MetricRegistry metricRegistry) {
@@ -36,13 +36,15 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter implements En
                 .forRegistry(metricRegistry)
                 .build())
                 .start();
+
+        LOG.info("Metrics will be exposed via JMX");
     }
 
     private void configureElasticsearchReporter(MetricRegistry metricRegistry) {
         try {
             registerReporter(ElasticsearchReporter
                     .forRegistry(metricRegistry)
-                    .hosts(elasticsearchNodes)
+                    .hosts(elasticsearchNodes.split(","))
                     .index("mapek")
                     .build())
                     .start(10, TimeUnit.SECONDS);
@@ -56,7 +58,7 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter implements En
 
     @Override
     public void setEnvironment(Environment environment) {
-        elasticsearchNodes = environment.getProperty("metrics.reporter.elasticsearch.nodes", "").split(",");
+        elasticsearchNodes = environment.getProperty("metrics.reporter.elasticsearch.nodes");
     }
 
 }
