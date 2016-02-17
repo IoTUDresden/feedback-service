@@ -1,6 +1,9 @@
 package de.tud.feedback.configuration;
 
+import org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -34,6 +37,12 @@ public class ServiceConfiguration extends WebMvcConfigurerAdapter {
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
         // FIXME SSE won't work without this
         configurer.setDefaultTimeout(ASYNC_REQUEST_TIMEOUT);
+    }
+
+    @Autowired
+    public void configureProxies(ApplicationContext context) {
+        ((AspectJAwareAdvisorAutoProxyCreator) context
+                .getBean("org.springframework.aop.config.internalAutoProxyCreator")).setExposeProxy(true);
     }
 
 }

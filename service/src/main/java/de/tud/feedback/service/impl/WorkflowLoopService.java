@@ -8,6 +8,7 @@ import de.tud.feedback.repository.graph.WorkflowRepository;
 import de.tud.feedback.service.LoopService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.task.AsyncListenableTaskExecutor;
@@ -53,7 +54,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
 
     @Override
     public void analyzeGoalsForWorkflowsWithin(Context context) {
-        workflowRepository.findWorkflowsWithin(context).forEach(this::analyzeGoalsFor);
+        workflowRepository.findWorkflowsWithin(context).forEach(that()::analyzeGoalsFor);
     }
 
     public void analyzeGoalsFor(Workflow workflow) {
@@ -61,15 +62,15 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
             !workflow.hasBeenFinished() &&
             !runningIterations.contains(workflow.getName())
         ) {
-            startLoopIteration(workflow);
+            that().startLoopIteration(workflow);
         }
     }
 
-    private void startLoopIteration(Workflow workflow) {
+    public void startLoopIteration(Workflow workflow) {
         LoopIteration<Workflow> loopIteration = loopIterationProvider.get().on(workflow);
         ListenableFuture<Workflow> submission = tasks.submitListenable(loopIteration);
 
-        submission.addCallback(this);
+        submission.addCallback(that());
         runningIterations.add(workflow.getName());
     }
 
@@ -93,6 +94,10 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
     public void onFailure(Throwable exception) {
         LOG.error(format("Iteration failed with %s", exception.getMessage()), exception);
         runningIterations.clear(); // LATER do not delete all running iterations
+    }
+
+    private WorkflowLoopService that() {
+        return (WorkflowLoopService) AopContext.currentProxy();
     }
 
 }
