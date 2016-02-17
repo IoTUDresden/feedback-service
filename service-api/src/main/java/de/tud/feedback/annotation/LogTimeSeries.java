@@ -11,8 +11,8 @@ public @interface LogTimeSeries {
 
     String context();
 
-    String item() default "#args[0]";
+    String item() default "#{#args[0]}";
 
-    String state() default "#args[1]";
+    String state() default "#{#args[1]}";
 
 }

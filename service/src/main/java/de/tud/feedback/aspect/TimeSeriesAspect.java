@@ -12,6 +12,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParserContext;
+import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,8 @@ import static com.google.common.collect.Sets.newHashSet;
 public class TimeSeriesAspect {
 
     private final ExpressionParser parser = new SpelExpressionParser();
+
+    private final ParserContext parserContext = new TemplateParserContext();
 
     private final MetricRegistry metrics;
 
@@ -51,7 +55,7 @@ public class TimeSeriesAspect {
     }
 
     private void persist(String context, String item, String stringState) {
-        String metric = MetricRegistry.name("context", context, item);
+        String metric = MetricRegistry.name(context, item);
         Double doubleState = Doubles.tryParse(stringState);
 
         if (!isRegistered(metric))
@@ -78,7 +82,7 @@ public class TimeSeriesAspect {
     }
 
     private String getValue(String expression, StandardEvaluationContext context) {
-        return (String) parser.parseExpression(expression).getValue(context);
+        return (String) parser.parseExpression(expression, parserContext).getValue(context);
     }
 
     private Method methodFrom(JoinPoint point) {
