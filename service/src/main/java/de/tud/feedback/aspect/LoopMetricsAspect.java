@@ -82,7 +82,7 @@ public class LoopMetricsAspect {
         if (changePlan.isPresent())
             incrementChangePlanCounterFor(workflowFrom(changeRequest));
 
-        return changeRequest;
+        return changePlan;
     }
 
     @Around("execution(* de.tud.feedback.loop.Executor.execute(..)) && args(command)")
@@ -150,49 +150,37 @@ public class LoopMetricsAspect {
         metrics.counter(name(metricFor(workflow), what)).inc();
     }
 
-    private void incrementExceptionCounter() {
-        metrics.counter("exceptions").inc();
-    }
-
     private void incrementIterationFailures() {
         metrics.counter("iterationFailures").inc();
     }
 
-    private void stopLoopTimerFor(String workflowInstance) {
-        loops.get(workflowInstance).stop();
-    }
-
-    private Timer.Context startTimerFor(String what, Workflow workflow) {
-        return metrics.timer(name(metricWithIdFor(workflow), what, "time")).time();
+    private boolean noLoopTimerRunningFor(String loop) {
+        return !loops.containsKey(loop);
     }
 
     private void startLoopTimerFor(String specificWorkflow) {
         loops.put(specificWorkflow, metrics.timer(specificWorkflow).time());
     }
 
+    private void stopLoopTimerFor(String workflowInstance) {
+        loops.get(workflowInstance).stop();
+        loops.remove(workflowInstance);
+    }
+
+    private Timer.Context startTimerFor(String what, Workflow workflow) {
+        return metrics.timer(name(metricWithIdFor(workflow), what, "time")).time();
+    }
+
     private Object proceedWith(ProceedingJoinPoint point) throws Throwable {
         return point.proceed(point.getArgs());
     }
 
-    private boolean noLoopTimerRunningFor(String loop) {
-        return loops.containsKey(loop);
-    }
-
     private String metricFor(Workflow workflow) {
-        return metricFor(workflow, false);
+        return name("workflow", workflow.getName());
     }
 
     private String metricWithIdFor(Workflow workflow) {
-        return metricFor(workflow, true);
-    }
-
-    private String metricFor(Workflow workflow, boolean includeId) {
-        String metric = name("workflow", workflow.getName());
-
-        if (includeId)
-            name(metric, workflow.getId().toString());
-
-        return metric;
+        return name("workflow", workflow.getName(), workflow.getId().toString());
     }
 
 }

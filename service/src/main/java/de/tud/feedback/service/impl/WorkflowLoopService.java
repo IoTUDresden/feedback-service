@@ -58,12 +58,15 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
     }
 
     public void analyzeGoalsFor(Workflow workflow) {
-        if (!workflow.hasBeenSatisfied() &&
-            !workflow.hasBeenFinished() &&
-            !runningIterations.contains(workflow.getName())
-        ) {
+        if (!loopShouldBeFinishedFor(workflow) && !iterationRunningFor(workflow))
             that().startLoopIteration(workflow);
-        }
+
+        else if (loopShouldBeFinishedFor(workflow))
+            finishLoopFor(workflow);
+    }
+
+    private boolean iterationRunningFor(Workflow workflow) {
+        return runningIterations.contains(workflow.getName());
     }
 
     public void startLoopIteration(Workflow workflow) {
@@ -78,22 +81,26 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
     public void onSuccess(Workflow workflow) {
         workflowRepository.save(workflow, WORKFLOW_SAVE_DEPTH);
         runningIterations.remove(workflow.getName());
-
-        if (workflow.hasBeenSatisfied()) {
-            LOG.info(format("Satisfaction for %s", workflow));
-        } else if (workflow.hasBeenFinished()) {
-            LOG.warn(format("%s left unsatisfied", workflow));
-        }
-
-        if (workflow.hasBeenFinished() || workflow.hasBeenSatisfied()) {
-            publisher.publishEvent(WorkflowUpdateEvent.on(workflow));
-        }
     }
 
     @Override
     public void onFailure(Throwable exception) {
         LOG.error(format("Iteration failed with %s", exception.getMessage()), exception);
         runningIterations.clear(); // LATER do not delete all running iterations
+    }
+
+    private void finishLoopFor(Workflow workflow) {
+        if (workflow.hasBeenSatisfied()) {
+            LOG.info(format("Satisfaction for %s", workflow));
+        } else if (workflow.hasBeenFinished()) {
+            LOG.warn(format("%s left unsatisfied", workflow));
+        }
+
+        publisher.publishEvent(WorkflowUpdateEvent.on(workflow));
+    }
+
+    private boolean loopShouldBeFinishedFor(Workflow workflow) {
+        return workflow.hasBeenSatisfied() || workflow.hasBeenFinished();
     }
 
     private WorkflowLoopService that() {
