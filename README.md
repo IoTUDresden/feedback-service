@@ -8,11 +8,17 @@ This service enabled the MAPE-K feedback control loop for existing process-model
 * Windows: ```gradlew.bat bootRun```
 * Docker: ```docker-compose --x-networking up```
 
-When running with Docker, there're three ports exposed:
+When running with Docker, the following services are exposed:
 
-* MAPE-K (9000)
-* Neo4j (7474)
-* Kibana (5601)
+* 9000: MAPE-K (feedback service)
+  * example DogOnt/OpenHAB instances: examples/openhab-instance.ttl (file type: "text/turtle" for context creation)
+* 9001: Kibana (metrics visualization)
+  * index pattern: mapek-*
+  * example visualizations and dashboard: examples/kibana-export.json
+* 9002: Neo4j (context and domain graph)
+  * web interface for graph visualization
+* 9003: Elasticsearch (metrics index)
+  * index: mapek-*
 
 ## Operation
 
