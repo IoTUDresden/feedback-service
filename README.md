@@ -8,10 +8,11 @@ This service enabled the MAPE-K feedback control loop for existing process-model
 * Windows: ```gradlew.bat bootRun```
 * Docker: ```docker-compose --x-networking up```
 
-When running with Docker, there're two ports exposed:
+When running with Docker, there're three ports exposed:
 
 * MAPE-K (9000)
 * Neo4j (7474)
+* Kibana (5601)
 
 ## Operation
 
