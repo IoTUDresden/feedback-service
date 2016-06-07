@@ -44,6 +44,10 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<OpenHabCommandExecutor> commandExecutorProvider;
 
+    @Autowired Provider<PeerMetricsMonitorAgent> peerMetricsMonitorAgentProvider;
+
+    @Autowired Provider<PeerMonitorAgent> peerMonitorAgentProvider;
+
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
         importerFactory.setExecutor(executor);
@@ -69,7 +73,7 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Override
     public Collection<MonitorAgent> getMonitorAgents() {
-        return newArrayList(monitorAgentProvider.get());
+        return newArrayList(monitorAgentProvider.get(),peerMonitorAgentProvider.get(),peerMetricsMonitorAgentProvider.get());
     }
 
     @Override

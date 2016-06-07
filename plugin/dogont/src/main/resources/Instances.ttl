@@ -1,0 +1,142 @@
+# baseURI: http://vicci.eu/speeront/instances
+# imports: http://openhab-semantic/0.1/instance
+# imports: http://vicci.eu/speeront
+
+@prefix : <http://vicci.eu/speeront/instances#> .
+@prefix dogont: <http://elite.polito.it/ontologies/dogont.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix speeront: <http://vicci.eu/speeront#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://vicci.eu/speeront/instances>
+  rdf:type owl:Ontology ;
+  owl:imports <http://openhab-semantic/0.1/instance> ;
+  owl:imports <http://vicci.eu/speeront> ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+:ActiveStateValue_1
+  rdf:type speeront:ActiveStateValue ;
+.
+:DeployedStateValue_1
+  rdf:type speeront:DeployedStateValue ;
+.
+:EscelatedStateValue_1
+  rdf:type speeront:EscelatedStateValue ;
+.
+:ExecutedStateValue_1
+  rdf:type speeront:ExecutedStateValue ;
+.
+:ExecutingStateValue_1
+  rdf:type speeront:ExecutingStateValue ;
+.
+:ExecutionTimeValue
+  rdf:type speeront:TimeValue ;
+  dogont:realStateValue "0.1"^^xsd:string ;
+  dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+.
+:FailedStateValue_1
+  rdf:type speeront:FailedStateValue ;
+.
+:InactiveStateValue_1
+  rdf:type speeront:InactiveStateValue ;
+.
+:KilledStateValue_1
+  rdf:type speeront:KilledStateValue ;
+.
+:LaptopBatteryValue
+  rdf:type dogont:LevelStateValue ;
+  dogont:realStateValue "0.9"^^xsd:string ;
+  dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
+.
+:LevelStateValue_1
+  rdf:type dogont:LevelStateValue ;
+  dogont:realStateValue "0.7"^^xsd:string ;
+  dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
+.
+:PausedStateValue_1
+  rdf:type speeront:PausedStateValue ;
+.
+:Peer_1
+  rdf:type speeront:Peer ;
+  dogont:IPAddress "192.168.1.63" ;
+  dogont:hasState :RobotBatteryLvlState ;
+  dogont:hasState [
+      rdf:type speeront:ExecutionTimeState ;
+    ] ;
+  dogont:hasState [
+      rdf:type speeront:ResponseTimeState ;
+    ] ;
+  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
+  speeront:hasProcess :SubProcess1 ;
+.
+:Peer_2
+  rdf:type speeront:Peer ;
+  dogont:IPAddress "192.168.1.69" ;
+  dogont:hasState :LaptopBatteryLvlState ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
+  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
+.
+:Process1
+  rdf:type speeront:Process ;
+  dogont:hasState :ProcessState ;
+.
+:ProcessState
+  rdf:type dogont:State ;
+  dogont:hasStateValue [
+      rdf:type dogont:StateValue ;
+      dogont:statevalueOf :ProcessState_1 ;
+    ] ;
+.
+:ProcessState_1
+  rdf:type speeront:ProcessState ;
+.
+:ProcessState_2
+  rdf:type dogont:State ;
+  dogont:hasStateValue [
+      rdf:type dogont:StateValue ;
+    ] ;
+.
+:ResponseTimeValue
+  rdf:type speeront:TimeValue ;
+  dogont:realStateValue "0.3"^^xsd:string ;
+  dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+.
+:RobotBatteryLvlState
+  rdf:type speeront:BatteryLevelState ;
+  dogont:hasStateValue :LevelStateValue_1 ;
+.
+:LaptopBatteryLvlState
+  rdf:type speeront:BatteryLevelState ;
+  dogont:hasStateValue :LaptopBatteryValue ;
+.
+:StoppedStateValue_1
+  rdf:type speeront:StoppedStateValue ;
+.
+:SubProcess1
+  rdf:type speeront:Process ;
+  dogont:hasState :ProcessState_2 ;
+.
+:SuperPeer_1
+  rdf:type speeront:SuperPeer ;
+  dogont:isIn <http://openhab-semantic/0.1/instance#Lobby_Mueller> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeLcd> ;
+  speeront:hasPeer :Peer_1 ;
+  speeront:hasPeer :Peer_2 ;
+  speeront:hasProcess :Process1 ;
+  speeront:hasURI "localhost"^^xsd:string ;
+.
+:UndeployedStateValue_1
+  rdf:type speeront:UndeployedStateValue ;
+.
+:WaitingStateValue_1
+  rdf:type speeront:WaitingStateValue ;
+.
+:undeployedState1
+  rdf:type dogont:State ;
+  dogont:hasStateValue :UndeployedStateValue_1 ;
+.

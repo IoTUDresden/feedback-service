@@ -4,14 +4,17 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
+import javax.jms.ConnectionFactory;
 import java.util.Arrays;
 
 import static java.lang.String.format;
@@ -20,7 +23,10 @@ import static java.lang.String.format;
 public class FeedbackService implements EnvironmentAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackService.class);
-
+    @Bean
+    ConnectionFactory connectionFactory(){
+        return new ActiveMQConnectionFactory("tcp://localhost:61616");
+    }
     @Autowired
     public void configureMetrics(MetricRegistry registry) {
         registry.register("memory", new MemoryUsageGaugeSet());
