@@ -1,4 +1,4 @@
-package de.tud.feedback.plugin;
+package de.tud.feedback.plugin.test;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
