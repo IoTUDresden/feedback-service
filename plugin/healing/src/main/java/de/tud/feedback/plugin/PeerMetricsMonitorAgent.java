@@ -2,12 +2,15 @@ package de.tud.feedback.plugin;
 
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.loop.MonitorAgent;
+import eu.vicci.process.distribution.logging.LogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Monitors LogEntry on changed peer metrics, e.g. changed workloads.
@@ -32,14 +35,20 @@ public class PeerMetricsMonitorAgent implements MonitorAgent {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 LogEntry logEntry = queue.take();
-                if (logEntry.getMessageType().equalsIgnoreCase("WAMPMESSAGE"))
-                {
+                String messageType = checkNotNull(logEntry.getMessageType());
+
+                if (messageType.equalsIgnoreCase("WAMPMESSAGE")) {
                     updater.update(logEntry.getProcessName(), logEntry.getMessage());
-                    LOG.debug("Updating Peer Metrics: "+logEntry.getMessage());
+                    LOG.debug("Updating Peer Metrics: " + logEntry.getMessage());
+                } else if (messageType.equalsIgnoreCase("PINGRESPONSE"))
+                    updater.update(logEntry.getClientName(), logEntry.getTimestamp());
+                else if (messageType.equalsIgnoreCase("METRICS")) {
+                    String[] metrics = logEntry.getMessage().split(":");
+                    String name = metrics[0].trim();
+                    String state = metrics[1].trim();
+                    LOG.debug("Update Peer Metric: "+metrics.toString());
+                    updater.update(name,state);
                 }
-                if (logEntry.getMessageType().equalsIgnoreCase("PINGRESPONSE"))
-                    updater.update(logEntry.getClientName(),logEntry.getTimestamp());
-            //TODO: aktuell eigentlich der ProcessMonitorAgent
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -58,4 +67,17 @@ public class PeerMetricsMonitorAgent implements MonitorAgent {
         }
     }
 
+    /**
+     * Updates Peer Timestamp everythime a Message arrives.
+     * @param entry
+     */
+    private void updateTimestamp(LogEntry entry){
+        String peerName = checkNotNull(entry.getClientName());
+        String timestamp = checkNotNull(entry.getTimestamp());
+        if (!peerName.isEmpty())
+            updater.update(peerName, timestamp);
+    }
+    private void updateResponseTime(LogEntry entry){
+
+    }
 }

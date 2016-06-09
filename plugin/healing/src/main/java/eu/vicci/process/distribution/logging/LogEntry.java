@@ -1,4 +1,4 @@
-package de.tud.feedback.plugin;
+package eu.vicci.process.distribution.logging;
 
 import java.io.Serializable;
 

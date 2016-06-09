@@ -2,6 +2,7 @@ package de.tud.feedback.plugin;
 
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.loop.MonitorAgent;
+import eu.vicci.process.distribution.logging.LogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
