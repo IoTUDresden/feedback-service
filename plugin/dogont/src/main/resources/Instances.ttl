@@ -39,11 +39,25 @@
 :FailedStateValue_1
   rdf:type speeront:FailedStateValue ;
 .
+:HeartbeatTimeState_1
+  rdf:type speeront:HeartbeatTimeState ;
+  dogont:hasStateValue :TimeValue_1 ;
+.
+:HeartbeatTimeState_2
+  rdf:type speeront:HeartbeatTimeState ;
+  dogont:hasStateValue [
+      rdf:type speeront:TimeValue ;
+    ] ;
+.
 :InactiveStateValue_1
   rdf:type speeront:InactiveStateValue ;
 .
 :KilledStateValue_1
   rdf:type speeront:KilledStateValue ;
+.
+:LaptopBatteryLvlState
+  rdf:type speeront:BatteryLevelState ;
+  dogont:hasStateValue :LaptopBatteryValue ;
 .
 :LaptopBatteryValue
   rdf:type dogont:LevelStateValue ;
@@ -61,6 +75,7 @@
 :Peer_1
   rdf:type speeront:Peer ;
   dogont:IPAddress "192.168.1.63" ;
+  dogont:hasState :HeartbeatTimeState_2 ;
   dogont:hasState :RobotBatteryLvlState ;
   dogont:hasState [
       rdf:type speeront:ExecutionTimeState ;
@@ -76,10 +91,11 @@
 :Peer_2
   rdf:type speeront:Peer ;
   dogont:IPAddress "192.168.1.69" ;
+  dogont:hasState :HeartbeatTimeState_1 ;
   dogont:hasState :LaptopBatteryLvlState ;
+  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
-  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
 .
 :Process1
   rdf:type speeront:Process ;
@@ -110,10 +126,6 @@
   rdf:type speeront:BatteryLevelState ;
   dogont:hasStateValue :LevelStateValue_1 ;
 .
-:LaptopBatteryLvlState
-  rdf:type speeront:BatteryLevelState ;
-  dogont:hasStateValue :LaptopBatteryValue ;
-.
 :StoppedStateValue_1
   rdf:type speeront:StoppedStateValue ;
 .
@@ -129,6 +141,9 @@
   speeront:hasPeer :Peer_2 ;
   speeront:hasProcess :Process1 ;
   speeront:hasURI "localhost"^^xsd:string ;
+.
+:TimeValue_1
+  rdf:type speeront:TimeValue ;
 .
 :UndeployedStateValue_1
   rdf:type speeront:UndeployedStateValue ;
