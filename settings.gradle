@@ -7,3 +7,5 @@ include ':plugin/openhab'
 include ':plugin/dogont'
 include ':plugin/spel'
 include ':plugin/healing'
+include 'healing_test'
+
