@@ -1,35 +1,44 @@
-package de.tud.feedback.plugin.test;
+package test.jms;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.vicci.process.distribution.logging.LogEntry;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.jms.core.JmsMessagingTemplate;
+import org.springframework.stereotype.Component;
 
+import javax.jms.Queue;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(TestApplication.class)
-public class SimpleListenerTest {
+/**
+ * Created by Stefan on 16.06.2016.
+ */
+@Component
+public class SimpleProducer implements CommandLineRunner{
 
     @Autowired
-    private JmsTemplate producer;
+    private JmsMessagingTemplate jmsMessagingTemplate;
 
-    private List<LogEntry> entries;
+    @Autowired
+    private Queue queue;
 
-    @Test
+    @Override
+    public void run(String... args) throws Exception {
+        sendSimpleMessageTree();
+        System.out.println("Message was sent to the Queue");
+    }
+
+    public void send(Object msg) {
+        this.jmsMessagingTemplate.convertAndSend(this.queue, msg);
+    }
     public void sendSimpleMessageTree() {
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode tree = mapper.readTree(new File("C:\\\\Temp\\log.json"));
             for (JsonNode leaf: tree
-                 ) {
+                    ) {
                 LogEntry entry = new LogEntry();
                 entry.setClientInstanceId(leaf.get("clientInstanceId").textValue());
                 entry.setMessage(leaf.get("message").textValue());
@@ -40,7 +49,8 @@ public class SimpleListenerTest {
                 entry.setProcessStepId(leaf.get("processStepId").textValue());
                 entry.setClientInstanceId(leaf.get("clientInstanceId").textValue());
                 entry.setClientName(leaf.get("clientName").textValue());
-                producer.convertAndSend("client.messages", entry);
+                System.out.println("Sending: "+entry);
+                send(entry);
                 Thread.sleep(1000);
 
             }
