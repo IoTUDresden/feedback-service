@@ -37,7 +37,7 @@ public class ContextMismatch {
     }
 
     public enum Type {
-        TOO_LOW, TOO_HIGH, UNEQUAL
+        TOO_LOW, TOO_HIGH, UNEQUAL, RESOURCE
     }
 
 }

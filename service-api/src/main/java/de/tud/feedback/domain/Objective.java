@@ -48,6 +48,9 @@ public class Objective implements Satisfiable {
     private String contextExpression;
 
     @Property
+    private Boolean isDistributable = false;
+
+    @Property
     @Convert(graphPropertyType = String.class)
     private DateTime created = now();
 
@@ -133,6 +136,15 @@ public class Objective implements Satisfiable {
     @JsonProperty("contextExpressions")
     public void setContextExpression(Collection<String> contextExpression) {
         this.contextExpression = join(" ", contextExpression);
+    }
+
+    @JsonProperty("isDistributable")
+    public void setDistributable(Boolean distributable) {
+        isDistributable = distributable;
+    }
+
+    public Boolean getDistributable() {
+        return isDistributable;
     }
 
     public DateTime getCreated() {
