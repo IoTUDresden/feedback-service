@@ -23,10 +23,7 @@ import static java.lang.String.format;
 public class FeedbackService implements EnvironmentAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackService.class);
-    @Bean
-    ConnectionFactory connectionFactory(){
-        return new ActiveMQConnectionFactory("tcp://localhost:61616");
-    }
+
     @Autowired
     public void configureMetrics(MetricRegistry registry) {
         registry.register("memory", new MemoryUsageGaugeSet());
