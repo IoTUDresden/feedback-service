@@ -28,10 +28,12 @@
 :Peer_1
   rdf:type speeront:Peer ;
   dogont:IPAddress "192.168.1.63" ;
-  dogont:hasState :Peer_1HeartbeatTimeState;
-  dogont:hasState :Peer_1BatteryLevelState ;
-  dogont:hasState :Peer_1ResponseTimeState ;
-  dogont:hasState :Peer_1ExecutionTimeState;
+  dogont:hasFunctionality :Function_ProcessControl ;
+  dogont:hasState :State_Peer_1HeartbeatTime;
+  dogont:hasState :State_Peer_1BatteryLevel ;
+  dogont:hasState :State_Peer_1ResponseTime ;
+  dogont:hasState :State_Peer_1ExecutionTime;
+  dogont:hasState :State_Peer_1Fault ;
   dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
@@ -40,15 +42,30 @@
 :Peer_2
   rdf:type speeront:Peer ;
   dogont:IPAddress "192.168.1.69" ;
-  dogont:hasState :Peer_2HeartbeatTimeState ;
-  dogont:hasState :Peer_2BatteryLevelState ;
-  dogont:hasState :Peer_2ResponseTimeState ;
-  dogont:hasState :Peer_2ExecutionTimeState;
+  dogont:hasFunctionality :Function_ProcessControl ;
+  dogont:hasState :State_Peer_2HeartbeatTime;
+  dogont:hasState :State_Peer_2BatteryLevel;
+  dogont:hasState :State_Peer_2ResponseTime;
+  dogont:hasState :State_Peer_2ExecutionTime;
+  dogont:hasState :State_Peer_2Fault ;
   dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
 .
-:Peer_1HeartbeatTimeState
+:Peer_3
+  rdf:type speeront:Peer ;
+  dogont:IPAddress "192.168.1.70" ;
+  dogont:hasFunctionality :Function_ProcessControl ;
+  dogont:hasState :State_Peer_3HeartbeatTime;
+  dogont:hasState :State_Peer_3BatteryLevel;
+  dogont:hasState :State_Peer_3ResponseTime;
+  dogont:hasState :State_Peer_3ExecutionTime;
+  dogont:hasState :State_Peer_3Fault ;
+  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
+.
+:State_Peer_1HeartbeatTime
   rdf:type speeront:HeartbeatTimeState ;
   dogont:hasStateValue [
         rdf:type speeront:TimeValue ;
@@ -56,7 +73,7 @@
         dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
     ] ;
 .
-:Peer_1ResponseTimeState
+:State_Peer_1ResponseTime
   rdf:type speeront:ResponseTimeState ;
   dogont:hasStateValue [
         rdf:type speeront:TimeValue ;
@@ -64,7 +81,7 @@
         dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
     ] ;
 .
-:Peer_1ExecutionTimeState
+:State_Peer_1ExecutionTime
   rdf:type speeront:ExecutionTimeState ;
   dogont:hasStateValue [
         rdf:type speeront:TimeValue ;
@@ -72,7 +89,7 @@
         dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
     ] ;
 .
-:Peer_2HeartbeatTimeState
+:State_Peer_2HeartbeatTime
   rdf:type speeront:HeartbeatTimeState ;
   dogont:hasStateValue [
           rdf:type speeront:TimeValue ;
@@ -80,7 +97,7 @@
           dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
       ] ;
 .
-:Peer_2ResponseTimeState
+:State_Peer_2ResponseTime
   rdf:type speeront:ResponseTimeState ;
   dogont:hasStateValue [
         rdf:type speeront:TimeValue ;
@@ -88,7 +105,7 @@
         dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
     ] ;
 .
-:Peer_2ExecutionTimeState
+:State_Peer_2ExecutionTime
   rdf:type speeront:ExecutionTimeState ;
   dogont:hasStateValue [
         rdf:type speeront:TimeValue ;
@@ -96,12 +113,59 @@
         dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
     ] ;
 .
+:State_Peer_3HeartbeatTime
+  rdf:type speeront:HeartbeatTimeState ;
+  dogont:hasStateValue [
+          rdf:type speeront:TimeValue ;
+          dogont:realStateValue "0.1"^^xsd:string ;
+          dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+      ] ;
+.
+:State_Peer_3ResponseTime
+  rdf:type speeront:ResponseTimeState ;
+  dogont:hasStateValue [
+        rdf:type speeront:TimeValue ;
+        dogont:realStateValue "0.1"^^xsd:string ;
+        dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+    ] ;
+.
+:State_Peer_3ExecutionTime
+  rdf:type speeront:ExecutionTimeState ;
+  dogont:hasStateValue [
+        rdf:type speeront:TimeValue ;
+        dogont:realStateValue "0.1"^^xsd:string ;
+        dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+    ] ;
+.
+### Failed States
+:State_Peer_1Fault
+  rdf:type dogont:FaultState ;
+  dogont:hasStateValue :NoFailureStateValue_1 ;
+.
+:State_Peer_2Fault
+  rdf:type dogont:FaultState ;
+  dogont:hasStateValue :NoFailureStateValue_1 ;
+.
+:State_Peer_3Fault
+  rdf:type dogont:FaultState ;
+  dogont:hasStateValue :FailureStateValue_1 ;
+.
+:NoFailureStateValue_1
+  rdf:type dogont:NoFailureStateValue ;
+.
+:FailureStateValue_1
+  rdf:type dogont:FailureStateValue ;
+.
 ### Battery States
-:Peer_1BatteryLevelState
+:State_Peer_1BatteryLevel
   rdf:type speeront:BatteryLevelState ;
   dogont:hasStateValue :RobotBatteryValue ;
 .
-:Peer_2BatteryLevelState
+:State_Peer_2BatteryLevel
+  rdf:type speeront:BatteryLevelState ;
+  dogont:hasStateValue :LaptopBatteryValue ;
+.
+:State_Peer_3BatteryLevel
   rdf:type speeront:BatteryLevelState ;
   dogont:hasStateValue :LaptopBatteryValue ;
 .
@@ -115,23 +179,28 @@
   dogont:realStateValue "0.7"^^xsd:string ;
   dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
 .
+:RouterBatteryValue
+  rdf:type dogont:LevelStateValue ;
+  dogont:realStateValue "0.9"^^xsd:string ;
+  dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
+.
 ### Process States/Metrics
 :Process1
   rdf:type speeront:Process ;
-  dogont:hasState :Process1ProcessState ;
+  dogont:hasState :State_Process1Process ;
 .
 :SubProcess1
   rdf:type speeront:Process ;
-  dogont:hasState :SubProcess1ProcessState;
+  dogont:hasState :State_SubProcess1Process;
 .
-:Process1ProcessState
+:State_Process1Process
   rdf:type dogont:State ;
   dogont:hasStateValue [
       rdf:type dogont:StateValue ;
       dogont:statevalueOf :ProcessState_1 ;
     ] ;
 .
-:SubProcess1ProcessState
+:State_SubProcess1Process
   rdf:type speeront:ProcessState ;
   dogont:hasStateValue [
       rdf:type dogont:DiscreteValue ;
@@ -174,4 +243,23 @@
 .
 :StoppedStateValue_1
   rdf:type speeront:StoppedStateValue ;
+.
+#Commands+Functions
+:Function_ProcessControl
+  rdf:type dogont:StartStopPauseFunctionality ;
+  dogont:hasCommand :PauseCommand_1 ;
+  dogont:hasCommand :StartCommand ;
+  dogont:hasCommand :StopCommand_1 ;
+.
+:StartCommand
+  rdf:type dogont:StartCommand ;
+  dogont:realCommandName "START"^^xsd:string
+.
+:StopCommand_1
+  rdf:type dogont:StopCommand ;
+   dogont:realCommandName "STOP"^^xsd:string
+.
+:PauseCommand_1
+  rdf:type dogont:PauseCommand ;
+  dogont:realCommandName "PAUSE"^^xsd:string ;
 .
