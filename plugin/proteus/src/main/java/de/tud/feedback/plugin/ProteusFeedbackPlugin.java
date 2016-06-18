@@ -8,10 +8,7 @@ import de.tud.feedback.loop.CommandExecutor;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.loop.ObjectiveEvaluator;
-import de.tud.feedback.plugin.factory.DogOntCompensationRepositoryFactoryBean;
-import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
-import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
-import de.tud.feedback.plugin.factory.SpelObjectiveEvaluatorFactoryBean;
+import de.tud.feedback.plugin.factory.*;
 import de.tud.feedback.repository.CompensationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,13 +37,18 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired DogOntCompensationRepositoryFactoryBean compensationRepositoryFactory;
 
+    @Autowired
+    HealingCompensationRepositoryFactoryBean healingCompensationRepositoryFactoryBean;
+
     @Autowired Provider<DogOntCompensationRepository> compensationRepositoryProvider;
+
+    @Autowired Provider<HealingCompensationRepository> healingCompensationRepositoryProvider;
 
     @Autowired Provider<OpenHabCommandExecutor> commandExecutorProvider;
 
-    @Autowired Provider<PeerMetricsMonitorAgent> peerMetricsMonitorAgentProvider;
+    @Autowired Provider<HealingCommandExecutor> healingCommandExecutorProvider;
 
-    @Autowired Provider<PeerMonitorAgent> peerMonitorAgentProvider;
+    @Autowired Provider<PeerMetricsMonitorAgent> peerMetricsMonitorAgentProvider;
 
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
@@ -73,7 +75,7 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Override
     public Collection<MonitorAgent> getMonitorAgents() {
-        return newArrayList(monitorAgentProvider.get(),peerMonitorAgentProvider.get(),peerMetricsMonitorAgentProvider.get());
+        return newArrayList(monitorAgentProvider.get(),peerMetricsMonitorAgentProvider.get());
     }
 
     @Override
@@ -83,8 +85,9 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Override
     public CompensationRepository getCompensationRepository(CypherExecutor executor) {
-        compensationRepositoryFactory.setExecutor(executor);
-        return compensationRepositoryProvider.get();
+        //TODO: Liste/Strategy
+        healingCompensationRepositoryFactoryBean.setExecutor(executor);
+        return healingCompensationRepositoryProvider.get();
     }
 
 

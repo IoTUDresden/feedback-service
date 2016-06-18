@@ -47,6 +47,7 @@ public class MismatchCompensatingPlanner implements Planner {
     public Optional<Command> plan(ChangeRequest changeRequest) {
         Objective objective = changeRequest.getObjective();
         ContextMismatch mismatch = mismatchWithin(changeRequest);
+        //TODO: Node ID should be variable: process ID!!
         Long testNodeId = changeRequest.getResult().getTestNodeId();
         Set<Command> executedCommands = commandRepository.findCommandsExecutedFor(objective);
         Set<Command> manipulatingCommands = compensationRepository.findCommandsManipulating(testNodeId);
@@ -54,7 +55,7 @@ public class MismatchCompensatingPlanner implements Planner {
         try {
             Optional<Command> command = manipulatingCommands.stream()
                     .filter(it -> it.isRepeatable() || !executedCommands.contains(it))
-                    .filter(it -> isCompensating(mismatch, it))
+                    .filter(it -> isCompensating(mismatch, it) || (objective.isDistributable() && isTransferring(it)))
                     .findAny();
 
             if (command.isPresent()) {
@@ -83,7 +84,10 @@ public class MismatchCompensatingPlanner implements Planner {
         objective.setState(Objective.State.UNSATISFIED);
         return compensation;
     }
-
+    private boolean isTransferring(Command command) {
+        LOG.debug("Check For Transferring Command");
+        return command.getType() == Command.Type.TAKE;
+    }
     private boolean isCompensating(ContextMismatch mismatch, Command command) {
         switch (mismatch.getType()) {
             case TOO_LOW:  return command.getType() == Command.Type.UP;
