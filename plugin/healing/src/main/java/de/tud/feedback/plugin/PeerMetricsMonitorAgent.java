@@ -2,11 +2,14 @@ package de.tud.feedback.plugin;
 
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.loop.MonitorAgent;
+import eu.vicci.process.distribution.logging.DistributionCommand;
 import eu.vicci.process.distribution.logging.LogEntry;
+import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 
+import javax.jms.ObjectMessage;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -39,15 +42,13 @@ public class PeerMetricsMonitorAgent implements MonitorAgent {
 
                 if (messageType.equalsIgnoreCase("WAMPMESSAGE")) {
                     updater.update(logEntry.getProcessName(), logEntry.getMessage());
-                    LOG.debug("Updating Peer Metrics: " + logEntry.getMessage());
-                } else if (messageType.equalsIgnoreCase("PINGRESPONSE"))
-                    updater.update(logEntry.getClientName(), logEntry.getTimestamp());
-                else if (messageType.equalsIgnoreCase("METRICS")) {
-                    String[] metrics = logEntry.getMessage().split(":");
-                    String name = metrics[0].trim();
-                    String state = metrics[1].trim();
-                    LOG.debug("Update Peer Metric: "+metrics.toString());
-                    updater.update(name,state);
+                    LOG.debug("Updating ProcessState: " + logEntry.getMessage());
+                } else if (messageType.equalsIgnoreCase("PINGRESPONSE")) {
+                    updateTimestamp(logEntry);
+                } else if (messageType.equalsIgnoreCase("PING")) {
+                    updateTimestamp(logEntry);
+                } else if (messageType.equalsIgnoreCase("METRICS")) {
+                    updateMetricState(logEntry);
                 }
             }
         } catch (InterruptedException e) {
@@ -55,29 +56,55 @@ public class PeerMetricsMonitorAgent implements MonitorAgent {
         }
     }
 
+    private void updateMetricState(LogEntry logEntry) {
+        String[] metrics = logEntry.getMessage().split(":");
+        String peerName = checkNotNull(logEntry.getClientName());
+        String metricName = metrics[0].trim();
+        String state = metrics[1].trim();
+        LOG.debug("Update Peer Metric: " + metrics.toString());
+        updater.update(peerName + metricName, state);
+    }
+
     @JmsListener(destination = "client.messages")
     public void receiveMessage(LogEntry message) {
+        if (message instanceof LogEntry) {
+            LogEntry logEntry = (LogEntry) message;
 
-        LOG.info("Received <" + message + ">");
-        try {
-            queue.put(message);
+            LOG.info("Received <" + message + ">");
+            try {
+                queue.put(logEntry);
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     /**
      * Updates Peer Timestamp everythime a Message arrives.
+     *
      * @param entry
      */
-    private void updateTimestamp(LogEntry entry){
+    private void updateTimestamp(LogEntry entry) {
         String peerName = checkNotNull(entry.getClientName());
         String timestamp = checkNotNull(entry.getTimestamp());
         if (!peerName.isEmpty())
-            updater.update(peerName, timestamp);
-    }
-    private void updateResponseTime(LogEntry entry){
+            updater.update(peerName + "HeartbeatTime", timestamp);
+        LOG.debug("Update Peer HeartbeatTime: " + peerName);
 
+    }
+    //TODO: impol. resp., execu.
+    private void updateResponseTime(LogEntry entry) {
+        String peerName = checkNotNull(entry.getClientName());
+        String timestamp = checkNotNull(entry.getTimestamp());
+        if (!peerName.isEmpty())
+            updater.update(peerName + "ResponseTime", timestamp);
+    }
+
+    private void updateExecutionTime(LogEntry entry) {
+        String peerName = checkNotNull(entry.getClientName());
+        String timestamp = checkNotNull(entry.getTimestamp());
+        if (!peerName.isEmpty())
+            updater.update(peerName + "ResponseTime", timestamp);
     }
 }
