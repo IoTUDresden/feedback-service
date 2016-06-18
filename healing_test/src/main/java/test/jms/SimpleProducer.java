@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Component;
+import test.PeerEmulator;
 
 import javax.jms.Queue;
 import java.io.File;
@@ -27,7 +28,7 @@ public class SimpleProducer implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
         sendSimpleMessageTree();
-        System.out.println("Message was sent to the Queue");
+        System.out.println("Producer available");
     }
 
     public void send(Object msg) {
@@ -51,14 +52,12 @@ public class SimpleProducer implements CommandLineRunner{
                 entry.setClientName(leaf.get("clientName").textValue());
                 System.out.println("Sending: "+entry);
                 send(entry);
-                Thread.sleep(1000);
+                //Thread.sleep(1000);
 
             }
 
 
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
