@@ -143,7 +143,7 @@ public class Objective implements Satisfiable {
         isDistributable = distributable;
     }
 
-    public Boolean getDistributable() {
+    public Boolean isDistributable() {
         return isDistributable;
     }
 
