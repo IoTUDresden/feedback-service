@@ -305,8 +305,3 @@
   rdf:type rdf:Property ;
   rdfs:range xsd:boolean ;
 .
-:runsOn
-  rdf:type rdf:Property ;
-  rdfs:domain :Process ;
-  rdfs:range :Peer ;
-.

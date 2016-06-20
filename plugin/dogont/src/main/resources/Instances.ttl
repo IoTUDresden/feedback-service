@@ -188,12 +188,10 @@
 :Process1
   rdf:type speeront:Process ;
   dogont:hasState :State_Process1Process ;
-  speeront:runsOn :SuperPeer_1 ;
 .
 :SubProcess1
   rdf:type speeront:Process ;
   dogont:hasState :State_SubProcess1Process;
-  speeront:runsOn :Peer_1 ;
 .
 :State_Process1Process
   rdf:type dogont:State ;
