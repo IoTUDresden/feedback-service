@@ -48,7 +48,6 @@
   dogont:hasState :State_Peer_2ResponseTime;
   dogont:hasState :State_Peer_2ExecutionTime;
   dogont:hasState :State_Peer_2Fault ;
-  speeront:hasProcess :SubProcess1 ;
   dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
