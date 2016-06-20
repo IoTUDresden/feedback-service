@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toMap;
 /**
  * Created by Stefan on 18.06.2016.
  */
-public class ProcessContextUpdater implements ContextUpdater {
+public class PeerProcessContextUpdater implements ContextUpdater {
     private final Function<String, String> stateNameMapper;
 
     private final CypherExecutor executor;
@@ -26,7 +26,7 @@ public class ProcessContextUpdater implements ContextUpdater {
 
     private Listener listener;
 
-    public ProcessContextUpdater(CypherExecutor executor, Function<String, String> stateNameMapper) {
+    public PeerProcessContextUpdater(CypherExecutor executor, Function<String, String> stateNameMapper) {
         this.stateNameMapper = stateNameMapper;
         this.executor = executor;
     }
@@ -45,7 +45,7 @@ public class ProcessContextUpdater implements ContextUpdater {
             executor.execute(
                     "MATCH (v) " +
                             "WHERE ID(v) = {id} " +
-                            "SET v.realStateValue = {value} " +
+                            "SET v.hasProcess = {value} " +
                             "RETURN v",
 
                     params().put("id", stateValueMapping.get(stateName))
@@ -60,10 +60,10 @@ public class ProcessContextUpdater implements ContextUpdater {
         return executor.execute(
                 "MATCH (thing)-[:within]->(import:ContextImport) " +
                         "MATCH (import)-[:for]->(context:Context) " +
-                        "MATCH (thing)-[:hasState]->(state) " +
-                        "MATCH (state)-[:hasStateValue]->(value) " +
+                        "MATCH (thing)-[:type]->(:Class{name:'Peer'})" +
+                        "OPTIONAL MATCH (thing)-[:hasProcess]->(process) " +
                         "WHERE context.name = {contextName} " +
-                        "RETURN state.name AS state, ID(value) AS valueId",
+                        "RETURN thing.name AS state, ID(thing) AS valueId",
 
                 params().put("contextName", context.getName())
                         .build())
