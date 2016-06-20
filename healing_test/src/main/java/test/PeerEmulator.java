@@ -7,9 +7,13 @@ import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 import test.jms.SimpleProducer;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import java.util.concurrent.BlockingQueue;
@@ -22,23 +26,32 @@ import static org.eclipse.jetty.http.HttpParser.LOG;
  * Created by Stefan on 16.06.2016.
  */
 @Component
-public class PeerEmulator implements CommandLineRunner {
+public class PeerEmulator implements CommandLineRunner,MessageListener {
 
     @Autowired
     private SimpleProducer producer;
 
     private final BlockingQueue<DistributionCommand> queue = new LinkedBlockingQueue<DistributionCommand>();
 
+    @Override
     @JmsListener(destination = "server.messages")
-    public void receiveMessage(DistributionCommand message) {
+    public void onMessage(Message message) {
         LOG.debug("Rec Message");
-        if (message instanceof DistributionCommand) {
-            DistributionCommand distributionCommand = (DistributionCommand) message;
-            LOG.debug("Consumer Test Received Command <" + message + ">");
+        if (message instanceof ObjectMessage)
+        {
+            ObjectMessage objectMessage = (ObjectMessage) message;
             try {
-                queue.put(distributionCommand);
+                if (objectMessage.getObject() instanceof DistributionCommand) {
+                    DistributionCommand distributionCommand = (DistributionCommand) objectMessage.getObject();
+                    LOG.debug("Consumer Test Received Command <" + distributionCommand + ">");
+                    try {
+                        queue.put(distributionCommand);
 
-            } catch (InterruptedException e) {
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JMSException e) {
                 e.printStackTrace();
             }
         }

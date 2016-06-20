@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -20,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p>
  * Created by Stefan on 09.05.2016.
  */
-public class PeerMetricsMonitorAgent implements MonitorAgent {
+public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
     private ContextUpdater updater;
 
     private final BlockingQueue<LogEntry> queue = new LinkedBlockingQueue<LogEntry>();
@@ -66,15 +69,21 @@ public class PeerMetricsMonitorAgent implements MonitorAgent {
     }
 
     @JmsListener(destination = "client.messages")
-    public void receiveMessage(LogEntry message) {
-        if (message instanceof LogEntry) {
-            LogEntry logEntry = (LogEntry) message;
-
-            LOG.info("Received <" + message + ">");
+    public void onMessage(Message message) {
+        if (message instanceof ObjectMessage) {
+            ObjectMessage objectMessage = (ObjectMessage) message;
             try {
-                queue.put(logEntry);
+                if (objectMessage.getObject() instanceof LogEntry){
+                    LogEntry logEntry = (LogEntry) objectMessage.getObject();
+                    LOG.info("Received <" + logEntry + ">");
+                    try {
+                        queue.put(logEntry);
 
-            } catch (InterruptedException e) {
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (JMSException e) {
                 e.printStackTrace();
             }
         }
@@ -93,6 +102,7 @@ public class PeerMetricsMonitorAgent implements MonitorAgent {
         LOG.debug("Update Peer HeartbeatTime: " + peerName);
 
     }
+
     //TODO: impol. resp., execu.
     private void updateResponseTime(LogEntry entry) {
         String peerName = checkNotNull(entry.getClientName());
@@ -100,6 +110,7 @@ public class PeerMetricsMonitorAgent implements MonitorAgent {
         if (!peerName.isEmpty())
             updater.update(peerName + "ResponseTime", timestamp);
     }
+
 
     private void updateExecutionTime(LogEntry entry) {
         String peerName = checkNotNull(entry.getClientName());

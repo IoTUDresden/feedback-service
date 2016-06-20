@@ -11,6 +11,7 @@ import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.jms.core.JmsTemplate;
 
 import javax.jms.Queue;
+import javax.jms.Topic;
 
 /**
  * Created by Stefan on 13.06.2016.
@@ -22,7 +23,7 @@ public class HealingCommandExecutor  implements CommandExecutor
     private JmsMessagingTemplate producer;
 
     @Autowired
-    private Queue queue;
+    private Topic queue;
 
     private static final Logger LOG = LoggerFactory.getLogger(HealingCommandExecutor.class);
 

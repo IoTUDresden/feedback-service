@@ -50,6 +50,8 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<PeerMetricsMonitorAgent> peerMetricsMonitorAgentProvider;
 
+    @Autowired Provider<PeerProcessMonitorAgent> peerProcessMonitorAgentProvider;
+
     @Override
     public ContextImporter getContextImporter(CypherExecutor executor) {
         importerFactory.setExecutor(executor);
@@ -75,7 +77,7 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Override
     public Collection<MonitorAgent> getMonitorAgents() {
-        return newArrayList(monitorAgentProvider.get(),peerMetricsMonitorAgentProvider.get());
+        return newArrayList(monitorAgentProvider.get(),peerMetricsMonitorAgentProvider.get(),peerProcessMonitorAgentProvider.get());
     }
 
     @Override

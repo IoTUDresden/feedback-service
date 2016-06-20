@@ -5,11 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.vicci.process.distribution.logging.LogEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.core.JmsMessagingTemplate;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.stereotype.Component;
 import test.PeerEmulator;
 
 import javax.jms.Queue;
+import javax.jms.Topic;
 import java.io.File;
 import java.io.IOException;
 
@@ -20,10 +24,10 @@ import java.io.IOException;
 public class SimpleProducer implements CommandLineRunner{
 
     @Autowired
-    private JmsMessagingTemplate jmsMessagingTemplate;
+    private JmsTemplate jmsMessagingTemplate;
 
     @Autowired
-    private Queue queue;
+    private Topic queue;
 
     @Override
     public void run(String... args) throws Exception {
