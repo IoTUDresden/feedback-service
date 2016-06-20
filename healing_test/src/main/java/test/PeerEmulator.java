@@ -72,10 +72,10 @@ public class PeerEmulator implements CommandLineRunner,MessageListener {
             System.out.println("Got Peer Switch Command");
             //Workflow (mit jeweiligen Monitor update):
             //Peer 1 sendet Process Terminierung -> Prozess aus Peer 1 entfernen
-            LogEntry peer1Termination = createLogEntry(peer1, process1, "undeployed", "WAMPMESSAGE");
-            producer.send(peer1Termination);
+            //LogEntry peer1Termination = createLogEntry(peer1, process1, "undeployed", "WAMPMESSAGE");
+            //producer.send(peer1Termination);
             //Peer 2 sendet Prozess Empfang -> Prozess zu Peer 2 hinzufügen
-            LogEntry peer2activation = createLogEntry(peer1, process1, "active", "WAMPMESSAGE");
+            LogEntry peer2activation = createLogEntry(peer2, process1, "active", "WAMPMESSAGE");
             producer.send(peer2activation);
             //Peer 2 sendet Metrik -> Metrik für Peer 2 updaten
             LogEntry entry = createLogEntry(peer2, process1, metrics2, "METRICS");
