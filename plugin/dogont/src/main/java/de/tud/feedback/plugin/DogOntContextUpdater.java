@@ -21,7 +21,7 @@ public class DogOntContextUpdater implements ContextUpdater {
     private Context context;
 
     private Map<String, Integer> stateValueMapping;
-
+    private Map<String, Integer> peerValueMapping;
     private Listener listener;
 
     public DogOntContextUpdater(CypherExecutor executor, Function<String, String> stateNameMapper) {
@@ -33,6 +33,19 @@ public class DogOntContextUpdater implements ContextUpdater {
     @LogInvocation
     @LogTimeSeries(context = "context.#{context.name}")
     public void update(String item, Object state) {
+        //FIXME HACK:
+        if (item.toLowerCase().contains("peer"))
+        {
+            if (state instanceof String){
+                String process = (String) state;
+                if (process.toLowerCase().contains("process"))
+                {
+                    updatePeer(item,process);
+                    return;
+                }
+            }
+        }
+
         final String stateName = stateNameMapper.apply(item);
 
         if (stateValueMapping == null) {
@@ -72,6 +85,52 @@ public class DogOntContextUpdater implements ContextUpdater {
                         e -> (Integer) e.get("valueId")));
     }
 
+    /**
+     * updates peer to process relation, deletes old peer to process relation
+     * @param item
+     * @param state
+     */
+    public void updatePeer(String item, Object state) {
+        final String stateName = item;
+
+        peerValueMapping = resolvePeerValueMapping();
+
+
+        if (peerValueMapping.containsKey(stateName)) {
+            executor.execute(
+                    "MATCH (v)-[:type]->(:Class{name:'Peer'}) " +
+                            "MATCH (oldPeer)-[:hasProcess]->(process) " +
+                            "MATCH (oldPeer)-[r]->(process) " +
+                            "WHERE ID(v) = {id} AND process.name = {value} " +
+                            "CREATE (v)-[:hasProcess]->(process) " +
+                            "DELETE r " +
+                            "RETURN v",
+
+                    params().put("id", peerValueMapping.get(stateName))
+                            .put("value", state)
+                            .build());
+
+            listener.contextUpdated();
+        }
+    }
+
+    private Map<String, Integer> resolvePeerValueMapping() {
+        return executor.execute(
+                "MATCH (thing)-[:within]->(import:ContextImport) " +
+                        "MATCH (import)-[:for]->(context:Context) " +
+                        "MATCH (thing)-[:type]->(:Class{name:'Peer'})" +
+                        "OPTIONAL MATCH (thing)-[:hasProcess]->(process) " +
+                        "WHERE context.name = {contextName} " +
+                        "RETURN thing.name AS state, ID(thing) AS valueId",
+
+                params().put("contextName", context.getName())
+                        .build())
+
+                .stream()
+                .collect(toMap(
+                        e -> (String) e.get("state"),
+                        e -> (Integer) e.get("valueId")));
+    }
     @Override
     public void workWith(Context context) {
         this.context = context;

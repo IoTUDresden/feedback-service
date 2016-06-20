@@ -39,8 +39,8 @@ public class PeerProcessMonitorAgent implements MonitorAgent, MessageListener {
             while (!Thread.currentThread().isInterrupted()) {
                 LogEntry logEntry = queue.take();
                 String messageType = checkNotNull(logEntry.getMessageType());
-
-                if (messageType.equalsIgnoreCase("WAMPMESSAGE")) {
+                String payload = checkNotNull(logEntry.getMessage());
+                if (messageType.equalsIgnoreCase("WAMPMESSAGE") && payload.equalsIgnoreCase("active")) {
                     LOG.debug("Updating Process2Peer Mapping: " + logEntry.getMessage());
                     updatePeersProcess(logEntry);
                 }
@@ -58,7 +58,7 @@ public class PeerProcessMonitorAgent implements MonitorAgent, MessageListener {
                 if (objectMessage.getObject() instanceof LogEntry){
                     LogEntry logEntry = (LogEntry) objectMessage.getObject();
                     String messageType = checkNotNull(logEntry.getMessageType());
-                    LOG.info("Received <" + logEntry + ">");
+                    LOG.info("Updateing Peer to Process <" + logEntry + ">");
                     try {
                         if (messageType.equalsIgnoreCase("WAMPMESSAGE")) {
                             queue.put(logEntry);
@@ -76,7 +76,7 @@ public class PeerProcessMonitorAgent implements MonitorAgent, MessageListener {
         String peerName = checkNotNull(entry.getClientName());
         String processName = checkNotNull(entry.getProcessName());
         if (!peerName.isEmpty() && !processName.isEmpty()){
-            //updater.update();
+            updater.update(peerName,processName);
         }
     }
 }
