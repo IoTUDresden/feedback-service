@@ -91,6 +91,15 @@
       owl:onProperty dogont:realStateValue ;
     ] ;
 .
+:HeartbeatTimeState
+  rdf:type owl:Class ;
+  rdfs:subClassOf :TimeState ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :TimeValue ;
+    ] ;
+.
 :InactiveStateValue
   rdf:type owl:Class ;
   rdfs:subClassOf dogont:DiscreteValue ;
@@ -99,6 +108,10 @@
       owl:hasValue "inactive"^^xsd:string ;
       owl:onProperty dogont:realStateValue ;
     ] ;
+.
+:InstanceIdValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:ContinuousValue ;
 .
 :KilledStateValue
   rdf:type owl:Class ;
@@ -137,6 +150,15 @@
 :Process
   rdf:type owl:Class ;
   rdfs:subClassOf dogont:Controllable ;
+.
+:ProcessInstanceState
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:ContinuousState ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :InstanceIdValue ;
+    ] ;
 .
 :ProcessState
   rdf:type owl:Class ;
@@ -282,4 +304,9 @@
 :isBlacklisted
   rdf:type rdf:Property ;
   rdfs:range xsd:boolean ;
+.
+:runsOn
+  rdf:type rdf:Property ;
+  rdfs:domain :Process ;
+  rdfs:range :Peer ;
 .
