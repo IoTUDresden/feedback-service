@@ -197,14 +197,14 @@
   rdf:type speeront:ProcessState ;
   dogont:hasStateValue [
       rdf:type dogont:DiscreteValue ;
-      dogont:statevalueOf :UndeployedStateValue_1 ;
+      dogont:realStateValue "undeployed"^^xsd:string ;
     ] ;
 .
 :State_SubProcess1Process
   rdf:type speeront:ProcessState ;
   dogont:hasStateValue [
       rdf:type dogont:DiscreteValue ;
-      dogont:statevalueOf :UndeployedStateValue_1 ;
+      dogont:realStateValue "undeployed"^^xsd:string ;
     ] ;
 .
 #### Process State Values
