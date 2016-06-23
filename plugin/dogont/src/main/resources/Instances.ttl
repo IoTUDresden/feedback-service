@@ -194,10 +194,10 @@
   dogont:hasState :State_SubProcess1Process;
 .
 :State_Process1Process
-  rdf:type dogont:State ;
+  rdf:type speeront:ProcessState ;
   dogont:hasStateValue [
-      rdf:type dogont:StateValue ;
-      dogont:statevalueOf :ProcessState_1 ;
+      rdf:type dogont:DiscreteValue ;
+      dogont:statevalueOf :UndeployedStateValue_1 ;
     ] ;
 .
 :State_SubProcess1Process
