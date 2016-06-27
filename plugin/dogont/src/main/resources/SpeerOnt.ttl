@@ -273,14 +273,6 @@
       owl:onProperty dogont:realStateValue ;
     ] ;
 .
-:hasBatteryLevel
-  rdf:type rdf:Property ;
-  rdfs:range xsd:decimal ;
-.
-:hasCPULoad
-  rdf:type rdf:Property ;
-  rdfs:range xsd:decimal ;
-.
 :hasDevices
   rdf:type rdf:Property ;
   rdfs:domain :Peer ;
@@ -295,13 +287,4 @@
   rdf:type rdf:Property ;
   rdfs:domain :Peer ;
   rdfs:range :Process ;
-.
-:hasURI
-  rdf:type rdf:Property ;
-  rdfs:range xsd:string ;
-  rdfs:subPropertyOf dogont:IPAddress ;
-.
-:isBlacklisted
-  rdf:type rdf:Property ;
-  rdfs:range xsd:boolean ;
 .
