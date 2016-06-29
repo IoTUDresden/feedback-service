@@ -6,6 +6,7 @@ import de.tud.feedback.loop.MismatchProvider;
 import org.springframework.expression.spel.SpelNode;
 import org.springframework.expression.spel.ast.Literal;
 import org.springframework.expression.spel.ast.OpGT;
+import org.springframework.expression.spel.ast.Operator;
 import org.springframework.expression.spel.ast.VariableReference;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -47,7 +48,7 @@ public class SpelMismatchProvider implements MismatchProvider {
         if (!literalWithin(ast).isPresent())
             throw new RuntimeException(format("No value literal within '%s'", expression));
 
-        if (!SUPPORTED_OPS.contains(((OpGT) ast).getOperatorName()))
+        if (!SUPPORTED_OPS.contains(((Operator) ast).getOperatorName()))
             throw new RuntimeException(format("Operator within '%s' can only be %s", expression, SUPPORTED_OPS));
     }
 
@@ -94,10 +95,10 @@ public class SpelMismatchProvider implements MismatchProvider {
     }
 
     public Optional<String> operatorWithin(SpelNode ast) {
-        if (!(ast instanceof OpGT) || ast.getChildCount() != 2) {
+        if (!(ast instanceof Operator) || ast.getChildCount() != 2) {
             return Optional.absent();
         } else {
-            return Optional.of(((OpGT) ast).getOperatorName());
+            return Optional.of(((Operator) ast).getOperatorName());
         }
     }
 
