@@ -38,15 +38,16 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
         return ObjectiveEvaluationResult.build()
                 .setContextVariables(expressionResult)
                 .setTestNodeIdTo(evaluateTestNodeId(objective, expressionResult))
-                .setCompensateTo(evaluateCompensationRule(objective))
+                .setCompensateTo(evaluateCompensationRule(objective, expressionResult))
                 .setSatisfiedTo(evaluateSatisfiedRule(objective, expressionResult));
     }
 
-    private boolean evaluateCompensationRule(Objective objective) {
+    private boolean evaluateCompensationRule(Objective objective, Map<String, Object> expressionResult) {
         StandardEvaluationContext context = new StandardEvaluationContext(objective);
         context.setVariable("now", now());
         context.setVariable("objective", objective);
         context.setVariable("goal", objective.getGoal());
+        context.setVariables(expressionResult);
         return parser.parseExpression(objective.getCompensateExpression()).getValue(context, Boolean.class);
     }
 
