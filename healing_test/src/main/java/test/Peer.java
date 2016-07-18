@@ -8,6 +8,8 @@ public class Peer {
     private String peerId;
     private Process process;
     private String peerIp;
+    private String failureState;
+
 
     public Peer(String peerName, String peerId, String peerIp) {
         this.peerName = peerName;
@@ -31,7 +33,17 @@ public class Peer {
         return peerIp;
     }
 
+
+
     public void setProcess(Process process) {
         this.process = process;
+    }
+
+    public String getFailureState() {
+        return failureState;
+    }
+
+    public void setFailureState(String failureState) {
+        this.failureState = failureState;
     }
 }

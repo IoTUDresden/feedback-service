@@ -44,7 +44,9 @@ public class HealingCompensationRepository implements CompensationRepository {
         return new Command()
                 .setRepeatable(false)
                 .setTargetTo((String) attributes.get("newPeer"))
+                .setProcessName((String) attributes.get("processName"))
                 .setNameTo((String) attributes.get("commandName"))
+                .setCommandReceiverId((String) attributes.get("oldPeer"))
                 .setCommandAddress((String) attributes.get("ipAddress"))
                 .setTypeTo(commands.get(attributes.get("commandType")));
     }

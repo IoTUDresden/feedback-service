@@ -30,7 +30,7 @@ public class HealingCommandExecutor  implements CommandExecutor
     @Override
     public void execute(Command command) {
         DistributionCommand cmd = new DistributionCommand();
-
+        cmd.setProcessName(command.getProcessName());
         cmd.setCommandName(command.getName());
         cmd.setPeerIp(command.getCommandAddress());
         cmd.setPeerName(command.getTarget());

@@ -6,6 +6,7 @@ import eu.vicci.process.distribution.logging.LogEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
@@ -28,7 +29,8 @@ public class SimpleProducer implements CommandLineRunner{
 
     @Autowired
     private Topic queue;
-
+    @Autowired
+    private ResourceLoader resourceLoader;
     @Override
     public void run(String... args) throws Exception {
         sendSimpleMessageTree();
@@ -41,7 +43,7 @@ public class SimpleProducer implements CommandLineRunner{
     public void sendSimpleMessageTree() {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            JsonNode tree = mapper.readTree(new File("C:\\\\Temp\\log.json"));
+            JsonNode tree = mapper.readTree(resourceLoader.getResource("classpath:testLog.json").getFile());
             for (JsonNode leaf: tree
                     ) {
                 LogEntry entry = new LogEntry();
@@ -56,12 +58,14 @@ public class SimpleProducer implements CommandLineRunner{
                 entry.setClientName(leaf.get("clientName").textValue());
                 System.out.println("Sending: "+entry);
                 send(entry);
-                //Thread.sleep(1000);
+                Thread.sleep(500);
 
             }
 
 
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

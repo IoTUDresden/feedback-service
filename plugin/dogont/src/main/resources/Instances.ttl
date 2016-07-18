@@ -52,19 +52,6 @@
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
 .
-:Peer_3
-  rdf:type speeront:Peer ;
-  dogont:IPAddress "192.168.1.70" ;
-  dogont:hasFunctionality :Function_ProcessControl ;
-  dogont:hasState :State_Peer_3HeartbeatTime;
-  dogont:hasState :State_Peer_3BatteryLevel;
-  dogont:hasState :State_Peer_3ResponseTime;
-  dogont:hasState :State_Peer_3ExecutionTime;
-  dogont:hasState :State_Peer_3Fault ;
-  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
-  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
-  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
-.
 :State_Peer_1HeartbeatTime
   rdf:type speeront:HeartbeatTimeState ;
   dogont:hasStateValue [
@@ -106,30 +93,6 @@
     ] ;
 .
 :State_Peer_2ExecutionTime
-  rdf:type speeront:ExecutionTimeState ;
-  dogont:hasStateValue [
-        rdf:type speeront:TimeValue ;
-        dogont:realStateValue "0.1"^^xsd:string ;
-        dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
-    ] ;
-.
-:State_Peer_3HeartbeatTime
-  rdf:type speeront:HeartbeatTimeState ;
-  dogont:hasStateValue [
-          rdf:type speeront:TimeValue ;
-          dogont:realStateValue "0.1"^^xsd:string ;
-          dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
-      ] ;
-.
-:State_Peer_3ResponseTime
-  rdf:type speeront:ResponseTimeState ;
-  dogont:hasStateValue [
-        rdf:type speeront:TimeValue ;
-        dogont:realStateValue "0.1"^^xsd:string ;
-        dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
-    ] ;
-.
-:State_Peer_3ExecutionTime
   rdf:type speeront:ExecutionTimeState ;
   dogont:hasStateValue [
         rdf:type speeront:TimeValue ;
@@ -247,19 +210,9 @@
 #Commands+Functions
 :Function_ProcessControl
   rdf:type dogont:StartStopPauseFunctionality ;
-  dogont:hasCommand :PauseCommand_1 ;
   dogont:hasCommand :StartCommand ;
-  dogont:hasCommand :StopCommand_1 ;
 .
 :StartCommand
   rdf:type dogont:StartCommand ;
   dogont:realCommandName "START"^^xsd:string
-.
-:StopCommand_1
-  rdf:type dogont:StopCommand ;
-   dogont:realCommandName "STOP"^^xsd:string
-.
-:PauseCommand_1
-  rdf:type dogont:PauseCommand ;
-  dogont:realCommandName "PAUSE"^^xsd:string ;
 .

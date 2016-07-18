@@ -58,9 +58,9 @@ public class PeerProcessMonitorAgent implements MonitorAgent, MessageListener {
                 if (objectMessage.getObject() instanceof LogEntry){
                     LogEntry logEntry = (LogEntry) objectMessage.getObject();
                     String messageType = checkNotNull(logEntry.getMessageType());
-                    LOG.info("Updateing Peer to Process <" + logEntry + ">");
                     try {
                         if (messageType.equalsIgnoreCase("WAMPMESSAGE")) {
+                            //LOG.info("Updateing Peer to Process <" + logEntry + ">");
                             queue.put(logEntry);
                         }
                     } catch (InterruptedException e) {
@@ -76,6 +76,7 @@ public class PeerProcessMonitorAgent implements MonitorAgent, MessageListener {
         String peerName = checkNotNull(entry.getClientName());
         String processName = checkNotNull(entry.getProcessName());
         if (!peerName.isEmpty() && !processName.isEmpty()){
+            LOG.debug("Peer: "+ peerName + " -> " +processName);
             updater.update(peerName,processName);
         }
     }

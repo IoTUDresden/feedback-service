@@ -5,6 +5,7 @@ import de.tud.feedback.loop.MonitorAgent;
 import eu.vicci.process.distribution.logging.DistributionCommand;
 import eu.vicci.process.distribution.logging.LogEntry;
 import org.apache.commons.logging.Log;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
@@ -15,6 +16,8 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import static org.joda.time.DateTime.now;
+
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -43,15 +46,16 @@ public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
                 LogEntry logEntry = queue.take();
                 String messageType = checkNotNull(logEntry.getMessageType());
 
-                if (messageType.equalsIgnoreCase("WAMPMESSAGE")) {
-                    updater.update(logEntry.getProcessName(), logEntry.getMessage());
-                    LOG.debug("Updating ProcessState: " + logEntry.getMessage());
+                if (messageType.equalsIgnoreCase("WAMPMESSAGE") || messageType.equalsIgnoreCase("REMOTESTEPRESPONSE") ) {
+                    updateProcessState(logEntry);
+                    updateTimestamp(logEntry);
                 } else if (messageType.equalsIgnoreCase("PINGRESPONSE")) {
                     updateTimestamp(logEntry);
                 } else if (messageType.equalsIgnoreCase("PING")) {
                     updateTimestamp(logEntry);
                 } else if (messageType.equalsIgnoreCase("METRICS")) {
                     updateMetricState(logEntry);
+                    updateTimestamp(logEntry);
                 }
             }
         } catch (InterruptedException e) {
@@ -64,7 +68,7 @@ public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
         String peerName = checkNotNull(logEntry.getClientName());
         String metricName = metrics[0].trim();
         String state = metrics[1].trim();
-        LOG.debug("Update Peer Metric: " + metrics.toString());
+        LOG.debug("Update Peer Metric: " + metricName +" : "+ state);
         updater.update(peerName + metricName, state);
     }
 
@@ -75,7 +79,7 @@ public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
             try {
                 if (objectMessage.getObject() instanceof LogEntry){
                     LogEntry logEntry = (LogEntry) objectMessage.getObject();
-                    LOG.info("Received <" + logEntry + ">");
+                    //LOG.info("Received <" + logEntry + ">");
                     try {
                         queue.put(logEntry);
 
@@ -97,12 +101,20 @@ public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
     private void updateTimestamp(LogEntry entry) {
         String peerName = checkNotNull(entry.getClientName());
         String timestamp = checkNotNull(entry.getTimestamp());
+        DateTime time = now();
         if (!peerName.isEmpty())
-            updater.update(peerName + "HeartbeatTime", timestamp);
-        LOG.debug("Update Peer HeartbeatTime: " + peerName);
+            updater.update(peerName + "HeartbeatTime", time.toString());
+        LOG.debug("Update Peer HeartbeatTime: " + time);
 
     }
-
+    private void updateProcessState(LogEntry entry) {
+        String processName = checkNotNull(entry.getProcessName());
+        String processState = checkNotNull(entry.getMessage());
+        if (!processName.isEmpty()){
+            updater.update(processName+"Process",processState);
+            LOG.debug("Updating ProcessState: " + entry.getMessage());
+        }
+    }
     //TODO: impol. resp., execu.
     private void updateResponseTime(LogEntry entry) {
         String peerName = checkNotNull(entry.getClientName());
