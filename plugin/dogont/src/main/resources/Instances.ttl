@@ -22,7 +22,7 @@
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeLcd> ;
   speeront:hasPeer :Peer_1 ;
   speeront:hasPeer :Peer_2 ;
-  speeront:hasProcess :Process1 ;
+  speeront:hasProcess :MedicationProcess ;
   speeront:hasURI "localhost"^^xsd:string ;
 .
 :Peer_1
@@ -37,7 +37,7 @@
   dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
-  speeront:hasProcess :SubProcess1 ;
+  speeront:hasProcess :RetrieveInsulinInjection ;
 .
 :Peer_2
   rdf:type speeront:Peer ;
@@ -52,11 +52,21 @@
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
 .
+:Peer_2
+  rdf:type speeront:Peer ;
+  dogont:IPAddress "192.168.1.70" ;
+  dogont:hasState :State_Peer_3BatteryLevel;
+  dogont:hasState :State_Peer_3Fault ;
+  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
+.
+#TODO: Test mit nicht passendem Peer: Mögliche Probleme: command kann nicht ausgeführt werden
 :State_Peer_1HeartbeatTime
   rdf:type speeront:HeartbeatTimeState ;
   dogont:hasStateValue [
         rdf:type speeront:TimeValue ;
-        dogont:realStateValue "0.1"^^xsd:string ;
+        dogont:realStateValue "0"^^xsd:string ;
         dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
     ] ;
 .
@@ -64,7 +74,7 @@
   rdf:type speeront:ResponseTimeState ;
   dogont:hasStateValue [
         rdf:type speeront:TimeValue ;
-        dogont:realStateValue "0.1"^^xsd:string ;
+        dogont:realStateValue "0.5"^^xsd:string ;
         dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
     ] ;
 .
@@ -80,7 +90,7 @@
   rdf:type speeront:HeartbeatTimeState ;
   dogont:hasStateValue [
           rdf:type speeront:TimeValue ;
-          dogont:realStateValue "0.1"^^xsd:string ;
+          dogont:realStateValue "0"^^xsd:string ;
           dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
       ] ;
 .
@@ -156,6 +166,14 @@
   rdf:type speeront:Process ;
   dogont:hasState :State_SubProcess1Process;
 .
+:MedicationProcess
+  rdf:type speeront:Process ;
+  dogont:hasState :State_MedicationProcessProcess ;
+.
+:RetrieveInsulinInjection
+  rdf:type speeront:Process ;
+  dogont:hasState :State_RetrieveInsulinInjectionProcess;
+.
 :State_Process1Process
   rdf:type speeront:ProcessState ;
   dogont:hasStateValue [
@@ -163,7 +181,21 @@
       dogont:realStateValue "undeployed"^^xsd:string ;
     ] ;
 .
+:State_MedicationProcessProcess
+  rdf:type speeront:ProcessState ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "undeployed"^^xsd:string ;
+    ] ;
+.
 :State_SubProcess1Process
+  rdf:type speeront:ProcessState ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "undeployed"^^xsd:string ;
+    ] ;
+.
+:State_RetrieveInsulinInjectionProcess
   rdf:type speeront:ProcessState ;
   dogont:hasStateValue [
       rdf:type dogont:DiscreteValue ;

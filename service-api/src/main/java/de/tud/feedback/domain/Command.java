@@ -25,6 +25,9 @@ public class Command {
     private String name;
 
     @Property
+    private String processName;
+
+    @Property
     private boolean repeatable;
 
     @Property
@@ -97,6 +100,15 @@ public class Command {
 
     public String getCommandReceiverId() {
         return commandReceiverId;
+    }
+
+    public Command setProcessName(String processName) {
+        this.processName = processName;
+        return this;
+    }
+
+    public String getProcessName() {
+        return processName;
     }
 
     @Override

@@ -1,0 +1,62 @@
+[
+  {
+    "processInstanceId": null,
+    "clientInstanceId": "ca327e6d-5705-4c4d-9714-4b9ae4ede8a3",
+    "processStepId": null,
+    "clientName": "Peer_1",
+    "processName": null,
+    "message": "BatteryLevel : 0.9",
+    "messageType": "METRICS",
+    "timestamp": "1467375360145"
+  },
+  {
+    "processInstanceId": "_rj9hsDeLEeaSQ8HmRk3Zuw_instance_1",
+    "clientInstanceId": "3b002e80-93c1-43af-9f50-3155319b39da",
+    "processStepId": "_Hz3F8DeMEeaSQ8HmRk3Zuw_Instance_1",
+    "clientName": "Peer_1",
+    "processName": "RetrieveInsulinInjection",
+    "message": "active",
+    "messageType": "WAMPMESSAGE",
+    "timestamp": "1467375361702"
+  },
+  {
+    "processInstanceId": "",
+    "clientInstanceId": "ca327e6d-5705-4c4d-9714-4b9ae4ede8a3",
+    "processStepId": "",
+    "clientName": "Peer_1",
+    "processName": "",
+    "message": "",
+    "messageType": "PING",
+    "timestamp": "1467375354068"
+  },
+  {
+    "processInstanceId": "_rj9hsDeLEeaSQ8HmRk3Zuw_instance_1",
+    "clientInstanceId": "3b002e80-93c1-43af-9f50-3155319b39da",
+    "processStepId": "_rj9hsDeLEeaSQ8HmRk3Zuw_instance_1",
+    "clientName": "Peer_1",
+    "processName": "RetrieveInsulinInjection",
+    "message": "active",
+    "messageType": "WAMPMESSAGE",
+    "timestamp": "1467375355660"
+  },
+  {
+    "processInstanceId": null,
+    "clientInstanceId": "ca327e6d-5705-4c4d-9714-4b9ae4ede8a3",
+    "processStepId": null,
+    "clientName": "Peer_1",
+    "processName": null,
+    "message": "BatteryLevel : 0.9",
+    "messageType": "METRICS",
+    "timestamp": "1467375357144"
+  },
+  {
+    "processInstanceId": "_rj9hsDeLEeaSQ8HmRk3Zuw_instance_1",
+    "clientInstanceId": "3b002e80-93c1-43af-9f50-3155319b39da",
+    "processStepId": "_HbnlEDeMEeaSQ8HmRk3Zuw_Instance_1",
+    "clientName": "Peer_1",
+    "processName": "Activate Robot",
+    "message": "active",
+    "messageType": "WAMPMESSAGE",
+    "timestamp": "1467375355678"
+  }
+]
