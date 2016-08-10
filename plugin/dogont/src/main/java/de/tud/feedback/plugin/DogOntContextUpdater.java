@@ -99,13 +99,14 @@ public class DogOntContextUpdater implements ContextUpdater {
 
         if (peerValueMapping.containsKey(stateName)) {
             executor.execute(
-                    "MATCH (v)-[:type]->(:Class{name:'Peer'}) " +
-                            "MATCH (oldPeer)-[:hasProcess]->(process) " +
-                            "MATCH (oldPeer)-[r]->(process) " +
+                            "MATCH (newPeer)-[:type]->(:Class{name:'Peer'}) "+
+                            "MATCH (process)-[:type]->(:Class{name:'Process'}) "+
                             "WHERE ID(v) = {id} AND process.name = {value} " +
-                            "CREATE (v)-[:hasProcess]->(process) " +
-                            "DELETE r " +
-                            "RETURN v",
+                            "Optional MATCH (oldPeer)-[r1:hasProcess]->(process) "+
+                            "Optional MATCH (newPeer)-[r2:hasProcess]->(oldProcess) "+
+                            "CREATE (newPeer)-[:hasProcess]->(process) " +
+                            "DELETE r1,r2 " +
+                            "RETURN newPeer",
 
                     params().put("id", peerValueMapping.get(stateName))
                             .put("value", state)
