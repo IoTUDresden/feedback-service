@@ -14,7 +14,7 @@
     "clientInstanceId": "3b002e80-93c1-43af-9f50-3155319b39da",
     "processStepId": "_Hz3F8DeMEeaSQ8HmRk3Zuw_Instance_1",
     "clientName": "Peer_1",
-    "processName": "RetrieveInsulinInjection",
+    "processName": "RetrieveInsulinInjectionProcess",
     "message": "active",
     "messageType": "WAMPMESSAGE",
     "timestamp": "1467375361702"
@@ -34,7 +34,7 @@
     "clientInstanceId": "3b002e80-93c1-43af-9f50-3155319b39da",
     "processStepId": "_rj9hsDeLEeaSQ8HmRk3Zuw_instance_1",
     "clientName": "Peer_1",
-    "processName": "RetrieveInsulinInjection",
+    "processName": "RetrieveInsulinInjectionProcess",
     "message": "active",
     "messageType": "WAMPMESSAGE",
     "timestamp": "1467375355660"
@@ -54,7 +54,7 @@
     "clientInstanceId": "3b002e80-93c1-43af-9f50-3155319b39da",
     "processStepId": "_HbnlEDeMEeaSQ8HmRk3Zuw_Instance_1",
     "clientName": "Peer_1",
-    "processName": "Activate Robot",
+    "processName": "ActivateRobot",
     "message": "active",
     "messageType": "WAMPMESSAGE",
     "timestamp": "1467375355678"

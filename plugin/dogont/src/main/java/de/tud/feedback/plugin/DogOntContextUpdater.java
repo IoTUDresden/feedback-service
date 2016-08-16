@@ -5,6 +5,8 @@ import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.annotation.LogInvocation;
 import de.tud.feedback.annotation.LogTimeSeries;
 import de.tud.feedback.domain.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -13,6 +15,7 @@ import static de.tud.feedback.Utils.params;
 import static java.util.stream.Collectors.toMap;
 
 public class DogOntContextUpdater implements ContextUpdater {
+    private static final Logger LOG = LoggerFactory.getLogger(DogOntContextUpdater.class);
 
     private final Function<String, String> stateNameMapper;
 
@@ -92,7 +95,8 @@ public class DogOntContextUpdater implements ContextUpdater {
      */
     public void updatePeer(String item, Object state) {
         final String stateName = item;
-        System.out.println("Peer: "+ stateName + " -> "+state);
+
+        LOG.debug("Update Peer: "+ stateName + " -> "+state);
 
         peerValueMapping = resolvePeerValueMapping();
 
@@ -101,7 +105,7 @@ public class DogOntContextUpdater implements ContextUpdater {
             executor.execute(
                             "MATCH (newPeer)-[:type]->(:Class{name:'Peer'}) "+
                             "MATCH (process)-[:type]->(:Class{name:'Process'}) "+
-                            "WHERE ID(v) = {id} AND process.name = {value} " +
+                            "WHERE ID(newPeer) = {id} AND process.name = {value} " +
                             "Optional MATCH (oldPeer)-[r1:hasProcess]->(process) "+
                             "Optional MATCH (newPeer)-[r2:hasProcess]->(oldProcess) "+
                             "CREATE (newPeer)-[:hasProcess]->(process) " +
@@ -121,9 +125,8 @@ public class DogOntContextUpdater implements ContextUpdater {
                 "MATCH (thing)-[:within]->(import:ContextImport) " +
                         "MATCH (import)-[:for]->(context:Context) " +
                         "MATCH (thing)-[:type]->(:Class{name:'Peer'})" +
-                        "OPTIONAL MATCH (thing)-[:hasProcess]->(process) " +
                         "WHERE context.name = {contextName} " +
-                        "RETURN thing.name AS state, ID(thing) AS valueId",
+                        "RETURN DISTINCT thing.name AS state, ID(thing) AS valueId",
 
                 params().put("contextName", context.getName())
                         .build())

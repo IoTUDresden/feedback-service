@@ -22,27 +22,27 @@
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeLcd> ;
   speeront:hasPeer :Peer_1 ;
   speeront:hasPeer :Peer_2 ;
+  speeront:hasPeer :Peer_3 ;
   speeront:hasProcess :MedicationProcess ;
   speeront:hasURI "localhost"^^xsd:string ;
 .
 :Peer_1
   rdf:type speeront:Peer ;
   dogont:IPAddress "192.168.1.63" ;
-  dogont:hasFunctionality :Function_ProcessControl ;
+  dogont:hasFunctionality :Function_Peer1_ProcessControl ;
   dogont:hasState :State_Peer_1HeartbeatTime;
-  dogont:hasState :State_Peer_1BatteryLevel ;
+  dogont:hasState :State_Peer_1BatteryLevel;
   dogont:hasState :State_Peer_1ResponseTime ;
   dogont:hasState :State_Peer_1ExecutionTime;
   dogont:hasState :State_Peer_1Fault ;
   dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
-  speeront:hasProcess :RetrieveInsulinInjection ;
 .
 :Peer_2
   rdf:type speeront:Peer ;
   dogont:IPAddress "192.168.1.69" ;
-  dogont:hasFunctionality :Function_ProcessControl ;
+  dogont:hasFunctionality :Function_Peer2_ProcessControl ;
   dogont:hasState :State_Peer_2HeartbeatTime;
   dogont:hasState :State_Peer_2BatteryLevel;
   dogont:hasState :State_Peer_2ResponseTime;
@@ -52,9 +52,11 @@
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
 .
-:Peer_2
+:Peer_3
   rdf:type speeront:Peer ;
-  dogont:IPAddress "192.168.1.70" ;
+  dogont:IPAddress "192.168.1.57" ;
+  dogont:hasFunctionality :Function_Peer3_ProcessControl ;
+  dogont:hasState :State_Peer_3HeartbeatTime;
   dogont:hasState :State_Peer_3BatteryLevel;
   dogont:hasState :State_Peer_3Fault ;
   dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
@@ -110,6 +112,14 @@
         dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
     ] ;
 .
+:State_Peer_3HeartbeatTime
+  rdf:type speeront:HeartbeatTimeState ;
+  dogont:hasStateValue [
+          rdf:type speeront:TimeValue ;
+          dogont:realStateValue "0"^^xsd:string ;
+          dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+      ] ;
+.
 ### Failed States
 :State_Peer_1Fault
   rdf:type dogont:FaultState ;
@@ -121,7 +131,7 @@
 .
 :State_Peer_3Fault
   rdf:type dogont:FaultState ;
-  dogont:hasStateValue :FailureStateValue_1 ;
+  dogont:hasStateValue :NoFailureStateValue_1 ;
 .
 :NoFailureStateValue_1
   rdf:type dogont:NoFailureStateValue ;
@@ -140,11 +150,11 @@
 .
 :State_Peer_3BatteryLevel
   rdf:type speeront:BatteryLevelState ;
-  dogont:hasStateValue :LaptopBatteryValue ;
+  dogont:hasStateValue :Robot2BatteryValue ;
 .
 :LaptopBatteryValue
   rdf:type dogont:LevelStateValue ;
-  dogont:realStateValue "0.9"^^xsd:string ;
+  dogont:realStateValue "0.7"^^xsd:string ;
   dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
 .
 :RobotBatteryValue
@@ -152,43 +162,43 @@
   dogont:realStateValue "0.7"^^xsd:string ;
   dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
 .
-:RouterBatteryValue
+:Robot2BatteryValue
   rdf:type dogont:LevelStateValue ;
-  dogont:realStateValue "0.9"^^xsd:string ;
+  dogont:realStateValue "0.7"^^xsd:string ;
   dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
 .
 ### Process States/Metrics
 :Process1
   rdf:type speeront:Process ;
-  dogont:hasState :State_Process1Process ;
+  dogont:hasState :State_Process1;
 .
 :SubProcess1
   rdf:type speeront:Process ;
-  dogont:hasState :State_SubProcess1Process;
+  dogont:hasState :State_SubProcess1;
 .
 :MedicationProcess
   rdf:type speeront:Process ;
-  dogont:hasState :State_MedicationProcessProcess ;
+  dogont:hasState :State_MedicationProcess;
 .
-:RetrieveInsulinInjection
+:RetrieveInsulinInjectionProcess
   rdf:type speeront:Process ;
   dogont:hasState :State_RetrieveInsulinInjectionProcess;
 .
-:State_Process1Process
+:State_Process1
   rdf:type speeront:ProcessState ;
   dogont:hasStateValue [
       rdf:type dogont:DiscreteValue ;
       dogont:realStateValue "undeployed"^^xsd:string ;
     ] ;
 .
-:State_MedicationProcessProcess
+:State_MedicationProcess
   rdf:type speeront:ProcessState ;
   dogont:hasStateValue [
       rdf:type dogont:DiscreteValue ;
       dogont:realStateValue "undeployed"^^xsd:string ;
     ] ;
 .
-:State_SubProcess1Process
+:State_SubProcess1
   rdf:type speeront:ProcessState ;
   dogont:hasStateValue [
       rdf:type dogont:DiscreteValue ;
@@ -240,11 +250,27 @@
   rdf:type speeront:StoppedStateValue ;
 .
 #Commands+Functions
-:Function_ProcessControl
+:Function_Peer1_ProcessControl
   rdf:type dogont:StartStopPauseFunctionality ;
-  dogont:hasCommand :StartCommand ;
+  dogont:hasCommand :TakeCommand_1 ;
 .
-:StartCommand
+:Function_Peer2_ProcessControl
+  rdf:type dogont:StartStopPauseFunctionality ;
+  dogont:hasCommand :TakeCommand_2 ;
+.
+:Function_Peer3_ProcessControl
+  rdf:type dogont:StartStopPauseFunctionality ;
+  dogont:hasCommand :TakeCommand_3 ;
+.
+:TakeCommand_1
   rdf:type dogont:StartCommand ;
-  dogont:realCommandName "START"^^xsd:string
+  dogont:realCommandName "TAKE"^^xsd:string
+.
+:TakeCommand_2
+  rdf:type dogont:StartCommand ;
+  dogont:realCommandName "TAKE"^^xsd:string
+.
+:TakeCommand_3
+  rdf:type dogont:StartCommand ;
+  dogont:realCommandName "TAKE"^^xsd:string
 .

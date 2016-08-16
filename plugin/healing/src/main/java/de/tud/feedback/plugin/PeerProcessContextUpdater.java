@@ -35,44 +35,9 @@ public class PeerProcessContextUpdater implements ContextUpdater {
     @LogInvocation
     @LogTimeSeries(context = "context.#{context.name}")
     public void update(String item, Object state) {
-        final String stateName = stateNameMapper.apply(item);
 
-        if (stateValueMapping == null) {
-            stateValueMapping = resolveStateValueMapping();
-        }
-
-        if (stateValueMapping.containsKey(stateName)) {
-            executor.execute(
-                    "MATCH (v) " +
-                            "WHERE ID(v) = {id} " +
-                            "SET v.hasProcess = {value} " +
-                            "RETURN v",
-
-                    params().put("id", stateValueMapping.get(stateName))
-                            .put("value", state)
-                            .build());
-
-            listener.contextUpdated();
-        }
     }
 
-    private Map<String, Integer> resolveStateValueMapping() {
-        return executor.execute(
-                "MATCH (thing)-[:within]->(import:ContextImport) " +
-                        "MATCH (import)-[:for]->(context:Context) " +
-                        "MATCH (thing)-[:type]->(:Class{name:'Peer'})" +
-                        "OPTIONAL MATCH (thing)-[:hasProcess]->(process) " +
-                        "WHERE context.name = {contextName} " +
-                        "RETURN thing.name AS state, ID(thing) AS valueId",
-
-                params().put("contextName", context.getName())
-                        .build())
-
-                .stream()
-                .collect(toMap(
-                        e -> (String) e.get("state"),
-                        e -> (Integer) e.get("valueId")));
-    }
 
     @Override
     public void workWith(Context context) {

@@ -43,7 +43,7 @@ public class SimpleProducer implements CommandLineRunner{
     public void sendSimpleMessageTree() {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            JsonNode tree = mapper.readTree(resourceLoader.getResource("classpath:testLog.json").getFile());
+            JsonNode tree = mapper.readTree(new File("C:\\\\Temp\\log.json"));
             for (JsonNode leaf: tree
                     ) {
                 LogEntry entry = new LogEntry();
@@ -58,10 +58,9 @@ public class SimpleProducer implements CommandLineRunner{
                 entry.setClientName(leaf.get("clientName").textValue());
                 System.out.println("Sending: "+entry);
                 send(entry);
-                Thread.sleep(500);
+                Thread.sleep(1000);
 
             }
-
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -8,7 +8,7 @@ MATCH (newPeer)-[:hasState]->(newPeerState)
 // find new peers with similar controlled devices
 MATCH (newPeer)-[:hasDevices]->(devices)<-[:hasDevices]-(oldPeer)
 // find peer with similar functionality
-MATCH (newPeer)-[:hasFunctionality]->(functionality)<-[:hasFunctionality]-(oldPeer)
+MATCH (newPeer)-[:hasFunctionality]->(functionality)-[:type]->()-[:subClassOf*0..1]->()<-[:type]-(functionality2)<-[:hasFunctionality]-(oldPeer)
 // find peer with similar state types
 MATCH (oldPeerState)-[:type]->(stateType)<-[:type]-(newPeerState)
 // find out commands the peer is supporting

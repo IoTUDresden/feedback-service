@@ -46,11 +46,14 @@ public class MismatchCompensatingPlanner implements Planner {
     @Override
     public Optional<Command> plan(ChangeRequest changeRequest) {
         Objective objective = changeRequest.getObjective();
+        //LOG.debug("Planning for " + objective);
         ContextMismatch mismatch = mismatchWithin(changeRequest);
+        LOG.debug("Mismatch: "+ mismatch);
         Long testNodeId = changeRequest.getResult().getTestNodeId();
+        //LOG.debug("TestNodeId: "+ testNodeId);
         Set<Command> executedCommands = commandRepository.findCommandsExecutedFor(objective);
         Set<Command> manipulatingCommands = compensationRepository.findCommandsManipulating(testNodeId);
-
+        //LOG.debug("Executed Commands: "+executedCommands.size()+" / manipulating Commands: "+manipulatingCommands.size());
         try {
             Optional<Command> command = manipulatingCommands.stream()
                     .filter(it -> it.isRepeatable() || !executedCommands.contains(it))

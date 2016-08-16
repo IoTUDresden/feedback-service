@@ -111,11 +111,11 @@ public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
         String processName = checkNotNull(entry.getProcessName());
         String processState = checkNotNull(entry.getMessage());
         if (!processName.isEmpty()){
-            updater.update(processName+"Process",processState);
+            updater.update(processName,processState);
             LOG.debug("Updating ProcessState: " + entry.getMessage());
         }
     }
-    //TODO: impol. resp., execu.
+    //TODO: impol. resp., execut
     private void updateResponseTime(LogEntry entry) {
         String peerName = checkNotNull(entry.getClientName());
         String timestamp = checkNotNull(entry.getTimestamp());

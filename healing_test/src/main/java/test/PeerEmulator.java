@@ -61,7 +61,7 @@ public class PeerEmulator implements CommandLineRunner,MessageListener {
 
     private Peer peer1 = new Peer("Peer_1", "98c9ca7f-a5a2-40f0-ae88-c25a8e7ebad1", "192.168.1.63");
     private Peer peer2 = new Peer("Peer_2", "1124", "192.168.1.69");
-    private Process process1 = new Process("SubProcess1", "_fqBe0BhIEeaIh_K9nEUPRA");
+    private Process process1 = new Process("RetrieveInsulinInjectionProcess", "_fqBe0BhIEeaIh_K9nEUPRA");
 
     private String metrics = "BatteryLevel : 0.39999992";
     private String metrics2 = "BatteryLevel : 0.9";
@@ -69,7 +69,7 @@ public class PeerEmulator implements CommandLineRunner,MessageListener {
 
     public void handleCommand(DistributionCommand command) {
         System.out.println("Handle Command");
-        if (command.getCommandName().equalsIgnoreCase("START")) {
+        if (command.getCommandName().equalsIgnoreCase("TAKE")) {
             System.out.println("Got Peer Switch Command");
             //Workflow (mit jeweiligen Monitor update):
             //Peer 1 sendet Process Terminierung -> Prozess aus Peer 1 entfernen

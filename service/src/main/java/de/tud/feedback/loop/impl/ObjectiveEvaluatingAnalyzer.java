@@ -6,6 +6,8 @@ import de.tud.feedback.domain.Objective.State;
 import de.tud.feedback.graph.SimpleCypherExecutor;
 import de.tud.feedback.loop.Analyzer;
 import de.tud.feedback.loop.ObjectiveEvaluator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import java.util.Optional;
 @Component
 @Scope("prototype")
 public class ObjectiveEvaluatingAnalyzer implements Analyzer {
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectiveEvaluatingAnalyzer.class);
 
     private final ObjectiveEvaluator evaluator;
 
@@ -38,6 +41,7 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
                                        (o.getState() == State.UNSATISFIED)))
                 .findAny()
                 .isPresent();
+        LOG.debug("Analysis : all Goals Satisfied: " + allGoalsHaveBeenSatisfied + " nothing left?"+ nothingLeft);
 
         if (allGoalsHaveBeenSatisfied || nothingLeft) {
             workflow.setFinished(true);
