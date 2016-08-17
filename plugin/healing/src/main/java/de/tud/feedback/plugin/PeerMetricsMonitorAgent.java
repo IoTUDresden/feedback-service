@@ -31,8 +31,13 @@ public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
 
     private final BlockingQueue<LogEntry> queue = new LinkedBlockingQueue<LogEntry>();
 
+    private final MetricSignificanceFilter filter;
 
     private static final Logger LOG = LoggerFactory.getLogger(PeerMetricsMonitorAgent.class);
+
+    public PeerMetricsMonitorAgent(MetricSignificanceFilter filter){
+        this.filter = filter;
+    }
 
     @Override
     public void workWith(ContextUpdater updater) {
@@ -68,8 +73,15 @@ public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
         String peerName = checkNotNull(logEntry.getClientName());
         String metricName = metrics[0].trim();
         String state = metrics[1].trim();
-        LOG.debug("Update Peer Metric: " + metricName +" : "+ state);
-        updater.update(peerName + metricName, state);
+        String itemId = peerName + metricName;
+        MetricItem item = new MetricItem();
+        item.setName(itemId);
+        item.setState(state);
+        if (filter.containsSignificantChange(item))
+        {
+            LOG.debug("Update Peer Metric: " + metricName +" : "+ state);
+            updater.update(itemId, state);
+        }
     }
 
     @JmsListener(destination = "client.messages")

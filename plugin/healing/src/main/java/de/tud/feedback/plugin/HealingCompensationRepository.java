@@ -48,7 +48,7 @@ public class HealingCompensationRepository implements CompensationRepository {
 
     private Command toCommand(Map<String, Object> attributes) {
         return new Command()
-                .setRepeatable(false)
+                .setRepeatable(true) //TODO: Versuch es nochmal wenn es nciht geklappt hat?
                 .setTargetTo((String) attributes.get("newPeer"))
                 .setProcessName((String) attributes.get("processName"))
                 .setNameTo((String) attributes.get("commandName"))

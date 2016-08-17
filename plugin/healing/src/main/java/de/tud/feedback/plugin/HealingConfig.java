@@ -21,7 +21,10 @@ public class HealingConfig {
     @Bean
     @Scope("prototype")
     PeerMetricsMonitorAgent peerMetricsMonitorAgent() {
-        return new PeerMetricsMonitorAgent();
+        Double numberStateChangeDelta = 0.1;
+        final MetricSignificanceFilter filter = new MetricSignificanceFilter(numberStateChangeDelta);
+
+        return new PeerMetricsMonitorAgent(filter);
     }
     @Bean
     @Scope("prototype")
