@@ -96,7 +96,7 @@ public class DogOntContextUpdater implements ContextUpdater {
     public void updatePeer(String item, Object state) {
         final String stateName = item;
 
-        LOG.debug("Update Peer: "+ stateName + " -> "+state);
+        //LOG.debug("Update Peer: "+ stateName + " -> "+state);
 
         peerValueMapping = resolvePeerValueMapping();
 

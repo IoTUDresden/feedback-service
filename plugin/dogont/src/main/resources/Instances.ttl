@@ -26,19 +26,6 @@
   speeront:hasProcess :MedicationProcess ;
   speeront:hasURI "localhost"^^xsd:string ;
 .
-:Peer_1
-  rdf:type speeront:Peer ;
-  dogont:IPAddress "192.168.1.63" ;
-  dogont:hasFunctionality :Function_Peer1_ProcessControl ;
-  dogont:hasState :State_Peer_1HeartbeatTime;
-  dogont:hasState :State_Peer_1BatteryLevel;
-  dogont:hasState :State_Peer_1ResponseTime ;
-  dogont:hasState :State_Peer_1ExecutionTime;
-  dogont:hasState :State_Peer_1Fault ;
-  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
-  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
-  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
-.
 :Peer_2
   rdf:type speeront:Peer ;
   dogont:IPAddress "192.168.1.69" ;
@@ -48,6 +35,7 @@
   dogont:hasState :State_Peer_2ResponseTime;
   dogont:hasState :State_Peer_2ExecutionTime;
   dogont:hasState :State_Peer_2Fault ;
+  speeront:hasProcess :RetrieveInsulinInjectionProcess ;
   dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
@@ -63,7 +51,6 @@
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
   speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
 .
-#TODO: Test mit nicht passendem Peer: Mögliche Probleme: command kann nicht ausgeführt werden
 :State_Peer_1HeartbeatTime
   rdf:type speeront:HeartbeatTimeState ;
   dogont:hasStateValue [

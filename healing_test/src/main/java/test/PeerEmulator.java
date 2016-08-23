@@ -59,11 +59,11 @@ public class PeerEmulator implements CommandLineRunner,MessageListener {
         //entries.add(message);
     }
 
-    private Peer peer1 = new Peer("Peer_1", "98c9ca7f-a5a2-40f0-ae88-c25a8e7ebad1", "192.168.1.63");
-    private Peer peer2 = new Peer("Peer_2", "1124", "192.168.1.69");
+    private Peer peer1 = new Peer("Peer_2", "98c9ca7f-a5a2-40f0-ae88-c25a8e7ebad1", "192.168.1.69");
+    private Peer peer2 = new Peer("Peer_3", "1124", "192.168.1.54");
     private Process process1 = new Process("RetrieveInsulinInjectionProcess", "_fqBe0BhIEeaIh_K9nEUPRA");
 
-    private String metrics = "BatteryLevel : 0.39999992";
+    private String metrics = "BatteryLevel : 0.2";
     private String metrics2 = "BatteryLevel : 0.9";
 
 
@@ -77,15 +77,16 @@ public class PeerEmulator implements CommandLineRunner,MessageListener {
             //producer.send(peer1Termination);
             //Peer 2 sendet Metrik -> Metrik für Peer 2 updaten
             LogEntry peer2deploy= createLogEntry(peer2, process1, "active", "WAMPMESSAGE");
+            try {
 
-            producer.send(peer2deploy);
+                producer.send(peer2deploy);
+
             LogEntry entry = createLogEntry(peer2, process1, metrics2, "METRICS");
             producer.send(entry);
             //Peer 2 sendet Prozess Empfang -> Prozess zu Peer 2 hinzufügen
             LogEntry peer2activation = createLogEntry(peer2, process1, "executing", "WAMPMESSAGE");
 
             producer.send(peer2activation);
-            try {
                 System.out.println("Sleep");
                 Thread.sleep(5000);
                 System.out.println("Sleep ende");
