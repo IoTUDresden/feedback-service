@@ -110,15 +110,24 @@
 ### Failed States
 :State_Peer_1Fault
   rdf:type dogont:FaultState ;
-  dogont:hasStateValue :NoFailureStateValue_1 ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "failed"^^xsd:string ;
+    ] ;
 .
 :State_Peer_2Fault
   rdf:type dogont:FaultState ;
-  dogont:hasStateValue :NoFailureStateValue_1 ;
+  dogont:hasStateValue [
+        rdf:type dogont:DiscreteValue ;
+        dogont:realStateValue "working"^^xsd:string ;
+      ] ;
 .
 :State_Peer_3Fault
   rdf:type dogont:FaultState ;
-  dogont:hasStateValue :NoFailureStateValue_1 ;
+    dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "working"^^xsd:string ;
+    ] ;
 .
 :NoFailureStateValue_1
   rdf:type dogont:NoFailureStateValue ;

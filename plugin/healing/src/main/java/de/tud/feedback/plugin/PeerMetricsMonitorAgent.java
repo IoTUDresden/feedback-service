@@ -54,6 +54,7 @@ public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
                 if (messageType.equalsIgnoreCase("WAMPMESSAGE") || messageType.equalsIgnoreCase("REMOTESTEPRESPONSE") ) {
                     updateProcessState(logEntry);
                     updateTimestamp(logEntry);
+
                 } else if (messageType.equalsIgnoreCase("PINGRESPONSE")) {
                     updateTimestamp(logEntry);
                 } else if (messageType.equalsIgnoreCase("PING")) {
@@ -125,6 +126,14 @@ public class PeerMetricsMonitorAgent implements MonitorAgent, MessageListener {
         if (!processName.isEmpty()){
             updater.update(processName,processState);
             LOG.debug("Updating ProcessState: " + entry.getMessage());
+        }
+    }
+    private void updateFaultState(LogEntry entry) {
+        String peerName = checkNotNull(entry.getClientName());
+        String state = checkNotNull(entry.getMessage());
+        if (!peerName.isEmpty() && state == "failed"){
+            updater.update(peerName+"Fault",state);
+            LOG.debug("Updating Peer Fault State: " + entry.getMessage());
         }
     }
     //TODO: impol. resp., execut

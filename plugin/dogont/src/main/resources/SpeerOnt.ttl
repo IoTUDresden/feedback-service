@@ -288,3 +288,8 @@
   rdfs:domain :Peer ;
   rdfs:range :Process ;
 .
+:hasInstanceId
+  rdf:type rdf:Property ;
+  rdfs:domain :Process ;
+  rdfs:range xsd:string ;
+.
