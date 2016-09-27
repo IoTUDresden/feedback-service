@@ -6,7 +6,7 @@ This service enabled the MAPE-K feedback control loop for existing process-model
 
 * Unix: ```./gradlew bootRun``` 
 * Windows: ```gradlew.bat bootRun```
-* Docker: ```docker-compose --x-networking up```
+* Docker: ```docker-compose up```
 
 When running with Docker, the following services are exposed:
 
