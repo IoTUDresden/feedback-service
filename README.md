@@ -2,6 +2,9 @@
 
 This service enabled the MAPE-K feedback control loop for existing process-models and -execution engines within CPS.
 
+See the following publication for more detail:
+Seiger, R., Huber, S., Heisig, P., & Assmann, U. (2016, June). Enabling Self-adaptive Workflows for Cyber-physical Systems. In International Workshop on Business Process Modeling, Development and Support (pp. 3-17). Springer International Publishing.
+
 ## Run
 
 * Unix: ```./gradlew bootRun``` 
