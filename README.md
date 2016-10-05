@@ -44,14 +44,16 @@ Content-Type: application/json
         "mimeType": "application/rdf+xml",
         "name": "ontology"
     },{
-        "source": "http://localhost:8080/rest/semantic",
-        "mimeType": "application/rdf+xml",
+        "source": "https://raw.githubusercontent.com/IoTUDresden/feedback-service/master/example/openhab-instances.ttl",
+        "mimeType": "text/turtle",
         "name": "items"
     }]
 } 
 ```
 
 ### Create a Workflow
+
+Use your own context reference URL, created by the previous post!
 
 ```
 POST /workflows HTTP/1.1
@@ -65,6 +67,8 @@ Content-Type: application/json
 ```
 
 ### Create a Process Goal
+
+Use your own workflow reference URL, created by the previous post!
 
 ```
 POST /goals HTTP/1.1
