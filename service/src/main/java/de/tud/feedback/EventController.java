@@ -48,8 +48,8 @@ public class EventController {
         // FIXME cyclic serialization reference (multiple ObjectMappers suck)
         workflow.setContext(null);
         workflow.setGoals(null);
-
-        sseEmitters.get(workflow.getId()).send(workflow);
+        if (!sseEmitters.isEmpty())
+            sseEmitters.get(workflow.getId()).send(workflow);
     }
 
     @HandleAfterCreate

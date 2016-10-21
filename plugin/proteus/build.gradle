@@ -10,4 +10,5 @@ dependencies {
     compile project(':plugin/openhab')
     compile project(':plugin/dogont')
     compile project(':plugin/spel')
+    compile project(':plugin/healing')
 }

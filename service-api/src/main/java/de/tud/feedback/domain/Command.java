@@ -25,7 +25,16 @@ public class Command {
     private String name;
 
     @Property
+    private String processName;
+
+    @Property
     private boolean repeatable;
+
+    @Property
+    private String commandAddress;
+
+    @Property
+    private String commandReceiverId;
 
     @Relationship(type = "executedFor", direction = Relationship.OUTGOING)
     private Objective objective;
@@ -75,6 +84,33 @@ public class Command {
         return this;
     }
 
+    public Command setCommandAddress(String commandAddress) {
+        this.commandAddress = commandAddress;
+        return this;
+    }
+
+    public String getCommandAddress() {
+        return commandAddress;
+    }
+
+    public Command setCommandReceiverId(String commandReceiverId) {
+        this.commandReceiverId = commandReceiverId;
+        return this;
+    }
+
+    public String getCommandReceiverId() {
+        return commandReceiverId;
+    }
+
+    public Command setProcessName(String processName) {
+        this.processName = processName;
+        return this;
+    }
+
+    public String getProcessName() {
+        return processName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -103,7 +139,7 @@ public class Command {
     }
 
     public enum Type {
-        UP, DOWN, ASSIGN
+        UP, DOWN, TAKE, ASSIGN
     }
 
 }

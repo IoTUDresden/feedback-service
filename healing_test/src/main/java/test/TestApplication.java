@@ -1,0 +1,42 @@
+package test;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.command.ActiveMQTopic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import test.jms.SimpleProducer;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
+import javax.jms.Topic;
+
+/**
+ * Created by Stefan on 17.05.2016.
+ */
+@SpringBootApplication
+@EnableJms
+public class TestApplication {
+
+    @Autowired
+    private SimpleProducer producer;
+
+    @Bean
+    public Topic queue() {
+        return new ActiveMQTopic("client.messages");
+    }
+    @Bean
+    ConnectionFactory connectionFactory(){
+        return new ActiveMQConnectionFactory("tcp://localhost:61616");
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(TestApplication.class, args);
+    }
+
+
+}

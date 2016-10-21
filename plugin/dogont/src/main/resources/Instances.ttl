@@ -1,0 +1,272 @@
+# baseURI: http://vicci.eu/speeront/instances
+# imports: http://openhab-semantic/0.1/instance
+# imports: http://vicci.eu/speeront
+
+@prefix : <http://vicci.eu/speeront/instances#> .
+@prefix dogont: <http://elite.polito.it/ontologies/dogont.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix speeront: <http://vicci.eu/speeront#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://vicci.eu/speeront/instances>
+  rdf:type owl:Ontology ;
+  owl:imports <http://openhab-semantic/0.1/instance> ;
+  owl:imports <http://vicci.eu/speeront> ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+:SuperPeer_1
+  rdf:type speeront:SuperPeer ;
+  dogont:isIn <http://openhab-semantic/0.1/instance#Lobby_Mueller> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeLcd> ;
+  speeront:hasPeer :Peer_1 ;
+  speeront:hasPeer :Peer_2 ;
+  speeront:hasPeer :Peer_3 ;
+  speeront:hasProcess :MedicationProcess ;
+  speeront:hasURI "localhost"^^xsd:string ;
+.
+:Peer_2
+  rdf:type speeront:Peer ;
+  dogont:IPAddress "192.168.1.69" ;
+  dogont:hasFunctionality :Function_Peer2_ProcessControl ;
+  dogont:hasState :State_Peer_2HeartbeatTime;
+  dogont:hasState :State_Peer_2BatteryLevel;
+  dogont:hasState :State_Peer_2ResponseTime;
+  dogont:hasState :State_Peer_2ExecutionTime;
+  dogont:hasState :State_Peer_2Fault ;
+  speeront:hasProcess :RetrieveInsulinInjectionProcess ;
+  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
+.
+:Peer_3
+  rdf:type speeront:Peer ;
+  dogont:IPAddress "192.168.1.57" ;
+  dogont:hasFunctionality :Function_Peer3_ProcessControl ;
+  dogont:hasState :State_Peer_3HeartbeatTime;
+  dogont:hasState :State_Peer_3BatteryLevel;
+  dogont:hasState :State_Peer_3Fault ;
+  dogont:isIn <http://openhab-semantic/0.1/instance#LivingRoom_Mueller> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_HomematicDimmer_1> ;
+  speeront:hasDevices <http://openhab-semantic/0.1/instance#Thing_TinkerforgeAmbientLight_2> ;
+.
+:State_Peer_1HeartbeatTime
+  rdf:type speeront:HeartbeatTimeState ;
+  dogont:hasStateValue [
+        rdf:type speeront:TimeValue ;
+        dogont:realStateValue "0"^^xsd:string ;
+        dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+    ] ;
+.
+:State_Peer_1ResponseTime
+  rdf:type speeront:ResponseTimeState ;
+  dogont:hasStateValue [
+        rdf:type speeront:TimeValue ;
+        dogont:realStateValue "0.5"^^xsd:string ;
+        dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+    ] ;
+.
+:State_Peer_1ExecutionTime
+  rdf:type speeront:ExecutionTimeState ;
+  dogont:hasStateValue [
+        rdf:type speeront:TimeValue ;
+        dogont:realStateValue "0.1"^^xsd:string ;
+        dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+    ] ;
+.
+:State_Peer_2HeartbeatTime
+  rdf:type speeront:HeartbeatTimeState ;
+  dogont:hasStateValue [
+          rdf:type speeront:TimeValue ;
+          dogont:realStateValue "0"^^xsd:string ;
+          dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+      ] ;
+.
+:State_Peer_2ResponseTime
+  rdf:type speeront:ResponseTimeState ;
+  dogont:hasStateValue [
+        rdf:type speeront:TimeValue ;
+        dogont:realStateValue "0.1"^^xsd:string ;
+        dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+    ] ;
+.
+:State_Peer_2ExecutionTime
+  rdf:type speeront:ExecutionTimeState ;
+  dogont:hasStateValue [
+        rdf:type speeront:TimeValue ;
+        dogont:realStateValue "0.1"^^xsd:string ;
+        dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+    ] ;
+.
+:State_Peer_3HeartbeatTime
+  rdf:type speeront:HeartbeatTimeState ;
+  dogont:hasStateValue [
+          rdf:type speeront:TimeValue ;
+          dogont:realStateValue "0"^^xsd:string ;
+          dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/time/second> ;
+      ] ;
+.
+### Failed States
+:State_Peer_1Fault
+  rdf:type dogont:FaultState ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "failed"^^xsd:string ;
+    ] ;
+.
+:State_Peer_2Fault
+  rdf:type dogont:FaultState ;
+  dogont:hasStateValue [
+        rdf:type dogont:DiscreteValue ;
+        dogont:realStateValue "working"^^xsd:string ;
+      ] ;
+.
+:State_Peer_3Fault
+  rdf:type dogont:FaultState ;
+    dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "working"^^xsd:string ;
+    ] ;
+.
+:NoFailureStateValue_1
+  rdf:type dogont:NoFailureStateValue ;
+.
+:FailureStateValue_1
+  rdf:type dogont:FailureStateValue ;
+.
+### Battery States
+:State_Peer_1BatteryLevel
+  rdf:type speeront:BatteryLevelState ;
+  dogont:hasStateValue :RobotBatteryValue ;
+.
+:State_Peer_2BatteryLevel
+  rdf:type speeront:BatteryLevelState ;
+  dogont:hasStateValue :LaptopBatteryValue ;
+.
+:State_Peer_3BatteryLevel
+  rdf:type speeront:BatteryLevelState ;
+  dogont:hasStateValue :Robot2BatteryValue ;
+.
+:LaptopBatteryValue
+  rdf:type dogont:LevelStateValue ;
+  dogont:realStateValue "0.7"^^xsd:string ;
+  dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
+.
+:RobotBatteryValue
+  rdf:type dogont:LevelStateValue ;
+  dogont:realStateValue "0.7"^^xsd:string ;
+  dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
+.
+:Robot2BatteryValue
+  rdf:type dogont:LevelStateValue ;
+  dogont:realStateValue "0.7"^^xsd:string ;
+  dogont:unitOfMeasure <http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent> ;
+.
+### Process States/Metrics
+:Process1
+  rdf:type speeront:Process ;
+  dogont:hasState :State_Process1;
+.
+:SubProcess1
+  rdf:type speeront:Process ;
+  dogont:hasState :State_SubProcess1;
+.
+:MedicationProcess
+  rdf:type speeront:Process ;
+  dogont:hasState :State_MedicationProcess;
+.
+:RetrieveInsulinInjectionProcess
+  rdf:type speeront:Process ;
+  dogont:hasState :State_RetrieveInsulinInjectionProcess;
+.
+:State_Process1
+  rdf:type speeront:ProcessState ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "undeployed"^^xsd:string ;
+    ] ;
+.
+:State_MedicationProcess
+  rdf:type speeront:ProcessState ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "undeployed"^^xsd:string ;
+    ] ;
+.
+:State_SubProcess1
+  rdf:type speeront:ProcessState ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "undeployed"^^xsd:string ;
+    ] ;
+.
+:State_RetrieveInsulinInjectionProcess
+  rdf:type speeront:ProcessState ;
+  dogont:hasStateValue [
+      rdf:type dogont:DiscreteValue ;
+      dogont:realStateValue "undeployed"^^xsd:string ;
+    ] ;
+.
+#### Process State Values
+:ActiveStateValue_1
+  rdf:type speeront:ActiveStateValue ;
+.
+:DeployedStateValue_1
+  rdf:type speeront:DeployedStateValue ;
+.
+:EscelatedStateValue_1
+  rdf:type speeront:EscelatedStateValue ;
+.
+:ExecutedStateValue_1
+  rdf:type speeront:ExecutedStateValue ;
+.
+:ExecutingStateValue_1
+  rdf:type speeront:ExecutingStateValue ;
+.
+:FailedStateValue_1
+  rdf:type speeront:FailedStateValue ;
+.
+:InactiveStateValue_1
+  rdf:type speeront:InactiveStateValue ;
+.
+:KilledStateValue_1
+  rdf:type speeront:KilledStateValue ;
+.
+:UndeployedStateValue_1
+  rdf:type speeront:UndeployedStateValue ;
+.
+:WaitingStateValue_1
+  rdf:type speeront:WaitingStateValue ;
+.
+:PausedStateValue_1
+  rdf:type speeront:PausedStateValue ;
+.
+:StoppedStateValue_1
+  rdf:type speeront:StoppedStateValue ;
+.
+#Commands+Functions
+:Function_Peer1_ProcessControl
+  rdf:type dogont:StartStopPauseFunctionality ;
+  dogont:hasCommand :TakeCommand_1 ;
+.
+:Function_Peer2_ProcessControl
+  rdf:type dogont:StartStopPauseFunctionality ;
+  dogont:hasCommand :TakeCommand_2 ;
+.
+:Function_Peer3_ProcessControl
+  rdf:type dogont:StartStopPauseFunctionality ;
+  dogont:hasCommand :TakeCommand_3 ;
+.
+:TakeCommand_1
+  rdf:type dogont:StartCommand ;
+  dogont:realCommandName "TAKE"^^xsd:string
+.
+:TakeCommand_2
+  rdf:type dogont:StartCommand ;
+  dogont:realCommandName "TAKE"^^xsd:string
+.
+:TakeCommand_3
+  rdf:type dogont:StartCommand ;
+  dogont:realCommandName "TAKE"^^xsd:string
+.

@@ -2,10 +2,14 @@ package de.tud.feedback.plugin.proteus;
 
 import de.tud.feedback.plugin.factory.*;
 import de.tud.feedback.plugin.openhab.OpenHabService;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ResourceLoader;
+
+import javax.jms.ConnectionFactory;
 
 @Configuration
 public class ProteusConfiguration {
@@ -14,7 +18,7 @@ public class ProteusConfiguration {
     public RdfContextImporterFactoryBean rdfContextImporterFactoryBean() {
         return new RdfContextImporterFactoryBean().setNodeLabel("Proteus");
     }
-    
+
     @Bean
     public DogOntCompensationRepositoryFactoryBean dogOntCompensationRepositoryFactoryBean(ResourceLoader loader) {
         return new DogOntCompensationRepositoryFactoryBean().setLoader(loader);

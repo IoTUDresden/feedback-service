@@ -36,8 +36,17 @@ public class ContextMismatch {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "ContextMismatch{" +
+                "target=" + target +
+                ", source=" + source +
+                ", type=" + type +
+                '}';
+    }
+
     public enum Type {
-        TOO_LOW, TOO_HIGH, UNEQUAL
+        TOO_LOW, TOO_HIGH, UNEQUAL, RESOURCE
     }
 
 }

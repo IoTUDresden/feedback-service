@@ -11,12 +11,13 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-data-rest',
             'org.springframework.boot:spring-boot-starter-data-elasticsearch',
             'org.springframework.boot:spring-boot-starter-aop'
-
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8',
             'org.restlet.jse:org.restlet:2.3.5'
 
     compile 'org.elasticsearch:metrics-elasticsearch-reporter:2.0',
             'io.dropwizard.metrics:metrics-jvm:3.1.2'
+
+    compile 'org.apache.activemq:activemq-all:5.4.2'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }

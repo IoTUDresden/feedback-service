@@ -1,0 +1,295 @@
+# baseURI: http://vicci.eu/speeront
+# imports: http://elite.polito.it/ontologies/dogont.owl
+
+@prefix : <http://vicci.eu/speeront#> .
+@prefix dogont: <http://elite.polito.it/ontologies/dogont.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://vicci.eu/speeront>
+  rdf:type owl:Ontology ;
+  owl:imports <http://elite.polito.it/ontologies/dogont.owl> ;
+  owl:versionInfo "Created with TopBraid Composer"^^xsd:string ;
+.
+:ActiveStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "active"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:BatteryLevelState
+  rdf:type owl:Class ;
+  rdfs:comment "Models the battery state of objects"^^xsd:string ;
+  rdfs:subClassOf dogont:LevelState ;
+  owl:disjointWith dogont:LightIntensityState ;
+  owl:disjointWith dogont:VolumeLevelState ;
+.
+:CPULevelState
+  rdf:type owl:Class ;
+  rdfs:comment "Models the CPU load of an object."^^xsd:string ;
+  rdfs:subClassOf dogont:LevelState ;
+  owl:disjointWith dogont:LightIntensityState ;
+  owl:disjointWith dogont:VolumeLevelState ;
+  owl:disjointWith :BatteryLevelState ;
+.
+:DeployedStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "deployed"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:EscelatedStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "escelated"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:ExecutedStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "executed"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:ExecutingStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "executing"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:ExecutionTimeState
+  rdf:type owl:Class ;
+  rdfs:subClassOf :TimeState ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :TimeValue ;
+    ] ;
+.
+:FailedStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "failed"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:HeartbeatTimeState
+  rdf:type owl:Class ;
+  rdfs:subClassOf :TimeState ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :TimeValue ;
+    ] ;
+.
+:InactiveStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "inactive"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:InstanceIdValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:ContinuousValue ;
+.
+:KilledStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "killed"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:PausedStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "paused"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:Peer
+  rdf:type rdfs:Class ;
+  rdfs:comment "Represents a peer, controlling the process execution."^^xsd:string ;
+  rdfs:subClassOf dogont:Controllable ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onDataRange xsd:anyURI ;
+      owl:onProperty dogont:IPAddress ;
+      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasState ;
+      owl:someValuesFrom dogont:ConnectionState ;
+    ] ;
+.
+:Process
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:Controllable ;
+.
+:ProcessInstanceState
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:ContinuousState ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :InstanceIdValue ;
+    ] ;
+.
+:ProcessState
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteState ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :ActiveStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :DeployedStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :EscelatedStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :ExecutedStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :ExecutingStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :FailedStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :InactiveStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :KilledStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :PausedStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :StoppedStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :UndeployedStateValue ;
+    ] ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :WaitingStateValue ;
+    ] ;
+.
+:ResponseTimeState
+  rdf:type owl:Class ;
+  rdfs:subClassOf :TimeState ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:onProperty dogont:hasStateValue ;
+      owl:someValuesFrom :TimeValue ;
+    ] ;
+.
+:StoppedStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "stopped"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:SuperPeer
+  rdf:type rdfs:Class ;
+  rdfs:comment "Super-Peer"^^xsd:string ;
+  rdfs:subClassOf :Peer ;
+.
+:TimeState
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:ContinuousState ;
+.
+:TimeValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:ContinuousValue ;
+.
+:UndeployedStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "undeployed"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:WaitingStateValue
+  rdf:type owl:Class ;
+  rdfs:subClassOf dogont:DiscreteValue ;
+  rdfs:subClassOf [
+      rdf:type owl:Restriction ;
+      owl:hasValue "waiting"^^xsd:string ;
+      owl:onProperty dogont:realStateValue ;
+    ] ;
+.
+:hasDevices
+  rdf:type rdf:Property ;
+  rdfs:domain :Peer ;
+  rdfs:range dogont:BuildingThing ;
+.
+:hasPeer
+  rdf:type rdf:Property ;
+  rdfs:domain :SuperPeer ;
+  rdfs:range :Peer ;
+.
+:hasProcess
+  rdf:type rdf:Property ;
+  rdfs:domain :Peer ;
+  rdfs:range :Process ;
+.
+:hasInstanceId
+  rdf:type rdf:Property ;
+  rdfs:domain :Process ;
+  rdfs:range xsd:string ;
+.
