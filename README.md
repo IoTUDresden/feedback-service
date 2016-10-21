@@ -23,6 +23,8 @@ When running with Docker, the following services are exposed:
   * web interface for graph visualization
 * 9003: Elasticsearch (metrics index)
   * index: mapek-*
+  
+**If you're using an external Neo4j instance, the version should be less or equal to 2.3.6**
 
 ## Operation
 
