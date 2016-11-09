@@ -6,25 +6,21 @@ See the following publication for more detail:
 
 Seiger, R., Huber, S., Heisig, P., & Assmann, U. (2016, June). Enabling Self-adaptive Workflows for Cyber-physical Systems. In International Workshop on Business Process Modeling, Development and Support (pp. 3-17). Springer International Publishing.
 
-## Run
+* Run: ```OPENHAB_HOST=172.17.0.1 docker-compose up```
+* Build: ```./gradlew build buildDocker```
 
-* Unix: ```./gradlew bootRun``` 
-* Windows: ```gradlew.bat bootRun```
-* Docker: ```docker-compose up```
-
-When running with Docker, the following services are exposed:
+To get the host's address (OPENHAB_HOST), check the IP of the docker network interface (```docker0```).
+If you're using an external Neo4j instance, the version should be less or equal to 2.3.6.
 
 * 9000: MAPE-K (feedback service)
-  * example DogOnt/OpenHAB instances: examples/openhab-instance.ttl (file type: "text/turtle" for context creation)
-* 9001: Kibana (metrics visualization)
-  * index pattern: mapek-*
-  * example visualizations and dashboard: examples/kibana-export.json
-* 9002: Neo4j (context and domain graph)
-  * web interface for graph visualization
-* 9003: Elasticsearch (metrics index)
-  * index: mapek-*
-  
-**If you're using an external Neo4j instance, the version should be less or equal to 2.3.6**
+    * example DogOnt/OpenHAB instances: examples/openhab-instance.ttl (file type: "text/turtle" for context creation)
+* 5601: Kibana (metrics visualization)
+    * index pattern: mapek-*
+    * example visualizations and dashboard: examples/kibana-export.json
+* 7474: Neo4j (context and domain graph)
+    * web interface for graph visualization
+* 5601: Elasticsearch (metrics index)
+    * index: mapek-*
 
 ## Operation
 

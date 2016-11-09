@@ -2,18 +2,12 @@ version: '2'
 
 services:
 
-  gradle:
-    image: niaquinto/gradle:2.7
-    container_name: gradle
-    volumes:
-      - ~/.m2:/root/.m2
-
   elasticsearch:
     image: elasticsearch:1.7.4
     container_name: elasticsearch
 
     ports:
-      - "9003:5601"
+      - "5601:5601"
 
   kibana:
     image: kibana:4.1.5
@@ -25,7 +19,7 @@ services:
       - elasticsearch
 
     ports:
-      - "9001:5601"
+      - "5602:5601"
 
   neo4j:
     image: neo4j:2.3.2
@@ -34,15 +28,11 @@ services:
       NEO4J_AUTH: none
 
     ports:
-      - "9002:7474"
+      - "7474:7474"
 
-  mapek:
-    build: .
-    container_name: mapek
-    working_dir: /tmp
-    volumes:
-      - ./:/tmp
-
+  service:
+    image: iotudresden/feedback-service
+    container_name: feedback
     environment:
       SPRING_DATA_ELASTICSEARCH_CLUSTER-NODES: elasticsearch:9300
       METRICS_REPORTER_ELASTICSEARCH_NODES: elasticsearch:9200

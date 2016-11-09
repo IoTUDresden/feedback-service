@@ -1,8 +1,11 @@
 apply plugin: 'spring-boot'
+apply plugin: 'docker'
+
+group = 'iotudresden'
 
 jar {
     baseName = 'feedback-service'
-    version = '1.0.0-SNAPSHOT'
+    version = '1.0.0'
 }
 
 dependencies {
@@ -23,3 +26,24 @@ dependencies {
 
 bootRun { systemProperties = System.properties }
 
+docker {
+    maintainer 'Peter Heisig <peter.heisig@tu-dresden.de>'
+    baseImage 'frolvlad/alpine-oraclejdk8:slim'
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+    push = true
+
+    applicationName = jar.baseName
+    volume '/tmp'
+    addFile "${jar.baseName}-${jar.version}.jar", 'feedback-service.jar'
+    runCommand 'sh -c "touch /feedback-service.jar"'
+    entryPoint([ 'java', '-jar', '/feedback-service.jar' ])
+
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+        }
+    }
+}
