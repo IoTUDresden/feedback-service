@@ -19,7 +19,7 @@ If you're using an external Neo4j instance, the version should be less or equal 
     * example visualizations and dashboard: examples/kibana-export.json
 * 7474: Neo4j (context and domain graph)
     * web interface for graph visualization
-* 5601: Elasticsearch (metrics index)
+* 9200: Elasticsearch HTTP (metrics index)
     * index: mapek-*
 
 ## Operation
