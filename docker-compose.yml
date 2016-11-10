@@ -38,6 +38,7 @@ services:
       METRICS_REPORTER_ELASTICSEARCH_NODES: elasticsearch:9200
       SERVICE_KNOWLEDGE_NEO4J_URL: http://neo4j:7474
       SERVER_PORT: 9000
+      OPENHAB_HOST: ${OPENHAB_HOST}
 
     depends_on:
       - elasticsearch

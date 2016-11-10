@@ -7,7 +7,7 @@ See the following publication for more detail:
 Seiger, R., Huber, S., Heisig, P., & Assmann, U. (2016, June). Enabling Self-adaptive Workflows for Cyber-physical Systems. In International Workshop on Business Process Modeling, Development and Support (pp. 3-17). Springer International Publishing.
 
 * Run: ```OPENHAB_HOST=172.17.0.1 docker-compose up```
-* Build: ```./gradlew build buildDocker```
+* Build: ```./gradlew buildDocker```
 
 To get the host's address (OPENHAB_HOST), check the IP of the docker network interface (```docker0```).
 If you're using an external Neo4j instance, the version should be less or equal to 2.3.6.
