@@ -2,6 +2,8 @@ package de.tud.feedback.plugin.proteus;
 
 import de.tud.feedback.plugin.factory.*;
 import de.tud.feedback.plugin.openhab.OpenHabService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +11,8 @@ import org.springframework.core.io.ResourceLoader;
 
 @Configuration
 public class ProteusConfiguration {
+
+    Logger log = LoggerFactory.getLogger(ProteusConfiguration.class);
 
     @Bean
     public RdfContextImporterFactoryBean rdfContextImporterFactoryBean() {
@@ -24,6 +28,7 @@ public class ProteusConfiguration {
     public OpenHabServiceFactoryBean openHabService(
             @Value("${openHab.host:localhost}") String host,
             @Value("${openHab.port:8080}") int port) {
+        log.info("Using OpenHAB at {}:{}", host, port);
         return new OpenHabServiceFactoryBean()
                 .setHost(host)
                 .setPort(port);
