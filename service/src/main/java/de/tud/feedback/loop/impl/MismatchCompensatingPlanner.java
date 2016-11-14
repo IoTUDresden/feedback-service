@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import java.security.cert.PKIXRevocationChecker;
 import java.util.Optional;
 import java.util.Set;
 
@@ -65,6 +66,7 @@ public class MismatchCompensatingPlanner implements Planner {
                 return Optional.of(prepared(compensation, objective));
 
             } else {
+                LOG.warn("No compensation available for {}", objective);
                 objective.setState(Objective.State.FAILED);
             }
 

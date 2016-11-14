@@ -4,6 +4,8 @@ import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.WorkflowUpdateEvent;
 import de.tud.feedback.service.ContextService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
@@ -20,6 +22,8 @@ import java.util.Map;
 @Controller
 @RepositoryEventHandler
 public class EventController {
+
+    Logger LOG = LoggerFactory.getLogger(EventController.class);
 
     private final ContextService contextService;
 
@@ -49,7 +53,11 @@ public class EventController {
         workflow.setContext(null);
         workflow.setGoals(null);
 
-        sseEmitters.get(workflow.getId()).send(workflow);
+        try {
+            sseEmitters.get(workflow.getId()).send(workflow);
+        } catch (RuntimeException exception) {
+            LOG.warn("Nobody was listening to the feedback's result of {}", workflow.getName());
+        }
     }
 
     @HandleAfterCreate

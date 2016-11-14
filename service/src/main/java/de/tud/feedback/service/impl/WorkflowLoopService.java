@@ -54,7 +54,9 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
 
     @Override
     public void analyzeGoalsForWorkflowsWithin(Context context) {
-        workflowRepository.findWorkflowsWithin(context).forEach(that()::analyzeGoalsFor);
+        workflowRepository.findWorkflowsWithin(context).stream()
+                .filter(Workflow::notDoneYet)
+                .forEach(that()::analyzeGoalsFor);
     }
 
     public void analyzeGoalsFor(Workflow workflow) {
@@ -97,6 +99,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
         }
 
         publisher.publishEvent(WorkflowUpdateEvent.on(workflow));
+        workflowRepository.save(workflow.done());
     }
 
     private boolean loopShouldBeFinishedFor(Workflow workflow) {
