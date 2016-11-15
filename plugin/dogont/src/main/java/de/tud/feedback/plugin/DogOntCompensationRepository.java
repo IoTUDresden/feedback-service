@@ -1,17 +1,24 @@
 package de.tud.feedback.plugin;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.repository.CompensationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static de.tud.feedback.Utils.params;
 import static java.util.stream.Collectors.toSet;
+import static org.parboiled.common.Preconditions.checkNotNull;
 
 public class DogOntCompensationRepository implements CompensationRepository {
+
+    Logger LOG = LoggerFactory.getLogger(DogOntCompensationRepository.class);
 
     private static final String ON   = "OnCommand";
     private static final String OFF  = "OffCommand";
@@ -36,12 +43,16 @@ public class DogOntCompensationRepository implements CompensationRepository {
 
     @Override
     public Set<Command> findCommandsManipulating(Long testNodeId) {
-        return executor.execute(query, params()
+        if (!Optional.fromNullable(testNodeId).isPresent()) {
+            LOG.warn("Cannot find commands without a valid testNodeId from the context path.");
+            return newHashSet();
+
+        } else return executor.execute(query, params()
                     .put("stateId", testNodeId)
                     .build())
-                .stream()
-                .map(this::toCommand)
-                .collect(toSet());
+                    .stream()
+                    .map(this::toCommand)
+                    .collect(toSet());
     }
 
     // LATER crappy, find a better way...

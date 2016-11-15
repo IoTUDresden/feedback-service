@@ -30,6 +30,9 @@ public class Workflow implements Satisfiable {
     @Property
     private boolean hasBeenFinished;
 
+    @Property
+    private boolean done = false;
+
     @Relationship(type = "hasGoal", direction = Relationship.OUTGOING)
     private Set<Goal> goals = newHashSet();
 
@@ -104,6 +107,17 @@ public class Workflow implements Satisfiable {
     @JsonProperty("hasBeenFinished")
     public boolean hasBeenFinished() {
         return hasBeenFinished;
+    }
+
+    @JsonIgnore
+    public boolean notDoneYet() {
+        return !done;
+    }
+
+    @JsonIgnore
+    public Workflow done() {
+        this.done = true;
+        return this;
     }
 
     @JsonIgnore
