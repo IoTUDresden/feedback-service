@@ -14,7 +14,7 @@ If you're using an external Neo4j instance, the version should be less or equal 
 
 * 9000: MAPE-K (feedback service)
     * example DogOnt/OpenHAB instances: examples/openhab-instance.ttl (file type: "text/turtle" for context creation)
-* 5601: Kibana (metrics visualization)
+* 5602: Kibana (metrics visualization)
     * index pattern: mapek-*
     * example visualizations and dashboard: examples/kibana-export.json
 * 7474: Neo4j (context and domain graph)
@@ -42,8 +42,8 @@ Content-Type: application/json
         "mimeType": "application/rdf+xml",
         "name": "ontology"
     },{
-        "source": "https://raw.githubusercontent.com/IoTUDresden/feedback-service/master/example/openhab-instances.ttl",
-        "mimeType": "text/turtle",
+        "source": "http://172.17.0.1:8080/rest/semantic",
+        "mimeType": "application/rdf+xml",
         "name": "items"
     }]
 } 
