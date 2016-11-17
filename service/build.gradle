@@ -40,6 +40,8 @@ task buildDocker(type: Docker, dependsOn: build) {
     runCommand 'sh -c "touch /feedback-service.jar"'
     entryPoint([ 'java', '-jar', '/feedback-service.jar' ])
 
+    tagVersion = "${jar.version}"
+
     doFirst {
         copy {
             from jar
