@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
+import java.util.function.Function;
+
 @Configuration
 public class ProteusConfiguration {
 
@@ -46,11 +48,15 @@ public class ProteusConfiguration {
     }
 
     @Bean
+    public Function<String, String> thingToItemMapper() {
+        return new ThingToItemMapper();
+    }
+
+    @Bean
     public OpenHabCommandExecutorFactoryBean openHabCommandExecutorFactoryBean(
-            OpenHabService service,
-            @Value("${dogOnt.thingNodePrefix:Thing_}") String thingNodePrefix) {
+            OpenHabService service, Function<String, String> thingToItemMapper) {
         return new OpenHabCommandExecutorFactoryBean()
-                .setItemNameMapper(s -> s.replace(thingNodePrefix, ""))
+                .setItemNameMapper(thingToItemMapper)
                 .setService(service);
     }
 
