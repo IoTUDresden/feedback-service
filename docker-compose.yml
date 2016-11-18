@@ -6,6 +6,9 @@ services:
     image: elasticsearch:1.7.4
     container_name: elasticsearch
 
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -27,6 +30,9 @@ services:
     container_name: neo4j
     environment:
       NEO4J_AUTH: none
+
+    volumes:
+      - ./data/neo4j:/data
 
     ports:
       - "7474:7474"
