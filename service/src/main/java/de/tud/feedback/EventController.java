@@ -4,11 +4,16 @@ import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.WorkflowUpdateEvent;
 import de.tud.feedback.service.ContextService;
+import org.neo4j.ogm.session.Neo4jSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.neo4j.template.Neo4jOperations;
+import org.springframework.data.neo4j.template.Neo4jTemplate;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
+import org.springframework.data.rest.core.annotation.HandleAfterDelete;
+import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,11 +32,14 @@ public class EventController {
 
     private final ContextService contextService;
 
+    private final Neo4jSession neo4j;
+
     private final Map<Long, SseEmitter> sseEmitters = new Hashtable<>();
 
     @Autowired
-    public EventController(ContextService contextService) {
+    public EventController(ContextService contextService, Neo4jSession neo4j) {
         this.contextService = contextService;
+        this.neo4j = neo4j;
     }
 
     @RequestMapping("/events/workflows/{workflowId}")
@@ -63,6 +71,14 @@ public class EventController {
     @HandleAfterCreate
     public void importContextSourcesAfterContextCreation(Context context) {
         contextService.importAllOf(context);
+    }
+
+    /**
+     * It's a hack due to https://jira.spring.io/browse/DATAGRAPH-918
+     */
+    @HandleAfterDelete
+    public void clearWholeNeo4jMappingContext(Object object) {
+        neo4j.context().clear();
     }
 
 }
