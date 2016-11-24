@@ -6,13 +6,13 @@
       "title": "MAPE-K",
       "hits": 0,
       "description": "",
-      "panelsJSON": "[{\"col\":4,\"id\":\"memory-used-over-time\",\"row\":1,\"size_x\":3,\"size_y\":3,\"type\":\"visualization\"},{\"col\":7,\"id\":\"thread-count-over-time\",\"row\":1,\"size_x\":3,\"size_y\":3,\"type\":\"visualization\"},{\"col\":4,\"id\":\"Homematic-Dimmers\",\"row\":4,\"size_x\":6,\"size_y\":3,\"type\":\"visualization\"},{\"col\":4,\"id\":\"Tinkerforge-Light-Sensor\",\"row\":7,\"size_x\":6,\"size_y\":3,\"type\":\"visualization\"}]",
+      "panelsJSON": "[\n  {\n    \"col\": 4,\n    \"id\": \"memory-used-over-time\",\n    \"row\": 1,\n    \"size_x\": 3,\n    \"size_y\": 3,\n    \"type\": \"visualization\"\n  },\n  {\n    \"col\": 7,\n    \"id\": \"thread-count-over-time\",\n    \"row\": 1,\n    \"size_x\": 3,\n    \"size_y\": 3,\n    \"type\": \"visualization\"\n  },\n  {\n    \"col\": 4,\n    \"id\": \"Homematic-Dimmers\",\n    \"row\": 4,\n    \"size_x\": 6,\n    \"size_y\": 3,\n    \"type\": \"visualization\"\n  },\n  {\n    \"col\": 4,\n    \"id\": \"Tinkerforge-Light-Sensor\",\n    \"row\": 7,\n    \"size_x\": 6,\n    \"size_y\": 3,\n    \"type\": \"visualization\"\n  }\n]",
       "version": 1,
       "timeRestore": true,
       "timeTo": "now",
       "timeFrom": "now-15m",
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"filter\":[{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}}}]}"
+        "searchSourceJSON": "{\n  \"filter\": [\n    {\n      \"query\": {\n        \"query_string\": {\n          \"analyze_wildcard\": true,\n          \"query\": \"*\"\n        }\n      }\n    }\n  ]\n}"
       }
     }
   },
@@ -30,28 +30,15 @@
     }
   },
   {
-    "_id": "memory-used-over-time",
-    "_type": "visualization",
-    "_source": {
-      "title": "Memory",
-      "visState": "{\n  \"type\": \"line\",\n  \"params\": {\n    \"addLegend\": true,\n    \"addTimeMarker\": false,\n    \"addTooltip\": true,\n    \"defaultYExtents\": true,\n    \"drawLinesBetweenPoints\": true,\n    \"interpolate\": \"linear\",\n    \"radiusRatio\": 9,\n    \"scale\": \"linear\",\n    \"setYExtents\": false,\n    \"shareYAxis\": true,\n    \"showCircles\": true,\n    \"smoothLines\": false,\n    \"times\": [],\n    \"yAxis\": {}\n  },\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"type\": \"avg\",\n      \"schema\": \"metric\",\n      \"params\": {\n        \"field\": \"value\"\n      }\n    },\n    {\n      \"id\": \"2\",\n      \"type\": \"date_histogram\",\n      \"schema\": \"segment\",\n      \"params\": {\n        \"field\": \"@timestamp\",\n        \"interval\": \"auto\",\n        \"customInterval\": \"2h\",\n        \"min_doc_count\": 1,\n        \"extended_bounds\": {}\n      }\n    }\n  ],\n  \"listeners\": {}\n}",
-      "description": "",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\n  \"index\": \"mapek-*\",\n  \"query\": {\n    \"query_string\": {\n      \"analyze_wildcard\": true,\n      \"query\": \"name: memory.total.used\"\n    }\n  },\n  \"filter\": []\n}"
-      }
-    }
-  },
-  {
     "_id": "thread-count-over-time",
     "_type": "visualization",
     "_source": {
       "title": "Thread count",
-      "visState": "{\n  \"type\": \"line\",\n  \"params\": {\n    \"shareYAxis\": true,\n    \"addTooltip\": true,\n    \"addLegend\": true,\n    \"showCircles\": true,\n    \"smoothLines\": false,\n    \"interpolate\": \"linear\",\n    \"scale\": \"linear\",\n    \"drawLinesBetweenPoints\": true,\n    \"radiusRatio\": 9,\n    \"times\": [],\n    \"addTimeMarker\": false,\n    \"defaultYExtents\": false,\n    \"setYExtents\": false,\n    \"yAxis\": {\n      \"min\": 20\n    }\n  },\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"type\": \"avg\",\n      \"schema\": \"metric\",\n      \"params\": {\n        \"field\": \"value\"\n      }\n    },\n    {\n      \"id\": \"2\",\n      \"type\": \"date_histogram\",\n      \"schema\": \"segment\",\n      \"params\": {\n        \"field\": \"@timestamp\",\n        \"interval\": \"auto\",\n        \"customInterval\": \"2h\",\n        \"min_doc_count\": 1,\n        \"extended_bounds\": {}\n      }\n    }\n  ],\n  \"listeners\": {}\n}",
+      "visState": "{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{\"min\":20}},\"aggs\":[{\"id\":\"1\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"value\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\n  \"index\": \"mapek-*\",\n  \"query\": {\n    \"query_string\": {\n      \"analyze_wildcard\": true,\n      \"query\": \"name: threads.count*\"\n    }\n  },\n  \"filter\": []\n}"
+        "searchSourceJSON": "{\"index\":\"mapek-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"name: threads.count*\"}},\"filter\":[]}"
       }
     }
   },
@@ -60,11 +47,76 @@
     "_type": "visualization",
     "_source": {
       "title": "Tinkerforge Light Sensor",
-      "visState": "{\n  \"type\": \"area\",\n  \"params\": {\n    \"addLegend\": true,\n    \"addTimeMarker\": false,\n    \"addTooltip\": true,\n    \"defaultYExtents\": true,\n    \"interpolate\": \"linear\",\n    \"mode\": \"overlap\",\n    \"scale\": \"linear\",\n    \"setYExtents\": false,\n    \"shareYAxis\": true,\n    \"smoothLines\": false,\n    \"times\": [],\n    \"yAxis\": {\n      \"max\": 1000,\n      \"min\": 30\n    }\n  },\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"type\": \"avg\",\n      \"schema\": \"metric\",\n      \"params\": {\n        \"field\": \"value\"\n      }\n    },\n    {\n      \"id\": \"2\",\n      \"type\": \"date_histogram\",\n      \"schema\": \"segment\",\n      \"params\": {\n        \"field\": \"@timestamp\",\n        \"interval\": \"auto\",\n        \"customInterval\": \"2h\",\n        \"min_doc_count\": 1,\n        \"extended_bounds\": {}\n      }\n    },\n    {\n      \"id\": \"3\",\n      \"type\": \"filters\",\n      \"schema\": \"group\",\n      \"params\": {\n        \"filters\": [\n          {\n            \"input\": {\n              \"query\": {\n                \"query_string\": {\n                  \"analyze_wildcard\": true,\n                  \"query\": \"*Light\"\n                }\n              }\n            },\n            \"label\": \"Sensor 1\"\n          },\n          {\n            \"input\": {\n              \"query\": {\n                \"query_string\": {\n                  \"analyze_wildcard\": true,\n                  \"query\": \"*Light_2\"\n                }\n              }\n            },\n            \"label\": \"Sensor 2\"\n          }\n        ]\n      }\n    }\n  ],\n  \"listeners\": {}\n}",
+      "visState": "{\"type\":\"area\",\"params\":{\"addLegend\":true,\"addTimeMarker\":false,\"addTooltip\":true,\"defaultYExtents\":true,\"interpolate\":\"linear\",\"mode\":\"overlap\",\"scale\":\"linear\",\"setYExtents\":false,\"shareYAxis\":true,\"smoothLines\":false,\"times\":[],\"yAxis\":{\"max\":1000,\"min\":30}},\"aggs\":[{\"id\":\"1\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"value\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"filters\",\"schema\":\"group\",\"params\":{\"filters\":[{\"input\":{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*Light\"}}},\"label\":\"Sensor 1\"},{\"input\":{\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*Light_2\"}}},\"label\":\"Sensor 2\"}]}}],\"listeners\":{}}",
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\n  \"index\": \"mapek-*\",\n  \"query\": {\n    \"query_string\": {\n      \"analyze_wildcard\": true,\n      \"query\": \"name: context.home.TinkerforgeAmbient*\"\n    }\n  },\n  \"filter\": []\n}"
+        "searchSourceJSON": "{\"index\":\"mapek-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"name: context.home.TinkerforgeAmbient*\"}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "memory-used-over-time",
+    "_type": "visualization",
+    "_source": {
+      "title": "Memory",
+      "visState": "{\"type\":\"line\",\"params\":{\"addLegend\":true,\"addTimeMarker\":false,\"addTooltip\":true,\"defaultYExtents\":true,\"drawLinesBetweenPoints\":true,\"interpolate\":\"linear\",\"radiusRatio\":9,\"scale\":\"linear\",\"setYExtents\":false,\"shareYAxis\":true,\"showCircles\":true,\"smoothLines\":false,\"times\":[],\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"value\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"mapek-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"name: memory.total.used\"}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Homematic-Dimmer-1",
+    "_type": "visualization",
+    "_source": {
+      "title": "Homematic Dimmer 1",
+      "visState": "{\"type\":\"area\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"smoothLines\":false,\"scale\":\"linear\",\"interpolate\":\"linear\",\"mode\":\"overlap\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"value\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"mapek-*\",\"query\":{\"query_string\":{\"query\":\"name: context.home.homematic_dimmer_dimmer_1\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Homematic-Dimmer-2",
+    "_type": "visualization",
+    "_source": {
+      "title": "Homematic Dimmer 2",
+      "visState": "{\"type\":\"area\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"smoothLines\":false,\"scale\":\"linear\",\"interpolate\":\"linear\",\"mode\":\"overlap\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"value\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"mapek-*\",\"query\":{\"query_string\":{\"query\":\"name: context.home.homematic_dimmer_dimmer_2\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Tinkerforge-Ambient-Light-1",
+    "_type": "visualization",
+    "_source": {
+      "title": "Tinkerforge Ambient Light 1",
+      "visState": "{\"type\":\"area\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"smoothLines\":false,\"scale\":\"linear\",\"interpolate\":\"linear\",\"mode\":\"overlap\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"value\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"mapek-*\",\"query\":{\"query_string\":{\"query\":\"name: context.home.tinkerforge_ambientLight_ambientLight_1\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Tinkerforge-Ambient-Light-2",
+    "_type": "visualization",
+    "_source": {
+      "title": "Tinkerforge Ambient Light 2",
+      "visState": "{\"type\":\"area\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"smoothLines\":false,\"scale\":\"linear\",\"interpolate\":\"linear\",\"mode\":\"overlap\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"value\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"mapek-*\",\"query\":{\"query_string\":{\"query\":\"name: context.home.tinkerforge_ambientLight_ambientLight_2\",\"analyze_wildcard\":true}},\"filter\":[]}"
       }
     }
   }

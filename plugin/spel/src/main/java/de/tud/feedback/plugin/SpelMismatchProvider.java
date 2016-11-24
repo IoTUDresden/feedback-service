@@ -1,12 +1,12 @@
 package de.tud.feedback.plugin;
 
 import com.google.common.base.Optional;
+import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Ints;
 import de.tud.feedback.domain.ContextMismatch;
 import de.tud.feedback.loop.MismatchProvider;
 import org.springframework.expression.spel.SpelNode;
-import org.springframework.expression.spel.ast.Literal;
-import org.springframework.expression.spel.ast.OpGT;
-import org.springframework.expression.spel.ast.VariableReference;
+import org.springframework.expression.spel.ast.*;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
@@ -33,8 +33,22 @@ public class SpelMismatchProvider implements MismatchProvider {
 
         return new ContextMismatch()
                 .setSource(parser.parseExpression(variableWithin(ast).get().toStringAST()).getValue(context))
-                .setTarget(literalWithin(ast).get().getOriginalValue())
+                .setTarget(literalTargetFor(ast))
                 .setType(mismatchTypeFor(ast));
+    }
+
+    private Object literalTargetFor(SpelNode ast) {
+        String value = literalWithin(ast).get().getOriginalValue();
+
+        Optional<Integer> integerValue = Optional.fromNullable(Ints.tryParse(value));
+        if (integerValue.isPresent()) return integerValue.get();
+
+        Optional<Double> doubleValue = Optional.fromNullable(Doubles.tryParse(value));
+        if (doubleValue.isPresent()) return doubleValue.get();
+
+        if (value.matches("^'.*'$")) return value.substring(1, value.length() - 1);
+
+        return value;
     }
 
     private void validate(SpelNode ast, String expression) {
@@ -47,7 +61,7 @@ public class SpelMismatchProvider implements MismatchProvider {
         if (!literalWithin(ast).isPresent())
             throw new RuntimeException(format("No value literal within '%s'", expression));
 
-        if (!SUPPORTED_OPS.contains(((OpGT) ast).getOperatorName()))
+        if (!SUPPORTED_OPS.contains(((Operator) ast).getOperatorName()))
             throw new RuntimeException(format("Operator within '%s' can only be %s", expression, SUPPORTED_OPS));
     }
 
@@ -61,19 +75,19 @@ public class SpelMismatchProvider implements MismatchProvider {
         return ContextMismatch.Type.UNEQUAL; // covered through validation => never reached
     }
 
-    public boolean isLessThanOperatorWithin(SpelNode ast) {
+    private boolean isLessThanOperatorWithin(SpelNode ast) {
         return "<".equals(operatorWithin(ast).get());
     }
 
-    public boolean isEqualityOperatorWithin(SpelNode ast) {
+    private boolean isEqualityOperatorWithin(SpelNode ast) {
         return "==".equals(operatorWithin(ast).get());
     }
 
-    public boolean variableFirstWithin(SpelNode ast) {
+    private boolean variableFirstWithin(SpelNode ast) {
         return ast.getChild(0) instanceof VariableReference;
     }
 
-    public Optional<VariableReference> variableWithin(SpelNode ast) {
+    private Optional<VariableReference> variableWithin(SpelNode ast) {
         if (ast.getChild(0) instanceof VariableReference) {
             return Optional.of((VariableReference) ast.getChild(0));
         } else if (ast.getChild(1) instanceof VariableReference) {
@@ -83,7 +97,7 @@ public class SpelMismatchProvider implements MismatchProvider {
         }
     }
 
-    public Optional<Literal> literalWithin(SpelNode ast) {
+    private Optional<Literal> literalWithin(SpelNode ast) {
         if (ast.getChild(0) instanceof Literal) {
             return Optional.of((Literal) ast.getChild(0));
         } else if (ast.getChild(1) instanceof Literal) {
@@ -93,11 +107,17 @@ public class SpelMismatchProvider implements MismatchProvider {
         }
     }
 
-    public Optional<String> operatorWithin(SpelNode ast) {
-        if (!(ast instanceof OpGT) || ast.getChildCount() != 2) {
+    private Optional<String> operatorWithin(SpelNode ast) {
+        boolean isSupportedOperator;
+
+        isSupportedOperator  = ast instanceof OpEQ;
+        isSupportedOperator |= ast instanceof OpLT;
+        isSupportedOperator |= ast instanceof OpGT;
+
+        if (!isSupportedOperator || ast.getChildCount() != 2) {
             return Optional.absent();
         } else {
-            return Optional.of(((OpGT) ast).getOperatorName());
+            return Optional.of(((Operator) ast).getOperatorName());
         }
     }
 

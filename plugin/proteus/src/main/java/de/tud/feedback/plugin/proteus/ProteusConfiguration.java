@@ -48,15 +48,10 @@ public class ProteusConfiguration {
     }
 
     @Bean
-    public Function<String, String> thingToItemMapper() {
-        return new ThingToItemMapper();
-    }
-
-    @Bean
-    public OpenHabCommandExecutorFactoryBean openHabCommandExecutorFactoryBean(
-            OpenHabService service, Function<String, String> thingToItemMapper) {
+    public OpenHabCommandExecutorFactoryBean openHabCommandExecutorFactoryBean(OpenHabService service,
+            @Value("${dogOnt.stateNodePrefix:State_}") String stateNodePrefix) {
         return new OpenHabCommandExecutorFactoryBean()
-                .setItemNameMapper(thingToItemMapper)
+                .setItemNameMapper((s) -> s.replace(stateNodePrefix, ""))
                 .setService(service);
     }
 

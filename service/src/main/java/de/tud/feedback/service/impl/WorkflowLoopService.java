@@ -6,6 +6,7 @@ import de.tud.feedback.event.WorkflowUpdateEvent;
 import de.tud.feedback.loop.LoopIteration;
 import de.tud.feedback.repository.graph.WorkflowRepository;
 import de.tud.feedback.service.LoopService;
+import org.neo4j.ogm.session.result.ResultProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopContext;
@@ -99,7 +100,12 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
         }
 
         publisher.publishEvent(WorkflowUpdateEvent.on(workflow));
-        workflowRepository.save(workflow.done());
+
+        try {
+            workflowRepository.save(workflow.done());
+        } catch (ResultProcessingException exception) {
+            LOG.warn(format("%s cannot be saved due to %s", workflow, exception.getMessage()));
+        }
     }
 
     private boolean loopShouldBeFinishedFor(Workflow workflow) {

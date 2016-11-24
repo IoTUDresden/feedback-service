@@ -35,7 +35,7 @@ WHERE id(sensorState) = {stateId}
 
 // Attributes needed for compensating command
 RETURN DISTINCT
-	actuator.name AS actuator,
+	actuatorState.name AS actuator,
 	commandType.name AS commandType,
 	command.realCommandName AS commandName,
 	actuatorStateValue.realStateValue AS actuatorState,
