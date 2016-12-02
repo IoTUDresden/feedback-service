@@ -66,7 +66,7 @@ public class EventController {
         try {
             sseEmitters.get(workflow.getId()).send(result);
             LOG.debug("Sent result for '{}': {}", workflow.getName(), result.toString());
-        } catch (RuntimeException exception) {
+        } catch (Exception exception) {
             LOG.warn("Nobody was listening to the result of {}", workflow.getName());
         }
     }
