@@ -1,5 +1,7 @@
 package de.tud.feedback;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tud.feedback.domain.Context;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.WorkflowUpdateEvent;
@@ -56,15 +58,16 @@ public class EventController {
     @EventListener
     public void emitServerSentEventOn(WorkflowUpdateEvent event) throws IOException {
         Workflow workflow = event.getWorkflow();
-
-        // FIXME cyclic serialization reference (multiple ObjectMappers suck)
-        workflow.setContext(null);
-        workflow.setGoals(null);
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode result = mapper.createObjectNode()
+                .put("hasBeenSatisfied", workflow.hasBeenSatisfied())
+                .put("hasBeenFinished", workflow.hasBeenFinished());
 
         try {
-            sseEmitters.get(workflow.getId()).send(workflow);
+            sseEmitters.get(workflow.getId()).send(result);
+            LOG.debug("Sent result for '{}': {}", workflow.getName(), result.toString());
         } catch (RuntimeException exception) {
-            LOG.warn("Nobody was listening to the feedback's result of {}", workflow.getName());
+            LOG.warn("Nobody was listening to the result of {}", workflow.getName());
         }
     }
 
