@@ -10,4 +10,11 @@ dependencies {
     compile project(':plugin/openhab')
     compile project(':plugin/dogont')
     compile project(':plugin/spel')
+    compile project(':plugin/healing')
+
+    compile 'eu.vicci.proteus.bundles.model:eu.vicci.process.model:1.0.0-SNAPSHOT',
+            'eu.vicci.proteus.bundles.model:eu.vicci.process.core:1.0.0-SNAPSHOT',
+            'eu.vicci.proteus.bundles.model:eu.vicci.process.model.util:1.0.0-SNAPSHOT'
+
+    compile 'eu.vicci.proteus.bundles.utils:eu.vicci.process.client:1.0.0-SNAPSHOT'
 }
