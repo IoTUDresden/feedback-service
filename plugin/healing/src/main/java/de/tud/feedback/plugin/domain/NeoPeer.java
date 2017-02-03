@@ -3,6 +3,7 @@ package de.tud.feedback.plugin.domain;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -17,10 +18,14 @@ public class NeoPeer {
     private String name;
     private String ip;
     private boolean isSuperPeer;
-    private Date lastHeartbeat;
+
+    //TODO check if this can be used as value or we must switch to Date
+    private LocalDateTime lastHeartbeat;
+    private boolean isConnected;
 
     /**
      * created by the framework
+     *
      * @return
      */
     public Long getId() {
@@ -80,14 +85,28 @@ public class NeoPeer {
     /**
      * the date of the last heartbeat from this peer
      */
-    public Date getLastHeartbeat() {
+    public LocalDateTime getLastHeartbeat() {
         return lastHeartbeat;
     }
 
     /**
      * the date of the last heartbeat from this peer
      */
-    public void setLastHeartbeat(Date lastHeartbeat) {
+    public void setLastHeartbeat(LocalDateTime lastHeartbeat) {
         this.lastHeartbeat = lastHeartbeat;
+    }
+
+    /**
+     * state if the peer is connected or not
+     */
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    /**
+     * state if the peer is connected or not
+     */
+    public void setConnected(boolean connected) {
+        isConnected = connected;
     }
 }

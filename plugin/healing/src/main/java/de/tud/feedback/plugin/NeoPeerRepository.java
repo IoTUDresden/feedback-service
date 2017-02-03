@@ -34,6 +34,13 @@ public interface NeoPeerRepository extends GraphRepository<NeoPeer> {
     //@Query("MATCH (p:NeoPeer {peerId={0}}) RETURN p")
     NeoPeer findByPeerId(String peerId);
 
+    /**
+     * finds a peer by the given ip
+     * @param ip
+     * @return
+     */
+    NeoPeer findByIp(String ip);
+
 
 
 }

@@ -1,9 +1,11 @@
 package de.tud.feedback.plugin;
 
+import de.tud.feedback.plugin.domain.NeoPeer;
 import de.tud.feedback.plugin.domain.NeoProcess;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -18,6 +20,13 @@ public interface NeoProcessRepository extends GraphRepository<NeoProcess> {
     //TODO check if this is working without the cypher query
     //@Query("MATCH (p:NeoProcess {processId={0}} ) RETURN p")
     NeoProcess findByProcessId(String processId);
+
+    /**
+     * finds all processes, which are running on the given peer
+     * @param peer
+     * @return
+     */
+    List<NeoProcess> findByPeer(NeoPeer peer);
 
     /**
      * Updates the process state with the given id.
