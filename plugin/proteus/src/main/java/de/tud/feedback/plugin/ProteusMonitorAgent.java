@@ -158,7 +158,7 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
      * The peer is just marked as disconnected in that case
      * @param profile
      */
-    private void peerDisoconnected(PeerProfile profile){
+    public void peerDisoconnected(PeerProfile profile){
         NeoPeer peer = peerRepository.findByPeerId(profile.getPeerId());
         if(peer == null) return;
         peer.setConnected(false);
@@ -171,7 +171,7 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
      * and it {@link NeoPeer#isConnected} is set to true.
      * @param profile
      */
-    private void peerConnected(PeerProfile profile){
+    public void peerConnected(PeerProfile profile){
         addPeerIfNotPresent(profile);
 
         //TODO bad: is done in the method before if the peer doesnt exists before
@@ -184,14 +184,14 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
     /**
      * If a new SuperPeer is requesting,
      * we close the client and remove all processes which are executed on the super peer.
-     * Then we make a new connection to the new super peer and get all peers again. 
+     * Then we make a new connection to the new super peer and get all peers again.
      * If new requesting super peer and the old super peer are equal (ids are equal) then we do nothing,
      * as the client will indefinitely try to connect to the super peer (default should be something around 3 seconds).
      *
      * @param profile
      */
-    //TODO this must go from a rest interface
-    private void superPeerIsRequesting(PeerProfile profile){
+    //TODO this method must be implemented in a thread safe way, so that all other operations not fail (e.g. client is null)
+    public void superPeerIsRequesting(PeerProfile profile){
         if(!checkSuperPeerArgs(profile)) {
             LOG.error("invalid peer profile for super peer");
             return;

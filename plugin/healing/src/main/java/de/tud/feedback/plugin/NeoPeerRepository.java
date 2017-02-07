@@ -3,6 +3,7 @@ package de.tud.feedback.plugin;
 import de.tud.feedback.plugin.domain.NeoPeer;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 
