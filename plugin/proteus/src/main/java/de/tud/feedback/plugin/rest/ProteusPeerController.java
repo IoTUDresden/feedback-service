@@ -2,10 +2,16 @@ package de.tud.feedback.plugin.rest;
 
 import de.tud.feedback.plugin.ProteusMonitorAgent;
 import eu.vicci.process.distribution.core.PeerProfile;
+import eu.vicci.process.distribution.core.SuperPeerRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Peer controller for api which can be accessed by proteus
@@ -14,25 +20,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/proteus")
 public class ProteusPeerController {
 
-    private final ProteusMonitorAgent monitorAgent;
-
     @Autowired
-    public ProteusPeerController(ProteusMonitorAgent monitorAgent){
-        this.monitorAgent = monitorAgent;
-    }
+    private Provider<ProteusMonitorAgent> proteusMonitorAgentProvider;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value="/peerConnected", method = RequestMethod.POST)
     public void peerConnected(PeerProfile profile){
-        monitorAgent.peerConnected(profile);
+        proteusMonitorAgentProvider.get().peerConnected(profile);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public void superPeerRequesting(PeerProfile profile){
-        monitorAgent.superPeerIsRequesting(profile);
+    @RequestMapping(value="/superPeerRequesting",
+            method = RequestMethod.POST,
+            consumes="application/json")
+    public void superPeerRequesting(@RequestBody  SuperPeerRequest request){
+        //FIXME maybe we can get the correct ip by the servlet request cause the proteus
+        proteusMonitorAgentProvider.get().superPeerIsRequesting(request);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value="/peerDisconnected", method = RequestMethod.POST)
     public void peerDisconnected(PeerProfile profile){
-        monitorAgent.peerDisoconnected(profile);
+        proteusMonitorAgentProvider.get().peerDisoconnected(profile);
+    }
+
+    //FIXME only for dev and testing - should be removed ;)
+    @RequestMapping(value="/hello", method = RequestMethod.GET)
+    public String helloWorld(){
+        return "Hello World";
     }
 }

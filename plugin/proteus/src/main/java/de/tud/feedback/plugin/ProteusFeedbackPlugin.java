@@ -34,6 +34,8 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<OpenHabMonitorAgent> monitorAgentProvider;
 
+    @Autowired Provider<ProteusMonitorAgent> proteusMonitorAgentProvider;
+
     @Autowired SpelObjectiveEvaluatorFactoryBean evaluatorFactory;
 
     @Autowired Provider<SpelObjectiveEvaluator> evaluatorProvider;
@@ -69,7 +71,7 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Override
     public Collection<MonitorAgent> getMonitorAgents() {
-        return newArrayList(monitorAgentProvider.get());
+        return newArrayList(monitorAgentProvider.get(), proteusMonitorAgentProvider.get());
     }
 
     @Override

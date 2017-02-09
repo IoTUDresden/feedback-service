@@ -12,9 +12,38 @@ dependencies {
     compile project(':plugin/spel')
     compile project(':plugin/healing')
 
-    compile 'eu.vicci.proteus.bundles.model:eu.vicci.process.model:1.0.0-SNAPSHOT',
-            'eu.vicci.proteus.bundles.model:eu.vicci.process.core:1.0.0-SNAPSHOT',
-            'eu.vicci.proteus.bundles.model:eu.vicci.process.model.util:1.0.0-SNAPSHOT'
+//    compile 'eu.vicci.proteus.bundles.model:eu.vicci.process.model:1.0.0-SNAPSHOT',
+//            'eu.vicci.proteus.bundles.model:eu.vicci.process.core:1.0.0-SNAPSHOT',
+//            'eu.vicci.proteus.bundles.model:eu.vicci.process.model.util:1.0.0-SNAPSHOT'
 
-    compile 'eu.vicci.proteus.bundles.utils:eu.vicci.process.client:1.0.0-SNAPSHOT'
+//    compile([ group: 'eu.vicci.proteus.bundles.model', name: 'eu.vicci.process.model', version:'1.0.0-SNAPSHOT'],
+//            [ group: 'eu.vicci.proteus.bundles.model', name: 'eu.vicci.process.core', version:'1.0.0-SNAPSHOT'],
+//            [ group: 'eu.vicci.proteus.bundles.model', name: 'eu.vicci.process.model.util', version:'1.0.0-SNAPSHOT']){
+//        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+//    }
+
+    //FIXME possible to write this in a nicer way?
+
+    compile ( group: 'eu.vicci.proteus.bundles.model', name: 'eu.vicci.process.model', version:'1.0.0-SNAPSHOT'){
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
+
+    compile (group: 'eu.vicci.proteus.bundles.model', name: 'eu.vicci.process.core', version:'1.0.0-SNAPSHOT'){
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
+
+    compile (group: 'eu.vicci.proteus.bundles.model', name: 'eu.vicci.process.model.util', version:'1.0.0-SNAPSHOT'){
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
+
+    compile (group: 'eu.vicci.proteus.bundles.utils', name:'eu.vicci.process.client', version:'1.0.0-SNAPSHOT'){
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
+
+    compile group: 'org.eclipse.emf', name: 'org.eclipse.emf.common', version: '2.12.0'
+
+    compile group: 'org.eclipse.emf', name: 'org.eclipse.emf.ecore', version: '2.12.0'
+
+
+//    org/eclipse/emf/ecore/resource/Resource
 }

@@ -1,20 +1,24 @@
 package de.tud.feedback.plugin.proteus;
 
+import de.tud.feedback.plugin.HealingPlugin;
 import de.tud.feedback.plugin.factory.*;
 import de.tud.feedback.plugin.openhab.OpenHabService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
-
-import java.util.function.Function;
 
 @Configuration
 public class ProteusConfiguration {
 
     Logger log = LoggerFactory.getLogger(ProteusConfiguration.class);
+
+    @Autowired
+    private HealingPlugin healingPlugin;
 
     @Bean
     public RdfContextImporterFactoryBean rdfContextImporterFactoryBean() {
@@ -60,6 +64,13 @@ public class ProteusConfiguration {
             @Value("${dogOnt.stateNodePrefix:State_}") String stateNodePrefix) {
         return new DogOntContextUpdaterFactoryBean()
                 .setStateNameMapper(s -> stateNodePrefix + s);
+    }
+
+    @Bean
+    public ProteusMonitorAgentFactoryBean proteusMonitorAgentFactoryBean(){
+        return new ProteusMonitorAgentFactoryBean()
+                .setNeoPeerRepository(healingPlugin.getNeoPeerRepository())
+                .setNeoProcessRepository(healingPlugin.getNeoProcessRepository());
     }
 
 }

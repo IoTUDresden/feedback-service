@@ -3,10 +3,13 @@ package de.tud.feedback.plugin;
 import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.plugin.domain.NeoPeer;
 import de.tud.feedback.plugin.domain.NeoProcess;
+import de.tud.feedback.plugin.repository.NeoPeerRepository;
+import de.tud.feedback.plugin.repository.NeoProcessRepository;
 import eu.vicci.process.client.ProcessEngineClientBuilder;
 import eu.vicci.process.client.core.ConnectionListener;
 import eu.vicci.process.client.core.IProcessEngineClient;
 import eu.vicci.process.distribution.core.PeerProfile;
+import eu.vicci.process.distribution.core.SuperPeerRequest;
 import eu.vicci.process.model.util.messages.core.IStateChangeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,14 +48,18 @@ import java.time.LocalDateTime;
 public class ProteusMonitorAgent implements ProcessMonitorAgent {
     private static final Logger LOG = LoggerFactory.getLogger(ProteusMonitorAgent.class);
 
+    private final NeoProcessRepository processRepository;
+    private final NeoPeerRepository peerRepository;
+
+    private ProcessIdFormatter idFormatter = new ProcessIdFormatter();
+
     private IProcessEngineClient client;
-
-    private NeoProcessRepository processRepository;
-    private NeoPeerRepository peerRepository;
-
-    private ProcessIdFormatter idFormatter;
-
     private PeerProfile currentSuperPeer;
+
+    public ProteusMonitorAgent(NeoProcessRepository processRepository, NeoPeerRepository peerRepository){
+        this.processRepository = processRepository;
+        this.peerRepository = peerRepository;
+    }
 
     @Override
     public void workWith(ContextUpdater updater) {
@@ -62,16 +69,17 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
     @Override
     public void run() {
         //clear once at startup
+
+        //FIXME is the run method called?
+
         processRepository.deleteAll();
         peerRepository.deleteAll();
 
-        //TODO only for testing, we connect direct to proteus
-
-        SuperPeerConfig config = getTestConfig();
-        if(!connect(config))
-            throw new RuntimeException("Cant connect to superpeer");
-
-        registerListeners();
+//        SuperPeerConfig config = getTestConfig();
+//        if(!connect(config))
+//            throw new RuntimeException("Cant connect to superpeer");
+//
+//        registerListeners();
 
         //TODO how do we get, that the runtime is stopped, so that we can close the client?
     }
@@ -188,24 +196,24 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
      * If new requesting super peer and the old super peer are equal (ids are equal) then we do nothing,
      * as the client will indefinitely try to connect to the super peer (default should be something around 3 seconds).
      *
-     * @param profile
+     * @param request
      */
     //TODO this method must be implemented in a thread safe way, so that all other operations not fail (e.g. client is null)
-    public void superPeerIsRequesting(PeerProfile profile){
-        if(!checkSuperPeerArgs(profile)) {
+    public void superPeerIsRequesting(SuperPeerRequest request){
+        if(!checkSuperPeerArgs(request)) {
             LOG.error("invalid peer profile for super peer");
             return;
         }
 
-        if(!superPeerHasChanged(profile))
+        if(!superPeerHasChanged(request.profile))
             return;
 
         removeProcessesFromSuperPeer();
 
         if(client != null) client.close();
-        currentSuperPeer = profile;
+        currentSuperPeer = request.profile;
         client = null;
-        connect(currentSuperPeer);
+        connect(request);
 
         LOG.info("monitoring new super peer on '{}'", currentSuperPeer.getIp());
 
@@ -214,7 +222,9 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
     }
 
     private void removeProcessesFromSuperPeer(){
-        Iterable<NeoProcess> processes = processRepository.findByPeer(null);
+//        Iterable<NeoProcess> processes = processRepository.findByPeer(null);
+        if(processRepository.count() == 0) return;
+        Iterable<NeoProcess> processes = processRepository.findByPeerIsNull();
         processRepository.delete(processes);
     }
 
@@ -230,7 +240,7 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
     }
 
     private boolean runsOnPeer(IStateChangeMessage message){
-        return message.getPeerId() != null && message.getPeerId().isEmpty();
+        return message.getPeerId() != null && !message.getPeerId().isEmpty();
     }
 
     private boolean connectedToSuperPeer(){
@@ -244,16 +254,24 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
                 && !profile.getPeerId().isEmpty();
     }
 
-    private boolean checkSuperPeerArgs(PeerProfile profile){
-        return profile.isSuperPeer() && checkPeerArg(profile);
+    private boolean checkSuperPeerArgs(SuperPeerRequest request){
+        PeerProfile profile = request.profile;
+        return profile != null
+                && request.namespace != null && !request.namespace.isEmpty()
+                && request.port != null && !request.port.isEmpty()
+                && request.realm != null && !request.realm.isEmpty()
+                && profile.isSuperPeer()
+                && checkPeerArg(profile);
     }
 
-    private boolean connect(PeerProfile profile){
+    //FIXME we must exclude the shitty graphiti dependency from the client
+    // it will require ui deps as well and is not available in maven
+    private boolean connect(SuperPeerRequest request){
         client = new ProcessEngineClientBuilder()
-                .withIp(profile.getIp())
-                .withPort("TODO")
-                .withRealmName("TODO")
-                .withNamespace("TODO")
+                .withIp(request.profile.getIp())
+                .withPort(request.port)
+                .withRealmName(request.realm)
+                .withNamespace(request.namespace)
                 .withName(ProteusMonitorAgent.class.getSimpleName())
                 .build();
         return client.connect();

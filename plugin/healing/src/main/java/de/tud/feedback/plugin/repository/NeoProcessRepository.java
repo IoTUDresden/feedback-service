@@ -1,9 +1,10 @@
-package de.tud.feedback.plugin;
+package de.tud.feedback.plugin.repository;
 
 import de.tud.feedback.plugin.domain.NeoPeer;
 import de.tud.feedback.plugin.domain.NeoProcess;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import java.util.Optional;
  *
  * http://docs.spring.io/spring-data/jpa/docs/1.5.0.RELEASE/reference/html/repositories.html
  */
+@Repository
 public interface NeoProcessRepository extends GraphRepository<NeoProcess> {
 
     //TODO check if this is working without the cypher query
@@ -28,12 +30,14 @@ public interface NeoProcessRepository extends GraphRepository<NeoProcess> {
      */
     List<NeoProcess> findByPeer(NeoPeer peer);
 
-    /**
-     * Updates the process state with the given id.
-     * @param id
-     * @param state
-     */
-    @Query("MATCH (p:NeoProcess {processId={0}} )" +
-            "SET p.state = {1}")
-    void updateProcessState(String id, String state);
+    List<NeoProcess> findByPeerIsNull();
+
+//    /**
+//     * Updates the process state with the given id.
+//     * @param id
+//     * @param state
+//     */
+//    @Query("MATCH (p:NeoProcess {processId={0}} )" +
+//            "SET p.state = {1}")
+//    void updateProcessState(String id, String state);
 }
