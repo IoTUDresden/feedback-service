@@ -30,6 +30,8 @@ public interface NeoProcessRepository extends GraphRepository<NeoProcess> {
      */
     List<NeoProcess> findByPeer(NeoPeer peer);
 
+    //the autogeneration will not work here :(
+    @Query("MATCH (n:NeoProcess) WHERE NOT HAS(n.peer) RETURN n")
     List<NeoProcess> findByPeerIsNull();
 
 //    /**

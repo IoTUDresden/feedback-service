@@ -6,6 +6,7 @@ import org.neo4j.ogm.session.SessionFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
@@ -14,7 +15,7 @@ import org.springframework.data.neo4j.server.RemoteServer;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-@EnableNeo4jRepositories(basePackageClasses = WorkflowRepository.class)
+@EnableNeo4jRepositories({"de.tud.feedback.repository.graph", "de.tud.feedback.plugin.repository"})
 public class Neo4jConfiguration
         extends org.springframework.data.neo4j.config.Neo4jConfiguration implements EnvironmentAware {
 
@@ -28,7 +29,8 @@ public class Neo4jConfiguration
 
     @Override
     public SessionFactory getSessionFactory() {
-        return new SessionFactory(Workflow.class.getPackage().getName());
+        return
+                new SessionFactory(Workflow.class.getPackage().getName(), "de.tud.feedback.plugin.domain");
     }
 
     @Override

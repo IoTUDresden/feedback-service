@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * This agent monitors all interesting stuff from proteus (e.g. state changes, new peers).
@@ -103,6 +104,7 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
      */
     private void updateProcessStateFrom(IStateChangeMessage message){
         String id = idFormatter.formatId(message.getPeerId(), message.getInstanceId());
+        Iterable<NeoProcess> test = processRepository.findAll();
         NeoProcess process = processRepository.findByProcessId(id);
         if(process == null)
             process = createProcessFrom(message, id);
@@ -136,7 +138,7 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
         peer.setIp(peerProfile.getIp());
         peer.setSuperPeer(false);
         peer.setConnected(true);
-        peer.setLastHeartbeat(LocalDateTime.now());
+//        peer.setLastHeartbeat(LocalDateTime.now());
         peerRepository.save(peer);
         LOG.info("peer on '{}' is monitored", peer.getIp());
     }
@@ -147,7 +149,7 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
         boolean hasSameIdAndIp = existingPeer != null && existingPeer.getIp().equals(peerProfile.getIp());
 
         if(hasSameIdAndIp) {
-            existingPeer.setLastHeartbeat(LocalDateTime.now());
+//            existingPeer.setLastHeartbeat(LocalDateTime.now());
             return true;
         }
 
@@ -189,6 +191,8 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
         LOG.info("peer on '{}' has connected", peer.getIp());
     }
 
+    boolean firstConnect = true;
+
     /**
      * If a new SuperPeer is requesting,
      * we close the client and remove all processes which are executed on the super peer.
@@ -200,6 +204,14 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
      */
     //TODO this method must be implemented in a thread safe way, so that all other operations not fail (e.g. client is null)
     public void superPeerIsRequesting(SuperPeerRequest request){
+
+        //TODO workaround since the run method is not called but we need a clean repo at startup
+        if(firstConnect){
+            peerRepository.deleteAll();
+            processRepository.deleteAll();
+            firstConnect = false;
+        }
+
         if(!checkSuperPeerArgs(request)) {
             LOG.error("invalid peer profile for super peer");
             return;
@@ -222,8 +234,6 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
     }
 
     private void removeProcessesFromSuperPeer(){
-//        Iterable<NeoProcess> processes = processRepository.findByPeer(null);
-        if(processRepository.count() == 0) return;
         Iterable<NeoProcess> processes = processRepository.findByPeerIsNull();
         processRepository.delete(processes);
     }
@@ -279,14 +289,14 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
 
     private void registerListeners(){
         client.addConnectionListener(connectionListener);
-        client.getRegisteredPeers().forEach(p -> addPeerIfNotPresent(p));
         client.addStateChangeListener(message -> updateProcessStateFrom(message));
     }
 
     private boolean connect(SuperPeerConfig config){
         ProcessEngineClientBuilder builder = new ProcessEngineClientBuilder();
         client = builder
-                .withIp(config.ip)
+//                .withIp(config.ip)
+                .withIp("127.0.0.1")
                 .withPort(config.port)
                 .withNamespace(config.namespace)
                 .withRealmName(config.realm)
