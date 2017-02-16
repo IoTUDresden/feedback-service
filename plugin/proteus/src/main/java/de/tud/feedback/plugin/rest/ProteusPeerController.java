@@ -34,11 +34,12 @@ public class ProteusPeerController {
     public void superPeerRequesting(@RequestBody  SuperPeerRequest request){
         //FIXME maybe we can get the correct ip by the servlet request cause the proteus
         proteusMonitorAgentProvider.get().superPeerIsRequesting(request);
+
     }
 
     @RequestMapping(value="/peerDisconnected", method = RequestMethod.POST)
     public void peerDisconnected(PeerProfile profile){
-        proteusMonitorAgentProvider.get().peerDisoconnected(profile);
+        proteusMonitorAgentProvider.get().peerDisconnected(profile);
     }
 
     //FIXME only for dev and testing - should be removed ;)

@@ -1,8 +1,11 @@
 package de.tud.feedback.plugin;
 
-import de.tud.feedback.ContextUpdater;
 import de.tud.feedback.plugin.domain.NeoPeer;
 import de.tud.feedback.plugin.domain.NeoProcess;
+import de.tud.feedback.plugin.events.ProteusEvent.NewSuperPeerEvent;
+import de.tud.feedback.plugin.events.ProteusEvent.PeerConnectedEvent;
+import de.tud.feedback.plugin.events.ProteusEvent.PeerDisconnectedEvent;
+import de.tud.feedback.plugin.events.ProteusEvent.StateChangeEvent;
 import de.tud.feedback.plugin.repository.NeoPeerRepository;
 import de.tud.feedback.plugin.repository.NeoProcessRepository;
 import eu.vicci.process.client.ProcessEngineClientBuilder;
@@ -11,11 +14,7 @@ import eu.vicci.process.client.core.IProcessEngineClient;
 import eu.vicci.process.distribution.core.PeerProfile;
 import eu.vicci.process.distribution.core.SuperPeerRequest;
 import eu.vicci.process.model.util.messages.core.IStateChangeMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import sun.rmi.runtime.Log;
 
 /**
  * This agent monitors all interesting stuff from proteus (e.g. state changes, new peers).
@@ -46,9 +45,7 @@ import java.util.List;
  * - polling or event based? (poll client.getConnectedPeers)
  *   -> event based is cooler
  */
-public class ProteusMonitorAgent implements ProcessMonitorAgent {
-    private static final Logger LOG = LoggerFactory.getLogger(ProteusMonitorAgent.class);
-
+public class ProteusMonitorAgent extends ProteusMonitorBase {
     private final NeoProcessRepository processRepository;
     private final NeoPeerRepository peerRepository;
 
@@ -57,52 +54,132 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
     private IProcessEngineClient client;
     private PeerProfile currentSuperPeer;
 
+
     public ProteusMonitorAgent(NeoProcessRepository processRepository, NeoPeerRepository peerRepository){
         this.processRepository = processRepository;
         this.peerRepository = peerRepository;
     }
 
     @Override
-    public void workWith(ContextUpdater updater) {
-        // not used as we dont use the current available dogont updater
-    }
-
-    @Override
-    public void run() {
-        //clear once at startup
-
-        //FIXME is the run method called?
-
-        processRepository.deleteAll();
-        peerRepository.deleteAll();
-
-//        SuperPeerConfig config = getTestConfig();
-//        if(!connect(config))
-//            throw new RuntimeException("Cant connect to superpeer");
-//
-//        registerListeners();
-
-        //TODO how do we get, that the runtime is stopped, so that we can close the client?
+    protected void initMonitor() {
+        //NP is thrown
+//        processRepository.deleteAll();
+//        peerRepository.deleteAll();
     }
 
     //tracks connection state of the proteus client
     private ConnectionListener connectionListener = new ConnectionListener() {
         @Override
         public void onConnect() {
+            LOG.debug("proteus monitor connected to proteus");
             //should we do something?
         }
 
         @Override
         public void onDisconnect() {
+            LOG.debug("proteus monitor disconnected from proteus");
             //should we do something?
         }
     };
 
     /**
-     * Updates the state of a process. The process is created and added to the repo if it not exists.
-     * @param message
+     * The peer is just marked as disconnected in that case
+     * @param profile
      */
-    private void updateProcessStateFrom(IStateChangeMessage message){
+    public void peerDisconnected(PeerProfile profile){
+        addEvent(new PeerDisconnectedEvent(profile));
+    }
+
+    /**
+     * The peer is added if not exists ({@link #addPeerIfNotPresent(PeerProfile)})
+     * and it {@link NeoPeer#isConnected} is set to true.
+     * @param profile
+     */
+    public void peerConnected(PeerProfile profile){
+        addEvent(new PeerConnectedEvent(profile));
+    }
+
+
+    /**
+     * If a new SuperPeer is requesting,
+     * we close the client and remove all processes which are executed on the super peer.
+     * Then we make a new connection to the new super peer and get all peers again.
+     * If new requesting super peer and the old super peer are equal (ids are equal) then we do nothing,
+     * as the client will indefinitely try to connect to the super peer (default should be something around 3 seconds).
+     *
+     * @param request
+     */
+    public void superPeerIsRequesting(SuperPeerRequest request){
+        addEvent(new NewSuperPeerEvent(request));
+    }
+
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////// EventImplementation
+    ////////////////////////////////////////////////////////////////////////
+
+    boolean firstConnect = true;
+
+    @Override
+    protected void handleNewSuperPeer(NewSuperPeerEvent event){
+        SuperPeerRequest request = event.getRequest();
+
+        //TODO workaround since the run method is not called but we need a clean repo at startup
+        if(firstConnect){
+            peerRepository.deleteAll();
+            processRepository.deleteAll();
+            firstConnect = false;
+        }
+
+        if(!checkSuperPeerArgs(request)) {
+            LOG.error("invalid peer profile for super peer");
+            return;
+        }
+
+        if(!superPeerHasChanged(request.profile))
+            return;
+
+        removeProcessesFromSuperPeer();
+
+        if(client != null) client.close();
+        currentSuperPeer = request.profile;
+        client = null;
+        connect(request);
+
+        LOG.info("monitoring new super peer on '{}'", currentSuperPeer.getIp());
+
+        client.getRegisteredPeers().forEach(p -> addPeerIfNotPresent(p));
+        registerListeners();
+    }
+
+    @Override
+    protected void handlePeerDisconnected(PeerDisconnectedEvent event) {
+        PeerProfile profile = event.getProfile();
+        NeoPeer peer = peerRepository.findByPeerId(profile.getPeerId());
+        if(peer == null) return;
+        peer.setConnected(false);
+        peerRepository.save(peer);
+        LOG.info("peer on '{}' has disconnected", peer.getIp());
+    }
+
+    @Override
+    protected void handlePeerConnected(PeerConnectedEvent event){
+        PeerProfile profile = event.getProfile();
+        addPeerIfNotPresent(profile);
+
+        //TODO bad: is done in the method before if the peer doesnt exists before
+        NeoPeer peer = peerRepository.findByPeerId(profile.getPeerId());
+        peer.setConnected(true);
+        peerRepository.save(peer);
+        LOG.info("peer on '{}' has connected", peer.getIp());
+    }
+
+    /**
+     * Updates the state of a process. The process is created and added to the repo if it not exists.
+     * @param event
+     */
+    @Override
+    protected void handleStateChange(StateChangeEvent event) {
+        IStateChangeMessage message = event.getMessage();
         String id = idFormatter.formatId(message.getPeerId(), message.getInstanceId());
         Iterable<NeoProcess> test = processRepository.findAll();
         NeoProcess process = processRepository.findByProcessId(id);
@@ -111,6 +188,10 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
         process.setState(message.getState().toString());
         processRepository.save(process);
     }
+
+    ///////////////////////////////////////////////////////////////////////
+    ///////////////// Helper
+    ////////////////////////////////////////////////////////////////////////
 
     private NeoProcess createProcessFrom(IStateChangeMessage message, String id){
         NeoProcess process = new NeoProcess();
@@ -164,74 +245,7 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
         return false;
     }
 
-    /**
-     * The peer is just marked as disconnected in that case
-     * @param profile
-     */
-    public void peerDisoconnected(PeerProfile profile){
-        NeoPeer peer = peerRepository.findByPeerId(profile.getPeerId());
-        if(peer == null) return;
-        peer.setConnected(false);
-        peerRepository.save(peer);
-        LOG.info("peer on '{}' has disconnected", peer.getIp());
-    }
 
-    /**
-     * The peer is added if not exists ({@link #addPeerIfNotPresent(PeerProfile)})
-     * and it {@link NeoPeer#isConnected} is set to true.
-     * @param profile
-     */
-    public void peerConnected(PeerProfile profile){
-        addPeerIfNotPresent(profile);
-
-        //TODO bad: is done in the method before if the peer doesnt exists before
-        NeoPeer peer = peerRepository.findByPeerId(profile.getPeerId());
-        peer.setConnected(true);
-        peerRepository.save(peer);
-        LOG.info("peer on '{}' has connected", peer.getIp());
-    }
-
-    boolean firstConnect = true;
-
-    /**
-     * If a new SuperPeer is requesting,
-     * we close the client and remove all processes which are executed on the super peer.
-     * Then we make a new connection to the new super peer and get all peers again.
-     * If new requesting super peer and the old super peer are equal (ids are equal) then we do nothing,
-     * as the client will indefinitely try to connect to the super peer (default should be something around 3 seconds).
-     *
-     * @param request
-     */
-    //TODO this method must be implemented in a thread safe way, so that all other operations not fail (e.g. client is null)
-    public void superPeerIsRequesting(SuperPeerRequest request){
-
-        //TODO workaround since the run method is not called but we need a clean repo at startup
-        if(firstConnect){
-            peerRepository.deleteAll();
-            processRepository.deleteAll();
-            firstConnect = false;
-        }
-
-        if(!checkSuperPeerArgs(request)) {
-            LOG.error("invalid peer profile for super peer");
-            return;
-        }
-
-        if(!superPeerHasChanged(request.profile))
-            return;
-
-        removeProcessesFromSuperPeer();
-
-        if(client != null) client.close();
-        currentSuperPeer = request.profile;
-        client = null;
-        connect(request);
-
-        LOG.info("monitoring new super peer on '{}'", currentSuperPeer.getIp());
-
-        client.getRegisteredPeers().forEach(p -> addPeerIfNotPresent(p));
-        registerListeners();
-    }
 
     private void removeProcessesFromSuperPeer(){
         Iterable<NeoProcess> processes = processRepository.findByPeerIsNull();
@@ -289,7 +303,7 @@ public class ProteusMonitorAgent implements ProcessMonitorAgent {
 
     private void registerListeners(){
         client.addConnectionListener(connectionListener);
-        client.addStateChangeListener(message -> updateProcessStateFrom(message));
+        client.addStateChangeListener(message -> addEvent(new StateChangeEvent(message)));
     }
 
     private boolean connect(SuperPeerConfig config){
