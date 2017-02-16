@@ -31,7 +31,7 @@ public abstract class ProteusMonitorBase implements ProcessMonitorAgent {
         // not used as we dont use the current available dogont updater
     }
 
-    protected void addEvent(ProteusEvent event){
+    protected synchronized void addEvent(ProteusEvent event){
         try {
             events.put(event);
         } catch (InterruptedException e) {
