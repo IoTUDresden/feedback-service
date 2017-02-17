@@ -2,10 +2,12 @@ package de.tud.feedback.plugin;
 
 import de.tud.feedback.plugin.domain.NeoPeer;
 import de.tud.feedback.plugin.domain.NeoProcess;
+import de.tud.feedback.plugin.events.ProteusEvent;
 import de.tud.feedback.plugin.events.ProteusEvent.NewSuperPeerEvent;
 import de.tud.feedback.plugin.events.ProteusEvent.PeerConnectedEvent;
 import de.tud.feedback.plugin.events.ProteusEvent.PeerDisconnectedEvent;
 import de.tud.feedback.plugin.events.ProteusEvent.StateChangeEvent;
+import de.tud.feedback.plugin.events.ProteusEvent.PeerMetricsEvent;
 import de.tud.feedback.plugin.repository.NeoPeerRepository;
 import de.tud.feedback.plugin.repository.NeoProcessRepository;
 import eu.vicci.process.client.ProcessEngineClientBuilder;
@@ -13,12 +15,17 @@ import eu.vicci.process.client.core.ConnectionListener;
 import eu.vicci.process.client.core.IProcessEngineClient;
 import eu.vicci.process.distribution.core.PeerProfile;
 import eu.vicci.process.distribution.core.SuperPeerRequest;
+import eu.vicci.process.model.util.configuration.TopicId;
+import eu.vicci.process.model.util.messages.core.IMessageReceiver;
 import eu.vicci.process.model.util.messages.core.IStateChangeMessage;
-import sun.rmi.runtime.Log;
+import eu.vicci.process.model.util.messages.core.PeerMetrics;
 
 /**
  * This agent monitors all interesting stuff from proteus (e.g. state changes, new peers).
  * Note: PROtEUS can handle only one peer per ip address.
+ *
+ * The monitor runs in a single thread. All operations from other threads should added to the event queue.
+ * This will (hopefully) ensure that there are no sync problems.
  *
  * TODO question over questions:
  * - how handle disconnects from peers?
@@ -79,6 +86,13 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         public void onDisconnect() {
             LOG.debug("proteus monitor disconnected from proteus");
             //should we do something?
+        }
+    };
+
+    private IMessageReceiver<PeerMetrics> metricsListener = new IMessageReceiver<PeerMetrics>() {
+        @Override
+        public void onMessage(PeerMetrics peerMetrics) {
+            addEvent(new PeerMetricsEvent(peerMetrics));
         }
     };
 
@@ -187,6 +201,13 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
             process = createProcessFrom(message, id);
         process.setState(message.getState().toString());
         processRepository.save(process);
+    }
+
+    @Override
+    protected void handlePeerMetrics(PeerMetricsEvent event) {
+        PeerMetrics metrics = event.getMetrics();
+        NeoPeer peer = peerRepository.findByPeerId(metrics.peerId);
+        //TODO implement me
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -304,6 +325,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     private void registerListeners(){
         client.addConnectionListener(connectionListener);
         client.addStateChangeListener(message -> addEvent(new StateChangeEvent(message)));
+        client.subscribeToTopic(TopicId.PEER_METRICS, metricsListener, PeerMetrics.class);
     }
 
     private boolean connect(SuperPeerConfig config){

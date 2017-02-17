@@ -79,16 +79,19 @@ public abstract class ProteusMonitorBase implements ProcessMonitorAgent {
     protected abstract void handlePeerDisconnected(PeerDisconnectedEvent event);
     protected abstract void handlePeerConnected(PeerConnectedEvent event);
     protected abstract void handleStateChange(StateChangeEvent event);
+    protected abstract void handlePeerMetrics(PeerMetricsEvent event);
 
     private void handleEvent(ProteusEvent event){
         if(event instanceof NewSuperPeerEvent)
             handleNewSuperPeer((NewSuperPeerEvent)event);
+        else if(event instanceof StateChangeEvent)
+            handleStateChange((StateChangeEvent)event);
+        else if(event instanceof PeerMetricsEvent)
+            handlePeerMetrics((PeerMetricsEvent)event);
         else if(event instanceof PeerConnectedEvent)
             handlePeerConnected((PeerConnectedEvent)event);
         else if(event instanceof PeerDisconnectedEvent)
             handlePeerDisconnected((PeerDisconnectedEvent)event);
-        else if(event instanceof StateChangeEvent)
-            handleStateChange((StateChangeEvent)event);
         else if(event instanceof TerminateEvent)
             LOG.info("shutting down");
         else

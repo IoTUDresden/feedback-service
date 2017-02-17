@@ -3,6 +3,7 @@ package de.tud.feedback.plugin.events;
 import eu.vicci.process.distribution.core.PeerProfile;
 import eu.vicci.process.distribution.core.SuperPeerRequest;
 import eu.vicci.process.model.util.messages.core.IStateChangeMessage;
+import eu.vicci.process.model.util.messages.core.PeerMetrics;
 
 public abstract class ProteusEvent {
 
@@ -53,6 +54,18 @@ public abstract class ProteusEvent {
 
         public IStateChangeMessage getMessage() {
             return message;
+        }
+    }
+
+    public static class PeerMetricsEvent extends ProteusEvent{
+        private final PeerMetrics metrics;
+
+        public PeerMetricsEvent(PeerMetrics metrics) {
+            this.metrics = metrics;
+        }
+
+        public PeerMetrics getMetrics() {
+            return metrics;
         }
     }
 
