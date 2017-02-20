@@ -2,9 +2,11 @@ package de.tud.feedback.plugin.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This represents a peer in a distributed process environment
@@ -19,8 +21,14 @@ public class NeoPeer {
     private String ip;
     private boolean isSuperPeer;
 
-    //TODO check if this can be used as value or we must switch to Date
-//    private LocalDateTime lastHeartbeat;
+    @Relationship(type="HAS_METRIC", direction=Relationship.OUTGOING)
+    private NeoPeerMetric metrics;
+
+    @Relationship(type="HAS_DEVICE", direction=Relationship.OUTGOING)
+    private Set<NeoDevice> devices = new HashSet<>();
+
+    //java 8 LocalDatetime is not serialized by spring data neo4j
+    private Date lastHeartbeat;
     private boolean isConnected;
 
     /**
@@ -82,19 +90,19 @@ public class NeoPeer {
         isSuperPeer = superPeer;
     }
 
-//    /**
-//     * the date of the last heartbeat from this peer
-//     */
-//    public LocalDateTime getLastHeartbeat() {
-//        return lastHeartbeat;
-//    }
-//
-//    /**
-//     * the date of the last heartbeat from this peer
-//     */
-//    public void setLastHeartbeat(LocalDateTime lastHeartbeat) {
-//        this.lastHeartbeat = lastHeartbeat;
-//    }
+    /**
+     * the date of the last heartbeat from this peer
+     */
+    public Date getLastHeartbeat() {
+        return lastHeartbeat;
+    }
+
+    /**
+     * the date of the last heartbeat from this peer
+     */
+    public void setLastHeartbeat(Date lastHeartbeat) {
+        this.lastHeartbeat = lastHeartbeat;
+    }
 
     /**
      * state if the peer is connected or not
@@ -108,5 +116,26 @@ public class NeoPeer {
      */
     public void setConnected(boolean connected) {
         isConnected = connected;
+    }
+
+    public NeoPeerMetric getMetrics() {
+        return metrics;
+    }
+
+    public void setMetrics(NeoPeerMetric metrics) {
+        this.metrics = metrics;
+    }
+
+    public void addDevice(NeoDevice device){
+        boolean alreadyExists = devices.stream().anyMatch(d -> d.getDeviceId().equals(device.getDeviceId()));
+        if(!alreadyExists)
+            devices.add(device);
+    }
+
+    public void removeDevice(String deviceId){
+        devices.removeAll(
+                devices.stream()
+                        .filter(d -> d.getDeviceId().equals(deviceId))
+                        .collect(Collectors.toList()));
     }
 }

@@ -1,13 +1,12 @@
 package de.tud.feedback.plugin;
 
+import de.tud.feedback.plugin.domain.NeoDevice;
 import de.tud.feedback.plugin.domain.NeoPeer;
+import de.tud.feedback.plugin.domain.NeoPeerMetric;
 import de.tud.feedback.plugin.domain.NeoProcess;
-import de.tud.feedback.plugin.events.ProteusEvent;
-import de.tud.feedback.plugin.events.ProteusEvent.NewSuperPeerEvent;
-import de.tud.feedback.plugin.events.ProteusEvent.PeerConnectedEvent;
-import de.tud.feedback.plugin.events.ProteusEvent.PeerDisconnectedEvent;
-import de.tud.feedback.plugin.events.ProteusEvent.StateChangeEvent;
-import de.tud.feedback.plugin.events.ProteusEvent.PeerMetricsEvent;
+import de.tud.feedback.plugin.events.ProteusEvent.*;
+import de.tud.feedback.plugin.repository.NeoDeviceRepository;
+import de.tud.feedback.plugin.repository.NeoPeerMetricRepository;
 import de.tud.feedback.plugin.repository.NeoPeerRepository;
 import de.tud.feedback.plugin.repository.NeoProcessRepository;
 import eu.vicci.process.client.ProcessEngineClientBuilder;
@@ -19,6 +18,11 @@ import eu.vicci.process.model.util.configuration.TopicId;
 import eu.vicci.process.model.util.messages.core.IMessageReceiver;
 import eu.vicci.process.model.util.messages.core.IStateChangeMessage;
 import eu.vicci.process.model.util.messages.core.PeerMetrics;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * This agent monitors all interesting stuff from proteus (e.g. state changes, new peers).
@@ -55,21 +59,24 @@ import eu.vicci.process.model.util.messages.core.PeerMetrics;
 public class ProteusMonitorAgent extends ProteusMonitorBase {
     private final NeoProcessRepository processRepository;
     private final NeoPeerRepository peerRepository;
+    private final NeoPeerMetricRepository metricRepository;
+    private final NeoDeviceRepository deviceRepository;
 
     private ProcessIdFormatter idFormatter = new ProcessIdFormatter();
 
     private IProcessEngineClient client;
     private PeerProfile currentSuperPeer;
 
-
-    public ProteusMonitorAgent(NeoProcessRepository processRepository, NeoPeerRepository peerRepository){
-        this.processRepository = processRepository;
-        this.peerRepository = peerRepository;
+    public ProteusMonitorAgent(HealingPlugin healingPlugin) {
+        processRepository = healingPlugin.getNeoProcessRepository();
+        peerRepository = healingPlugin.getNeoPeerRepository();
+        metricRepository = healingPlugin.getNeoPeerMetricRepository();
+        deviceRepository = healingPlugin.getNeoDeviceRepository();
     }
 
     @Override
     protected void initMonitor() {
-        //NP is thrown
+        //TODO NP is thrown
 //        processRepository.deleteAll();
 //        peerRepository.deleteAll();
     }
@@ -139,8 +146,10 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
 
         //TODO workaround since the run method is not called but we need a clean repo at startup
         if(firstConnect){
-            peerRepository.deleteAll();
             processRepository.deleteAll();
+            peerRepository.deleteAll();
+            metricRepository.deleteAll();
+            deviceRepository.deleteAll();
             firstConnect = false;
         }
 
@@ -152,12 +161,13 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         if(!superPeerHasChanged(request.profile))
             return;
 
-        removeProcessesFromSuperPeer();
+        removeSuperPeerData();
 
         if(client != null) client.close();
         currentSuperPeer = request.profile;
         client = null;
         connect(request);
+        addPeerIfNotPresent(currentSuperPeer);
 
         LOG.info("monitoring new super peer on '{}'", currentSuperPeer.getIp());
 
@@ -178,9 +188,11 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     @Override
     protected void handlePeerConnected(PeerConnectedEvent event){
         PeerProfile profile = event.getProfile();
-        addPeerIfNotPresent(profile);
+        handlePeerConnected(profile);
+    }
 
-        //TODO bad: is done in the method before if the peer doesnt exists before
+    private void handlePeerConnected(PeerProfile profile){
+        addPeerIfNotPresent(profile);
         NeoPeer peer = peerRepository.findByPeerId(profile.getPeerId());
         peer.setConnected(true);
         peerRepository.save(peer);
@@ -207,7 +219,32 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     protected void handlePeerMetrics(PeerMetricsEvent event) {
         PeerMetrics metrics = event.getMetrics();
         NeoPeer peer = peerRepository.findByPeerId(metrics.peerId);
-        //TODO implement me
+
+        if(peer == null) {
+            client.getRegisteredPeers().forEach(profile -> handlePeerConnected(profile));
+            peer = peerRepository.findByPeerId(metrics.peerId);
+        }
+
+        if(peer == null){
+            LOG.error("unknown peer: {}", metrics.peerId);
+            return;
+        }
+
+        NeoPeerMetric existingMetric = peer.getMetrics();
+        if(existingMetric == null){
+            existingMetric = new NeoPeerMetric();
+            peer.setMetrics(existingMetric);
+        }
+
+        peer.setLastHeartbeat(new Date());
+        peer.setConnected(true);
+        copyMetric(metrics, existingMetric);
+        peerRepository.save(peer);
+    }
+
+    private static void copyMetric(PeerMetrics newMetric, NeoPeerMetric exisitingMetric){
+        exisitingMetric.setBatteryValue(newMetric.batteryStatus);
+        exisitingMetric.setHasBattery(newMetric.hasBattery);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -218,9 +255,43 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         NeoProcess process = new NeoProcess();
         process.setProcessId(id);
         process.setName(message.getProcessName());
+
+        String peerId;
         if(runsOnPeer(message))
-            process.setPeer(peerRepository.findByPeerId(message.getPeerId()));
+            peerId = message.getPeerId();
+        else
+            peerId = currentSuperPeer.getPeerId();
+
+        NeoPeer peer = peerRepository.findByPeerId(peerId);
+        if(peer == null) {
+            client.getRegisteredPeers().forEach(profile -> addPeerIfNotPresent(profile));
+            peer = peerRepository.findByPeerId(peerId);
+        }
+
+        if(isSubProcess(message)){
+            NeoProcess root = findRootProcess(message);
+            if(root != null)
+                process.setRoot(root);
+            else
+                LOG.error("cant find root process for '{}'", message.getProcessName());
+        }
+
+        if(peer == null)
+            LOG.error("cant find peer '{}' for process '{}'", peerId, id);
+        else
+            process.setPeer(peer);
+
         return process;
+    }
+
+    private NeoProcess findRootProcess(IStateChangeMessage message){
+        String id = idFormatter.formatId(message.getPeerId(), message.getProcessInstanceId());
+        NeoProcess process = processRepository.findByProcessId(id);
+        return process;
+    }
+
+    private boolean isSubProcess(IStateChangeMessage message){
+        return !message.getProcessInstanceId().equals(message.getInstanceId());
     }
 
     /**
@@ -236,13 +307,37 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
             return;
 
         NeoPeer peer = new NeoPeer();
+        peer.setPeerId(peerProfile.getPeerId());
         peer.setName(peerProfile.getHostName());
         peer.setIp(peerProfile.getIp());
-        peer.setSuperPeer(false);
+        peer.setSuperPeer(peerProfile.isSuperPeer());
+        findOrCreateDevices(peerProfile).forEach(d -> peer.addDevice(d));
         peer.setConnected(true);
-//        peer.setLastHeartbeat(LocalDateTime.now());
+        peer.setLastHeartbeat(new Date());
         peerRepository.save(peer);
         LOG.info("peer on '{}' is monitored", peer.getIp());
+    }
+
+    /**
+     * Tries to find the devices which are committed with the profile.
+     * If the device is not found in the repo, it is added.
+     */
+    private List<NeoDevice> findOrCreateDevices(PeerProfile profile){
+        //TODO send devices with the peer profile
+        List<String> hack = Arrays.asList("robot_device_1","dimmer_device_1", "temp_device_1");
+        List<NeoDevice> devices = new ArrayList<>();
+        hack.forEach(d -> findOrCreateDevice(d, devices));
+        return devices;
+    }
+
+    private void findOrCreateDevice(String deviceId, List<NeoDevice> listToAdd){
+        NeoDevice tmp = deviceRepository.findByDeviceId(deviceId);
+        if(tmp == null){
+            tmp = new NeoDevice();
+            tmp.setDeviceId(deviceId);
+            deviceRepository.save(tmp);
+        }
+        listToAdd.add(tmp);
     }
 
     //also removes instances from restarted peers
@@ -250,10 +345,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         NeoPeer existingPeer = peerRepository.findByPeerId(peerProfile.getPeerId());
         boolean hasSameIdAndIp = existingPeer != null && existingPeer.getIp().equals(peerProfile.getIp());
 
-        if(hasSameIdAndIp) {
-//            existingPeer.setLastHeartbeat(LocalDateTime.now());
-            return true;
-        }
+        if(hasSameIdAndIp) return true;
 
         existingPeer = peerRepository.findByIp(peerProfile.getIp());
 
@@ -266,11 +358,10 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         return false;
     }
 
-
-
-    private void removeProcessesFromSuperPeer(){
-        Iterable<NeoProcess> processes = processRepository.findByPeerIsNull();
-        processRepository.delete(processes);
+    private void removeSuperPeerData(){
+        if(currentSuperPeer == null) return;
+        processRepository.delete(processRepository.findByPeerId(currentSuperPeer.getPeerId()));
+        peerRepository.delete(currentSuperPeer.getPeerId());
     }
 
     private boolean superPeerHasChanged(PeerProfile newRequest){
@@ -279,9 +370,8 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     }
 
     private void deleteOldPeerDataFor(NeoPeer peer){
-        Iterable<NeoProcess> processes = processRepository.findByPeer(peer);
-        processRepository.delete(processes);
-        peerRepository.delete(peer);
+        processRepository.delete(processRepository.findByPeerId(peer.getPeerId()));
+        peerRepository.delete(peer.getPeerId());
     }
 
     private boolean runsOnPeer(IStateChangeMessage message){
@@ -309,8 +399,6 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
                 && checkPeerArg(profile);
     }
 
-    //FIXME we must exclude the shitty graphiti dependency from the client
-    // it will require ui deps as well and is not available in maven
     private boolean connect(SuperPeerRequest request){
         client = new ProcessEngineClientBuilder()
                 .withIp(request.profile.getIp())
@@ -326,35 +414,5 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         client.addConnectionListener(connectionListener);
         client.addStateChangeListener(message -> addEvent(new StateChangeEvent(message)));
         client.subscribeToTopic(TopicId.PEER_METRICS, metricsListener, PeerMetrics.class);
-    }
-
-    private boolean connect(SuperPeerConfig config){
-        ProcessEngineClientBuilder builder = new ProcessEngineClientBuilder();
-        client = builder
-//                .withIp(config.ip)
-                .withIp("127.0.0.1")
-                .withPort(config.port)
-                .withNamespace(config.namespace)
-                .withRealmName(config.realm)
-                .withName(ProteusMonitorAgent.class.getSimpleName())
-                .build();
-        return client.connect();
-    }
-
-    private static SuperPeerConfig getTestConfig(){
-        SuperPeerConfig config = new SuperPeerConfig();
-        config.ip = "localhost";
-        config.port = "8081";
-        config.namespace = "vicciWs";
-        config.name = "vicciRealm";
-        return config;
-    }
-
-    public static class SuperPeerConfig{
-        public String name;
-        public String ip;
-        public String port;
-        public String namespace;
-        public String realm;
     }
 }
