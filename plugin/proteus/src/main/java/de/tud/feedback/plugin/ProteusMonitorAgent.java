@@ -323,10 +323,10 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
      * If the device is not found in the repo, it is added.
      */
     private List<NeoDevice> findOrCreateDevices(PeerProfile profile){
-        //TODO send devices with the peer profile
-        List<String> hack = Arrays.asList("robot_device_1","dimmer_device_1", "temp_device_1");
         List<NeoDevice> devices = new ArrayList<>();
-        hack.forEach(d -> findOrCreateDevice(d, devices));
+        if(profile.getDevices() == null || profile.getDevices().isEmpty())
+            return  devices;
+        profile.getDevices().forEach(d -> findOrCreateDevice(d, devices));
         return devices;
     }
 
