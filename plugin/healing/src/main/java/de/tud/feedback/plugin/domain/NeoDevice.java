@@ -1,11 +1,14 @@
 package de.tud.feedback.plugin.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.Index;
 
 public class NeoDevice {
 
     @GraphId
     private Long id;
+
+    @Index(unique=true)
     private String deviceId;
 
     public Long getId() {

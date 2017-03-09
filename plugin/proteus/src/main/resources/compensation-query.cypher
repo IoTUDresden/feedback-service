@@ -1,0 +1,1 @@
+MATCH (p:NeoPeer) RETURN p

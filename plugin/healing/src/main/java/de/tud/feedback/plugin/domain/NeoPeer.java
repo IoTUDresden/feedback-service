@@ -1,6 +1,7 @@
 package de.tud.feedback.plugin.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -16,6 +17,8 @@ public class NeoPeer {
 
     @GraphId
     private Long id;
+
+    @Index(unique=true)
     private String peerId;
     private String name;
     private String ip;

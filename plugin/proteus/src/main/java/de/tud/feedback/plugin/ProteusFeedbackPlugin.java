@@ -85,5 +85,9 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
         return compensationRepositoryProvider.get();
     }
 
+    public ProteusMonitorAgent getProteusMonitorAgent(){
+        return proteusMonitorAgentProvider.get();
+    }
+
 
 }

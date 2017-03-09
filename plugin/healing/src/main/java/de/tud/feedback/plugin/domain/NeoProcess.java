@@ -1,6 +1,7 @@
 package de.tud.feedback.plugin.domain;
 
 import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -12,6 +13,8 @@ public class NeoProcess {
 
     @GraphId
     private Long id;
+
+    @Index(unique=true)
     private String processId;
     private String name;
     private String state;
