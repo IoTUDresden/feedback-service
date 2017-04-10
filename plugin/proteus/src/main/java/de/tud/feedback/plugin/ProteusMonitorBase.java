@@ -19,6 +19,7 @@ public abstract class ProteusMonitorBase implements ProcessMonitorAgent {
 
     public ProteusMonitorBase() {
         //FIXME the monitor should be started by the feedback service and not at this point
+        // fbs starts this only if the context is imported
 
         Thread t = new Thread(this);
         t.setDaemon(true);

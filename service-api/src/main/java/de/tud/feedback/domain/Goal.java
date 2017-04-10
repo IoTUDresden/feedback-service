@@ -1,6 +1,7 @@
 package de.tud.feedback.domain;
 
 import de.tud.feedback.Satisfiable;
+import org.apache.commons.collections.map.HashedMap;
 import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -10,6 +11,8 @@ import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -36,6 +39,8 @@ public class Goal implements Satisfiable {
     @Relationship(type = "hasObjective", direction = Relationship.OUTGOING)
     private Set<Objective> objectives = newHashSet();
 
+    private Map<String, Object> parameters = new HashMap<>();
+
     @NotNull
     @Relationship(type = "hasGoal", direction = Relationship.INCOMING)
     private Workflow workflow;
@@ -57,6 +62,14 @@ public class Goal implements Satisfiable {
                 .filter(objective -> name.equals(objective.getName()))
                 .findAny()
                 .get();
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
     }
 
     public String getName() {
