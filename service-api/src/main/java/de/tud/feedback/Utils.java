@@ -2,6 +2,8 @@ package de.tud.feedback;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Map;
+
 public abstract class Utils {
 
     private Utils() {}

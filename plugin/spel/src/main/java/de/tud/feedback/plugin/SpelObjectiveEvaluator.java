@@ -1,5 +1,6 @@
 package de.tud.feedback.plugin;
 
+import com.google.common.collect.ImmutableMap;
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;
@@ -27,7 +28,12 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
 
     @Override
     public ObjectiveEvaluationResult evaluate(Objective objective) {
-        Collection<Map<String, Object>> result = executor.execute(objective.getContextExpression(), params().build());
+        Map<String, Object> tmpParams = objective.getGoal().getParameters();
+        ImmutableMap.Builder<String, Object> builder = params();
+        if(tmpParams != null)
+            builder.putAll(tmpParams);
+
+        Collection<Map<String, Object>> result = executor.execute(objective.getContextExpression(), builder.build());
 
         if (result.size() != 1)
             throw new RuntimeException(format(
