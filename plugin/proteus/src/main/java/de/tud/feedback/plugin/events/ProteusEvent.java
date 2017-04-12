@@ -5,6 +5,7 @@ import eu.vicci.process.distribution.core.SuperPeerRequest;
 import eu.vicci.process.model.util.messages.core.IStateChangeMessage;
 import eu.vicci.process.model.util.messages.core.PeerMetrics;
 
+//TODO think about using spring events
 public abstract class ProteusEvent {
 
     public static abstract class ProfileEvent extends ProteusEvent{

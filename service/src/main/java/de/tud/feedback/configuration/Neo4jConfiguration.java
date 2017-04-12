@@ -1,12 +1,9 @@
 package de.tud.feedback.configuration;
 
 import de.tud.feedback.domain.Workflow;
-import de.tud.feedback.repository.graph.WorkflowRepository;
 import org.neo4j.ogm.session.SessionFactory;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;

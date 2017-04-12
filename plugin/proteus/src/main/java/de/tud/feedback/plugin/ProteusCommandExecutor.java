@@ -3,12 +3,14 @@ package de.tud.feedback.plugin;
 
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.loop.CommandExecutor;
+import de.tud.feedback.plugin.ProteusCompensationRepository.ProteusCommand;
 import eu.vicci.process.client.ProcessEngineClientBuilder;
 import eu.vicci.process.client.core.IProcessEngineClient;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProteusCommandExecutor implements CommandExecutor{
-    private static final String CMD_COMPENSATE = "Compensate";
+    private static final Logger LOG = LoggerFactory.getLogger(ProteusCommandExecutor.class);
 
     private IProcessEngineClient client;
     private ProteusFeedbackPlugin plugin;
@@ -19,10 +21,19 @@ public class ProteusCommandExecutor implements CommandExecutor{
 
     @Override
     public void execute(Command command) {
+        if(!(command instanceof ProteusCommand)){
+            String name = command == null ? "NULL" : command.getClass().getSimpleName();
+            LOG.error("Cant execute command from type '{}'", name);
+            return;
+        }
+
         connectClient();
+
+        ProteusCommand pCommand = (ProteusCommand)command;
 
         //TODO add the required functions to the client
         //TODO use IP or Id for redeployment?
+        //TODO must be synchronized?
 
         //Compensate:{currentExecutingPeer}:{processInstanceId}:{newPeer}
 
