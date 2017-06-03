@@ -30,6 +30,11 @@ public class ProteusConfiguration {
     }
 
     @Bean
+    public ProteusCompensationRepositoryFactoryBean proteusCompensationRepositoryFactoryBean(ResourceLoader loader){
+        return new ProteusCompensationRepositoryFactoryBean().setLoader(loader);
+    }
+
+    @Bean
     public OpenHabServiceFactoryBean openHabService(
             @Value("${openHab.host:localhost}") String host,
             @Value("${openHab.port:8080}") int port) {

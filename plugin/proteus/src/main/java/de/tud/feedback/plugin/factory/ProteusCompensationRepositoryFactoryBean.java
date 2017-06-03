@@ -3,6 +3,7 @@ package de.tud.feedback.plugin.factory;
 
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.plugin.ProteusCompensationRepository;
+import de.tud.feedback.repository.CompensationRepositoryFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StreamUtils;
@@ -13,7 +14,8 @@ import java.nio.charset.Charset;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ProteusCompensationRepositoryFactoryBean extends AbstractFactoryBean<ProteusCompensationRepository> {
+public class ProteusCompensationRepositoryFactoryBean extends AbstractFactoryBean<ProteusCompensationRepository>
+    implements CompensationRepositoryFactory<ProteusCompensationRepositoryFactoryBean>{
 
     private static final String QUERY_FILE_PATH = "classpath:compensation-query.cypher";
 
@@ -36,8 +38,10 @@ public class ProteusCompensationRepositoryFactoryBean extends AbstractFactoryBea
         this.executor = executor;
     }
 
-    public void setLoader(ResourceLoader loader) {
-        this.loader = loader;
+    @Override
+    public ProteusCompensationRepositoryFactoryBean setLoader(ResourceLoader loader) {
+        this.loader = checkNotNull(loader);
+        return this;
     }
 
     @Override

@@ -8,16 +8,16 @@ import de.tud.feedback.loop.CommandExecutor;
 import de.tud.feedback.loop.MismatchProvider;
 import de.tud.feedback.loop.MonitorAgent;
 import de.tud.feedback.loop.ObjectiveEvaluator;
-import de.tud.feedback.plugin.factory.DogOntCompensationRepositoryFactoryBean;
-import de.tud.feedback.plugin.factory.DogOntContextUpdaterFactoryBean;
-import de.tud.feedback.plugin.factory.RdfContextImporterFactoryBean;
-import de.tud.feedback.plugin.factory.SpelObjectiveEvaluatorFactoryBean;
+import de.tud.feedback.plugin.factory.*;
 import de.tud.feedback.repository.CompensationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -40,9 +40,13 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
 
     @Autowired Provider<SpelObjectiveEvaluator> evaluatorProvider;
 
-    @Autowired DogOntCompensationRepositoryFactoryBean compensationRepositoryFactory;
+    @Autowired DogOntCompensationRepositoryFactoryBean dogontCompensationRepositoryFactory;
 
-    @Autowired Provider<DogOntCompensationRepository> compensationRepositoryProvider;
+    @Autowired ProteusCompensationRepositoryFactoryBean proteusCompensationRepositoryFactory;
+
+    @Autowired Provider<DogOntCompensationRepository> dogOntCompensationRepositoryProvider;
+
+    @Autowired Provider<ProteusCompensationRepository> proteusCompensationRepositoryProvider;
 
     @Autowired Provider<OpenHabCommandExecutor> commandExecutorProvider;
 
@@ -80,9 +84,10 @@ public class ProteusFeedbackPlugin implements FeedbackPlugin {
     }
 
     @Override
-    public CompensationRepository getCompensationRepository(CypherExecutor executor) {
-        compensationRepositoryFactory.setExecutor(executor);
-        return compensationRepositoryProvider.get();
+    public List<CompensationRepository> getCompensationRepositories(CypherExecutor executor) {
+        dogontCompensationRepositoryFactory.setExecutor(executor);
+        proteusCompensationRepositoryFactory.setExecutor(executor);
+        return Arrays.asList(dogOntCompensationRepositoryProvider.get(), proteusCompensationRepositoryProvider.get());
     }
 
     public ProteusMonitorAgent getProteusMonitorAgent(){

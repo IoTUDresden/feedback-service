@@ -2,6 +2,7 @@ package de.tud.feedback.plugin.factory;
 
 import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.plugin.DogOntCompensationRepository;
+import de.tud.feedback.repository.CompensationRepositoryFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StreamUtils;
@@ -12,7 +13,8 @@ import java.nio.charset.Charset;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class DogOntCompensationRepositoryFactoryBean extends AbstractFactoryBean<DogOntCompensationRepository> {
+public class DogOntCompensationRepositoryFactoryBean extends AbstractFactoryBean<DogOntCompensationRepository>
+        implements CompensationRepositoryFactory<DogOntCompensationRepositoryFactoryBean> {
 
     private static final String QUERY_FILE_PATH = "classpath:compensation-query.cypher";
 
@@ -33,6 +35,7 @@ public class DogOntCompensationRepositoryFactoryBean extends AbstractFactoryBean
         return this;
     }
 
+    @Override
     public DogOntCompensationRepositoryFactoryBean setLoader(ResourceLoader loader) {
         this.loader = checkNotNull(loader);
         return this;
