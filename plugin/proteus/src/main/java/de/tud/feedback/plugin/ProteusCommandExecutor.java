@@ -9,6 +9,8 @@ import eu.vicci.process.client.core.IProcessEngineClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//TODO command executer factory
+//TODO get the correct command executer for each command (maybe function "supportsCommand(cmd)")
 public class ProteusCommandExecutor implements CommandExecutor{
     private static final Logger LOG = LoggerFactory.getLogger(ProteusCommandExecutor.class);
 
@@ -38,6 +40,11 @@ public class ProteusCommandExecutor implements CommandExecutor{
         //Compensate:{currentExecutingPeer}:{processInstanceId}:{newPeer}
 
         disconnectClient();
+    }
+
+    @Override
+    public boolean supportsCommand(Command command) {
+        return command instanceof ProteusCommand;
     }
 
     /**

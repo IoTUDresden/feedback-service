@@ -26,4 +26,9 @@ public class OpenHabCommandExecutor implements CommandExecutor {
                 command.getName());
     }
 
+    @Override
+    public boolean supportsCommand(Command command) {
+        return Command.class.equals(command.getClass());
+    }
+
 }

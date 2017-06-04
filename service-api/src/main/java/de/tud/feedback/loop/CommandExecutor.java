@@ -6,4 +6,6 @@ public interface CommandExecutor {
 
     void execute(Command command);
 
+    boolean supportsCommand(Command command);
+
 }

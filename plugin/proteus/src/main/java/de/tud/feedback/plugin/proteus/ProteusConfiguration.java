@@ -1,6 +1,7 @@
 package de.tud.feedback.plugin.proteus;
 
 import de.tud.feedback.plugin.HealingPlugin;
+import de.tud.feedback.plugin.ProteusFeedbackPlugin;
 import de.tud.feedback.plugin.factory.*;
 import de.tud.feedback.plugin.openhab.OpenHabService;
 import org.slf4j.Logger;
@@ -62,6 +63,13 @@ public class ProteusConfiguration {
                 .setItemNameMapper((s) -> s.replace(stateNodePrefix, ""))
                 .setService(service);
     }
+
+    @Bean
+    public ProteusCommandExecuterFactoryBean proteusCommandExecuterFactoryBean(ProteusFeedbackPlugin plugin){
+        return new ProteusCommandExecuterFactoryBean()
+                .setPlugin(plugin);
+    }
+
 
     @Bean
     public DogOntContextUpdaterFactoryBean dogOntContextUpdaterFactoryBean(
