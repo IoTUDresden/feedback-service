@@ -57,10 +57,6 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
         }
     }
 
-    private boolean nothingLeftFor(Workflow workflow){
-        return true;
-    }
-
     private ChangeRequest toChangeRequest(Objective objective) {
         ObjectiveEvaluationResult result = evaluator.evaluate(objective);
         boolean weCantGetNoSatisfaction = !result.hasBeenSatisfied();
