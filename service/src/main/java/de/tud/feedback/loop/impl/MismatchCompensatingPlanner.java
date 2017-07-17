@@ -55,6 +55,7 @@ public class MismatchCompensatingPlanner implements Planner {
 
         try {
             Optional<Command> command = manipulatingCommands.stream()
+                    .filter(it -> it.getName() != null)
                     .filter(it -> it.isRepeatable() || !executedCommands.contains(it))
                     .filter(it -> isCompensating(mismatch, it))
                     .findAny();

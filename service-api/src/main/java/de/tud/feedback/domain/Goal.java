@@ -1,19 +1,22 @@
 package de.tud.feedback.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.tud.feedback.Satisfiable;
 import org.apache.commons.collections.map.HashedMap;
 import org.joda.time.DateTime;
+import org.neo4j.cypher.internal.compiler.v2_0.functions.Str;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.annotation.typeconversion.Convert;
+import scala.xml.PrettyPrinter;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
@@ -39,7 +42,9 @@ public class Goal implements Satisfiable {
     @Relationship(type = "hasObjective", direction = Relationship.OUTGOING)
     private Set<Objective> objectives = newHashSet();
 
-    private Map<String, Object> parameters = new HashMap<>();
+    //neo4j cant store a map property
+    @Relationship(type = "hasParameter", direction = Relationship.OUTGOING)
+    private Set<Parameter> parametersList = newHashSet();
 
     @NotNull
     @Relationship(type = "hasGoal", direction = Relationship.INCOMING)
@@ -64,12 +69,30 @@ public class Goal implements Satisfiable {
                 .get();
     }
 
-    public Map<String, Object> getParameters() {
-        return parameters;
+    public Collection<Parameter> getParametersList(){
+        return parametersList;
     }
 
-    public void setParameters(Map<String, Object> parameters) {
-        this.parameters = parameters;
+    public void setParametersList(Set<Parameter> parameters){
+        this.parametersList = parameters;
+    }
+
+    @JsonProperty("parameters")
+    public Map<String, String> getParameters() {
+        if(parametersList == null || parametersList.isEmpty())
+            return new HashMap<>();
+        return parametersList.stream()
+                .filter(p -> p.getName() != null && !p.getName().isEmpty())
+                .collect(Collectors.toMap(Parameter::getName, Parameter::getValue));
+    }
+
+    @JsonProperty("parameters")
+    public void setParameters(Map<String, String> parameters) {
+        this.parametersList = newHashSet();
+        if(parameters == null || parameters.isEmpty()) return;
+        parameters.entrySet().stream()
+                .filter(e -> e.getKey() != null && !e.getKey().isEmpty())
+                .forEach(entry -> this.parametersList.add(new Parameter(entry.getKey(), entry.getValue())));
     }
 
     public String getName() {

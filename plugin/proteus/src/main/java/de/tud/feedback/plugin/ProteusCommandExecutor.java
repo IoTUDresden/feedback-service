@@ -3,7 +3,7 @@ package de.tud.feedback.plugin;
 
 import de.tud.feedback.domain.Command;
 import de.tud.feedback.loop.CommandExecutor;
-import de.tud.feedback.plugin.ProteusCompensationRepository.ProteusCommand;
+import de.tud.feedback.plugin.domain.ProteusCommand;
 import eu.vicci.process.client.ProcessEngineClientBuilder;
 import eu.vicci.process.client.core.IProcessEngineClient;
 import org.slf4j.Logger;
@@ -23,6 +23,7 @@ public class ProteusCommandExecutor implements CommandExecutor{
 
     @Override
     public void execute(Command command) {
+        LOG.debug("Execute Proteus Compensation Command");
         if(!(command instanceof ProteusCommand)){
             String name = command == null ? "NULL" : command.getClass().getSimpleName();
             LOG.error("Cant execute command from type '{}'", name);
@@ -36,6 +37,15 @@ public class ProteusCommandExecutor implements CommandExecutor{
         //TODO add the required functions to the client
         //TODO use IP or Id for redeployment?
         //TODO must be synchronized?
+
+        //wenn distributed, goal muss zu peer kopiert und dort gecheckt werden (zwecks instance id)
+        //fbs trackt den remote process - bei fehler
+        // -> publish error/compensate auf anderen peer anfordern
+        // -> engine stellt neue Session bereit - TODO wie zusammenhang zu alten goal herstellen - workflow herausfinden?
+        // ODER
+        // -> fbs track den process auf super peer
+        // -> falls failed compensate TODO wird nicht von proteus unterstützt - processausführung würde in failed state stehen bleiben
+
 
         //Compensate:{currentExecutingPeer}:{processInstanceId}:{newPeer}
 

@@ -1,10 +1,9 @@
 package de.tud.feedback.plugin;
 
 
-import com.google.common.base.Optional;
 import de.tud.feedback.CypherExecutor;
-import de.tud.feedback.Utils;
 import de.tud.feedback.domain.Command;
+import de.tud.feedback.plugin.domain.ProteusCommand;
 import de.tud.feedback.repository.CompensationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,14 +28,8 @@ public class ProteusCompensationRepository implements CompensationRepository {
 
     @Override
     public Set<Command> findCommandsManipulating(Long testNodeId) {
-        if (!Optional.fromNullable(testNodeId).isPresent()) {
-            LOG.warn("Cannot find commands without a valid testNodeId from the context path.");
-            return newHashSet();
-        }
-        //TODO We need the instance id of the process at this point
-        // so testNode id should point at this
+        //TODO We need the instance id (or session id for this process)
         return executor.execute(query, params()
-                .put("stateId", testNodeId)
                 .build())
                 .stream()
                 .map(this::toCommand)
@@ -44,36 +37,15 @@ public class ProteusCompensationRepository implements CompensationRepository {
     }
 
     private Command toCommand(Map<String, Object> attributes){
+        String ip = (String)attributes.get("ip");
+        String peerId = (String)attributes.get("peerId");
+
         return new ProteusCommand()
-                .setIp("ip")
-                .setPeeId("peerId")
+                .setIp(ip)
+                .setPeeId(peerId)
+                .setTargetTo(peerId + "_" + ip)
+                .setNameTo("ExecuteOnOtherPeerCommand")
+                .setTypeTo(Command.Type.ASSIGN)
                 .setRepeatable(false);
-
-        //TODO is the following important?
-//                .setTargetTo((String) attributes.get("actuator"))
-//                .setNameTo((String) attributes.get("commandName"))
-//                .setTypeTo(commands.get(attributes.get("commandType")));
-    }
-
-    public static class ProteusCommand extends Command{
-        private String peerId;
-        private String ip;
-
-        private ProteusCommand setPeeId(String peeId){
-            this.peerId = peeId;
-            return this;
-        }
-        private ProteusCommand setIp(String ip){
-            this.ip = ip;
-            return this;
-        }
-
-        public String getPeerId() {
-            return peerId;
-        }
-
-        public String getIp() {
-            return ip;
-        }
     }
 }

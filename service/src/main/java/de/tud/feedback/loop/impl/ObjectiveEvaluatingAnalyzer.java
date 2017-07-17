@@ -30,14 +30,18 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
                 .stream()
                 .allMatch(Goal::hasBeenSatisfied);
 
+
+        //TODO this fails and then there are 2 goals :(
+        //maybe this https://github.com/neo4j/neo4j/issues/6178
+        //Wrapped by: org.neo4j.ogm.session.result.ResultProcessingException: Failed to execute request: {"statements":[{"statement":"MATCH p = (o:Objective)<-[:hasObjective]-(g:Goal)<-[:hasGoal]-(w:Workflow)-[:runsWithin]->(c:Context) WHERE ID(c) = {contextId} RETURN p","parameters":{"contextId":2750},"resultDataContents":["graph"],"includeStats":false}]}
+
+
         boolean nothingLeft = !workflow.getGoals()
                 .stream()
-                .filter(goal -> goal.getObjectives()
+                .anyMatch(goal -> goal.getObjectives()
                         .stream()
-                        .anyMatch(o -> (o.getState() == State.COMPENSATION) ||
-                                       (o.getState() == State.UNSATISFIED)))
-                .findAny()
-                .isPresent();
+                        .anyMatch(o -> o.getState() == State.COMPENSATION ||
+                                o.getState() == State.UNSATISFIED));
 
         if (allGoalsHaveBeenSatisfied || nothingLeft) {
             workflow.setFinished(true);
@@ -51,6 +55,10 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
                     .filter(Objects::nonNull)
                     .findAny();
         }
+    }
+
+    private boolean nothingLeftFor(Workflow workflow){
+        return true;
     }
 
     private ChangeRequest toChangeRequest(Objective objective) {

@@ -28,7 +28,7 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
 
     @Override
     public ObjectiveEvaluationResult evaluate(Objective objective) {
-        Map<String, Object> tmpParams = objective.getGoal().getParameters();
+        Map<String, String> tmpParams = objective.getGoal().getParameters();
         ImmutableMap.Builder<String, Object> builder = params();
         if(tmpParams != null)
             builder.putAll(tmpParams);

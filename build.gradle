@@ -1,4 +1,4 @@
-import groovy.xml.MarkupBuilder
+dockerimport groovy.xml.MarkupBuilder
 
 buildscript {
     repositories {
