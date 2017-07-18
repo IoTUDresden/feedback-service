@@ -43,6 +43,7 @@ public class Goal implements Satisfiable {
     private Set<Objective> objectives = newHashSet();
 
     //neo4j cant store a map property
+    @JsonIgnore
     @Relationship(type = "hasParameter", direction = Relationship.OUTGOING)
     private Set<Parameter> parametersList = newHashSet();
 
@@ -79,7 +80,7 @@ public class Goal implements Satisfiable {
 
     @JsonProperty("parameters")
     public Map<String, String> getParameters() {
-        if(parametersList == null || parametersList.isEmpty())
+        if(parametersList == null)
             return new HashMap<>();
         return parametersList.stream()
                 .filter(p -> p.getName() != null && !p.getName().isEmpty())
@@ -88,7 +89,6 @@ public class Goal implements Satisfiable {
 
     @JsonProperty("parameters")
     public void setParameters(Map<String, String> parameters) {
-        this.parametersList = newHashSet();
         if(parameters == null || parameters.isEmpty()) return;
         parameters.entrySet().stream()
                 .filter(e -> e.getKey() != null && !e.getKey().isEmpty())

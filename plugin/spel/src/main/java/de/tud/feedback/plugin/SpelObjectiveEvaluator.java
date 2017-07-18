@@ -5,6 +5,8 @@ import de.tud.feedback.CypherExecutor;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;
 import de.tud.feedback.loop.ObjectiveEvaluator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -17,6 +19,7 @@ import static java.lang.String.format;
 import static org.joda.time.DateTime.now;
 
 public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
+    private static final Logger LOG = LoggerFactory.getLogger(SpelObjectiveEvaluator.class);
 
     private final ExpressionParser parser = new SpelExpressionParser();
 
@@ -35,9 +38,11 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
 
         Collection<Map<String, Object>> result = executor.execute(objective.getContextExpression(), builder.build());
 
-        if (result.size() != 1)
+        if (result.size() != 1) {
+//            LOG.error(format("Context expression for %s invalid. Expecting one row.", objective));
             throw new RuntimeException(format(
                     "Context expression for %s invalid. Expecting one row.", objective));
+        }
 
         Map<String, Object> expressionResult = result.stream().findFirst().get();
 
