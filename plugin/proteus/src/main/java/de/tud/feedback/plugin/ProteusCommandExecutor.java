@@ -6,8 +6,11 @@ import de.tud.feedback.loop.CommandExecutor;
 import de.tud.feedback.plugin.domain.ProteusCommand;
 import eu.vicci.process.client.ProcessEngineClientBuilder;
 import eu.vicci.process.client.core.IProcessEngineClient;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.joda.time.DateTime.now;
 
 //TODO command executer factory
 //TODO get the correct command executer for each command (maybe function "supportsCommand(cmd)")
@@ -31,7 +34,7 @@ public class ProteusCommandExecutor implements CommandExecutor{
         }
 
         connectClient();
-
+        command.setLastSendAt(now());
         ProteusCommand pCommand = (ProteusCommand)command;
 
         //TODO add the required functions to the client

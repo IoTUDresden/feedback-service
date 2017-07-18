@@ -1,12 +1,15 @@
 package de.tud.feedback.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.joda.time.DateTime;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
+import org.neo4j.ogm.annotation.typeconversion.Convert;
 
 import static java.lang.String.format;
+import static org.joda.time.DateTime.now;
 
 @NodeEntity
 @SuppressWarnings("unused")
@@ -29,6 +32,10 @@ public class Command {
 
     @Relationship(type = "executedFor", direction = Relationship.OUTGOING)
     private Objective objective;
+
+    @Property
+    @Convert(graphPropertyType = String.class)
+    private DateTime lastSendAt = now();
 
     @JsonIgnore
     public Objective getObjective() {
@@ -73,6 +80,14 @@ public class Command {
     public Command setRepeatable(boolean repeatable) {
         this.repeatable = repeatable;
         return this;
+    }
+
+    public DateTime getLastSendAt() {
+        return lastSendAt;
+    }
+
+    public void setLastSendAt(DateTime lastSendAt) {
+        this.lastSendAt = lastSendAt;
     }
 
     @Override

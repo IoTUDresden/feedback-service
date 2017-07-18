@@ -7,6 +7,8 @@ import de.tud.feedback.plugin.openhab.OpenHabService;
 
 import java.util.function.Function;
 
+import static org.joda.time.DateTime.now;
+
 public class OpenHabCommandExecutor implements CommandExecutor {
 
     private final OpenHabService service;
@@ -21,6 +23,7 @@ public class OpenHabCommandExecutor implements CommandExecutor {
     @Override
     @LogInvocation
     public void execute(Command command) {
+        command.setLastSendAt(now());
         service.executeCommand(
                 itemNameMapper.apply(command.getTarget()),
                 command.getName());

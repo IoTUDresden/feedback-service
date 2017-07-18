@@ -94,6 +94,11 @@ Content-Type: application/json
 }
 ```
 
+#### Available Variables/Functions
+* objective: gives the whole objective bean (usage: #objective.created)
+* lastCommandSendBefore(Objective, seconds): returns true if the last command, which was send to reach the objective,
+was send before the given amount of seconds (usage: #lastCommandSendBefore(#objective, 5))
+
 ## IDE-Import
 
 ### IntelliJ
