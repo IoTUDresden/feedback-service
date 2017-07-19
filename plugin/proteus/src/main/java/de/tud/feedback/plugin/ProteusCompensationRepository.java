@@ -16,8 +16,6 @@ import static de.tud.feedback.Utils.params;
 import static java.util.stream.Collectors.toSet;
 
 public class ProteusCompensationRepository implements CompensationRepository {
-    private static final Logger LOG = LoggerFactory.getLogger(DogOntCompensationRepository.class);
-
     private final CypherExecutor executor;
     private final String query;
 
@@ -28,8 +26,8 @@ public class ProteusCompensationRepository implements CompensationRepository {
 
     @Override
     public Set<Command> findCommandsManipulating(Long testNodeId) {
-        //TODO We need the instance id (or session id for this process)
         return executor.execute(query, params()
+                .put("processNodeId", testNodeId)
                 .build())
                 .stream()
                 .map(this::toCommand)
@@ -37,14 +35,25 @@ public class ProteusCompensationRepository implements CompensationRepository {
     }
 
     private Command toCommand(Map<String, Object> attributes){
-        String ip = (String)attributes.get("ip");
-        String peerId = (String)attributes.get("peerId");
+        Map<String, Object> process = (Map<String, Object>)attributes.get("process");
+        Map<String, Object> peer = (Map<String, Object>)attributes.get("peer");
+        Map<String, Object> executingPeer = (Map<String, Object>)attributes.get("executingPeer");
+
+        String processId = (String)process.get("processId");
+        String processName = (String)process.get("name");
+        String processModelId = (String)process.get("processModelId");
+        String ip = (String)peer.get("ip");
+        String peerId = (String)peer.get("peerId");
+        String oldPeerId = (String)executingPeer.get("peerId");
 
         return new ProteusCommand()
-                .setIp(ip)
-                .setPeeId(peerId)
+                .setOldInstanceId(processId)
+                .setOldPeerId(oldPeerId)
+                .setProcessModelId(processModelId)
+                .setNewIp(ip)
+                .setNewPeerId(peerId)
                 .setTargetTo(peerId + "_" + ip)
-                .setNameTo("ExecuteOnOtherPeerCommand")
+                .setNameTo("Compensate_" + processName + "_" + processId + "_OnNew_" + peerId)
                 .setTypeTo(Command.Type.ASSIGN)
                 .setRepeatable(false);
     }

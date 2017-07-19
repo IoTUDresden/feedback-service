@@ -1,6 +1,9 @@
-//TODO only for testing return all peers
-MATCH (peer:NeoPeer)
+//TODO check peers for same devices, heartbeats and battery?
+Match(process:NeoProcess)-[runsOn:RUNS_ON]->(executingPeer:NeoPeer)
+WHERE ID(process) = {processNodeId}
+WITH process, executingPeer
 
-RETURN DISTINCT
-    peer.peerId AS peerId,
-    peer.ip AS ip
+Match(peer:NeoPeer)
+WHERE peer <> executingPeer
+
+RETURN process, peer, executingPeer

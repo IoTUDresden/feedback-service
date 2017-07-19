@@ -18,6 +18,7 @@ public class NeoProcess {
     private String processId;
     private String name;
     private String state;
+    private String processModelId;
 
     @Relationship(type = "BELONGS_TO", direction = Relationship.OUTGOING)
     private NeoProcess root;
@@ -100,5 +101,18 @@ public class NeoProcess {
         this.root = root;
     }
 
+    /**
+     * The model id of the process (no instance and no root id)
+     */
+    public String getProcessModelId() {
+        return processModelId;
+    }
+
+    /**
+     * The model id of the process (no instance and no root id)
+     */
+    public void setProcessModelId(String processModelId) {
+        this.processModelId = processModelId;
+    }
 
 }

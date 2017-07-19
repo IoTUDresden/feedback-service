@@ -264,6 +264,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         NeoProcess process = new NeoProcess();
         process.setProcessId(id);
         process.setName(message.getProcessName());
+        process.setProcessModelId(message.getProcessId());
 
         String peerId;
         if (runsOnPeer(message))
