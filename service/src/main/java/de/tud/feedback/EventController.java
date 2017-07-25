@@ -14,9 +14,11 @@ import org.springframework.context.event.EventListener;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -41,11 +43,9 @@ public class EventController {
         this.neo4j = neo4j;
     }
 
-    @RequestMapping("/events/workflows/{workflowId}")
+    @RequestMapping(path = "/events/workflows/{workflowId}", method= RequestMethod.GET)
     public SseEmitter subscribeToEventsFor(@PathVariable Long workflowId) {
         // FIXME multiple subscribers
-        // if (!sseEmitters.containsKey(workflowId))
-        //    sseEmitters.put(workflowId, new SseEmitter());
 
         SseEmitter emitter = new SseEmitter();
         sseEmitters.put(workflowId, emitter);
@@ -61,7 +61,9 @@ public class EventController {
                 .put("hasBeenFinished", workflow.hasBeenFinished());
 
         try {
-            sseEmitters.get(workflow.getId()).send(result);
+            final SseEmitter emitter = sseEmitters.get(workflow.getId());
+            emitter.send(result);
+            emitter.complete(); //FIXME events are not send till complete is called
             LOG.debug("Sent result for '{}': {}", workflow.getName(), result.toString());
         } catch (Exception exception) {
             LOG.warn("Nobody was listening to the result of {}", workflow.getName());

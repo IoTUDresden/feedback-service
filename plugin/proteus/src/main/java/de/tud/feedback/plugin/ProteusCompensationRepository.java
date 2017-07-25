@@ -35,15 +35,15 @@ public class ProteusCompensationRepository implements CompensationRepository {
     }
 
     private Command toCommand(Map<String, Object> attributes){
-        Map<String, Object> process = (Map<String, Object>)attributes.get("process");
-        Map<String, Object> peer = (Map<String, Object>)attributes.get("peer");
-        Map<String, Object> executingPeer = (Map<String, Object>)attributes.get("executingPeer");
+        Map<String, Object> original = (Map<String, Object>)attributes.get("original");
+        Map<String, Object> newPeer = (Map<String, Object>)attributes.get("newPeer");
+        Map<String, Object> executingPeer = (Map<String, Object>)attributes.get("remotePeer");
 
-        String processId = (String)process.get("processId");
-        String processName = (String)process.get("name");
-        String processModelId = (String)process.get("processModelId");
-        String ip = (String)peer.get("ip");
-        String peerId = (String)peer.get("peerId");
+        String processId = (String)original.get("processId");
+        String processName = (String)original.get("name");
+        String processModelId = (String)original.get("processModelId");
+        String ip = (String)newPeer.get("ip");
+        String peerId = (String)newPeer.get("peerId");
         String oldPeerId = (String)executingPeer.get("peerId");
 
         return new ProteusCommand()

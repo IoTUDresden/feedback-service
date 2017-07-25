@@ -6,6 +6,7 @@ import de.tud.feedback.loop.CommandExecutor;
 import de.tud.feedback.plugin.domain.ProteusCommand;
 import eu.vicci.process.client.ProcessEngineClientBuilder;
 import eu.vicci.process.client.core.IProcessEngineClient;
+import eu.vicci.process.model.util.messages.core.CompensationRequest;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class ProteusCommandExecutor implements CommandExecutor{
 
         connectClient();
         command.setLastSendAt(now());
-        ProteusCommand pCommand = (ProteusCommand)command;
+        client.publishCompensationRequest(createCompensationRequest((ProteusCommand)command));
 
         //TODO add the required functions to the client
         //TODO use IP or Id for redeployment?
@@ -85,6 +86,16 @@ public class ProteusCommandExecutor implements CommandExecutor{
     private void disconnectClient(){
         if(client != null) client.close();
         client = null;
+    }
+
+    private CompensationRequest createCompensationRequest(ProteusCommand command){
+        CompensationRequest r = new CompensationRequest();
+        r.ip = command.getNewIp();
+        r.newPeerId = command.getNewPeerId();
+        r.oldPeerId = command.getOldPeerId();
+        r.oldInstanceId = command.getOldInstanceId(); //FIXME this is the wrong instance id :(
+        r.processId = command.getProcessModelId();
+        return r;
     }
 
 

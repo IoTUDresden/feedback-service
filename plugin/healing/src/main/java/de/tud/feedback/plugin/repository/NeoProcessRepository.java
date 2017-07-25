@@ -22,8 +22,7 @@ import java.util.Optional;
 @Repository
 public interface NeoProcessRepository extends GraphRepository<NeoProcess> {
 
-    //TODO check if this is working without the cypher query
-    //@Query("MATCH (p:NeoProcess {processId={0}} ) RETURN p")
+    @Query("MATCH (p:NeoProcess {processId:{0}} ) RETURN p")
     NeoProcess findByProcessId(String processId);
 
     /**

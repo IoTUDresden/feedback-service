@@ -1,9 +1,18 @@
 //TODO check peers for same devices, heartbeats and battery?
-Match(process:NeoProcess)-[runsOn:RUNS_ON]->(executingPeer:NeoPeer)
-WHERE ID(process) = {processNodeId}
-WITH process, executingPeer
+Match(original:NeoProcess)
+WHERE ID(original) = {processNodeId}
+WITH original
 
-Match(peer:NeoPeer)
-WHERE peer <> executingPeer
+Match(remote:NeoProcess)-[remoteFor:REMOTE_FOR]->(original)
+WITH remote, original
 
-RETURN process, peer, executingPeer
+Match(original)-[runsOnSuper:RUNS_ON]->(originalPeer:NeoPeer)
+WITH originalPeer, remote, original
+
+Match(remote)-[runsOnRemote:RUNS_ON]->(remotePeer:NeoPeer)
+WITH remotePeer, originalPeer, remote, original
+
+MATCH (newPeer:NeoPeer)
+WHERE newPeer <> originalPeer AND newPeer <> remotePeer
+
+RETURN original, remotePeer, newPeer

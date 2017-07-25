@@ -221,6 +221,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         if (process == null)
             process = createProcessFrom(message, id);
         process.setState(message.getState().toString());
+        setOriginalProcessToRemote(message, process);
         processRepository.save(process);
     }
 
@@ -266,6 +267,8 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         process.setName(message.getProcessName());
         process.setProcessModelId(message.getProcessId());
 
+        setOriginalProcessToRemote(message, process);
+
         String peerId;
         if (runsOnPeer(message))
             peerId = message.getPeerId();
@@ -292,6 +295,18 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
             process.setPeer(peer);
 
         return process;
+    }
+
+    private void setOriginalProcessToRemote(IStateChangeMessage message, NeoProcess process){
+        String orgInstanceId = message.getOriginalProcessInstanceId();
+        if(process.getOriginalProcess() != null || orgInstanceId == null || orgInstanceId.isEmpty())
+            return;
+        NeoProcess orgProcess = processRepository.findByProcessId(orgInstanceId);
+        if(orgProcess == null){
+            LOG.warn("cant find the original process with the instance id '{}'", orgInstanceId);
+            return;
+        }
+        process.setOriginalProcess(orgProcess);
     }
 
     private NeoProcess findRootProcess(IStateChangeMessage message) {

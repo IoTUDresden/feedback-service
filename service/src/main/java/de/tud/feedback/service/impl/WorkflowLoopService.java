@@ -70,33 +70,6 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
             finishLoopFor(workflow);
     }
 
-    private void removeUnwantedGoals(Workflow workflow){
-        if(workflow.getGoals().size() != 2 || workflow.getGoals().isEmpty()) return;
-
-        Goal[] goals = workflow.getGoals().toArray(new Goal[workflow.getGoals().size()]);
-        Goal g1 = goals[0];
-        Goal g2 = goals[1];
-
-        boolean isTheSame = g1.getName().equals(g2.getName()) &&
-                g1.getObjectives().stream().findFirst().isPresent() &&
-                g2.getObjectives().stream().findFirst().isPresent() &&
-                g1.getObjectives().stream().findFirst().get().getContextExpression().equals(g2.getObjectives().stream().findFirst().get().getContextExpression()) &&
-                g1.getObjectives().stream().findFirst().get().getSatisfiedExpression().equals(g2.getObjectives().stream().findFirst().get().getSatisfiedExpression()) &&
-                g1.getObjectives().stream().findFirst().get().getCompensateExpression().equals(g2.getObjectives().stream().findFirst().get().getCompensateExpression());
-
-        if(!isTheSame) return;
-
-        int s1 = g1.getObjectives().stream().findFirst().get().getCommands().size();
-        int s2 = g2.getObjectives().stream().findFirst().get().getCommands().size();
-
-        if(s1 > s2)
-            workflow.getGoals().remove(g2);
-        else
-            workflow.getGoals().remove(g1);
-
-        workflowRepository.save(workflow);
-    }
-
     private boolean iterationRunningFor(Workflow workflow) {
         return runningIterations.contains(workflow.getName());
     }
