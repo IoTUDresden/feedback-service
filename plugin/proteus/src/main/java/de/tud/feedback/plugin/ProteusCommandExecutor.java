@@ -92,9 +92,8 @@ public class ProteusCommandExecutor implements CommandExecutor{
         CompensationRequest r = new CompensationRequest();
         r.ip = command.getNewIp();
         r.newPeerId = command.getNewPeerId();
-        r.oldPeerId = command.getOldPeerId();
-        r.oldInstanceId = command.getOldInstanceId(); //FIXME this is the wrong instance id :(
         r.processId = command.getProcessModelId();
+        r.originalInstanceId = command.getOriginalInstanceId();
         return r;
     }
 

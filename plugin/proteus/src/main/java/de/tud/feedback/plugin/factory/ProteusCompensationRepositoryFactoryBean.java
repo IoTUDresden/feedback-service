@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class ProteusCompensationRepositoryFactoryBean extends AbstractFactoryBean<ProteusCompensationRepository>
     implements CompensationRepositoryFactory<ProteusCompensationRepositoryFactoryBean>{
 
-    private static final String QUERY_FILE_PATH = "classpath:compensation-query.cypher";
+    private static final String QUERY_FILE_PATH = "classpath:proteus-compensation-query.cypher";
 
     private CypherExecutor executor;
     private ResourceLoader loader;

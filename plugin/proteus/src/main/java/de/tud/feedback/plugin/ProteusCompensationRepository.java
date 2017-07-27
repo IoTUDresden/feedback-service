@@ -37,23 +37,20 @@ public class ProteusCompensationRepository implements CompensationRepository {
     private Command toCommand(Map<String, Object> attributes){
         Map<String, Object> original = (Map<String, Object>)attributes.get("original");
         Map<String, Object> newPeer = (Map<String, Object>)attributes.get("newPeer");
-        Map<String, Object> executingPeer = (Map<String, Object>)attributes.get("remotePeer");
 
-        String processId = (String)original.get("processId");
-        String processName = (String)original.get("name");
+        String orgProcessId = (String)original.get("processId");
+        String orgProcessName = (String)original.get("name");
         String processModelId = (String)original.get("processModelId");
         String ip = (String)newPeer.get("ip");
         String peerId = (String)newPeer.get("peerId");
-        String oldPeerId = (String)executingPeer.get("peerId");
 
         return new ProteusCommand()
-                .setOldInstanceId(processId)
-                .setOldPeerId(oldPeerId)
+                .setOriginalInstanceId(orgProcessId)
                 .setProcessModelId(processModelId)
                 .setNewIp(ip)
                 .setNewPeerId(peerId)
                 .setTargetTo(peerId + "_" + ip)
-                .setNameTo("Compensate_" + processName + "_" + processId + "_OnNew_" + peerId)
+                .setNameTo("Compensate_" + orgProcessName + "_" + orgProcessId + "_OnNew_" + peerId)
                 .setTypeTo(Command.Type.ASSIGN)
                 .setRepeatable(false);
     }
