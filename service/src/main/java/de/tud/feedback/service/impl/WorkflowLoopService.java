@@ -30,7 +30,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkflowLoopService.class);
 
-    private static final int WORKFLOW_SAVE_DEPTH = 3;
+    private static final int WORKFLOW_SAVE_DEPTH = -1;
 
     private final Provider<LoopIteration<Workflow>> loopIterationProvider;
 
@@ -104,7 +104,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
         publisher.publishEvent(WorkflowUpdateEvent.on(workflow));
 
         try {
-            workflowRepository.save(workflow.done());
+            workflowRepository.save(workflow.done(), WORKFLOW_SAVE_DEPTH);
         } catch (ResultProcessingException exception) {
             LOG.warn(format("%s cannot be saved due to %s", workflow, exception.getMessage()));
         }
