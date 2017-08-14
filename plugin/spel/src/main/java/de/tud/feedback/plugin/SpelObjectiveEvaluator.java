@@ -6,10 +6,7 @@ import de.tud.feedback.domain.Command;
 import de.tud.feedback.domain.Objective;
 import de.tud.feedback.domain.ObjectiveEvaluationResult;
 import de.tud.feedback.loop.ObjectiveEvaluator;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -62,6 +59,7 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
         context.setVariable("objective", objective);
         context.setVariable("goal", objective.getGoal());
         context.registerFunction("lastCommandSendBefore", getLastCommandSendBeforeMethod());
+        context.registerFunction("robotReachedPosition", getRobotPositionMethod());
         return parser.parseExpression(objective.getCompensateExpression()).getValue(context, Boolean.class);
     }
 
@@ -96,6 +94,29 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("function for evaluation context could not be found", e);
         }
+    }
+
+    private Method getRobotPositionMethod(){
+        try {
+            return getClass().getDeclaredMethod("robotReachedPosition", String.class, double.class, double.class, double.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("function for evaluation context could not be found", e);
+        }
+    }
+
+    //this is used by the evaluation context via reflection
+    @SuppressWarnings("unused")
+    private static boolean robotReachedPosition(String position, double x, double y, double precision){
+        if(position == null || position.trim().isEmpty())
+            return false;
+        position = position.trim();
+
+        LocationUtil util = new LocationUtil(position);
+        LocationUtil.Position parsedPosition = util.getPosition();
+        if(parsedPosition == null)
+            throw new RuntimeException("Failed to parse Robot Position: can only handle P: n.nn n.nn n.nn O: n.nn n.nn n.nn n.nn");
+
+        return parsedPosition.isInRangeOf(x, y, precision);
     }
 
 }
