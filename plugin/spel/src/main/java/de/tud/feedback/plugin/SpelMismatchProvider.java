@@ -92,6 +92,13 @@ public class SpelMismatchProvider implements MismatchProvider {
             return Optional.of((VariableReference) ast.getChild(0));
         } else if (ast.getChild(1) instanceof VariableReference) {
             return Optional.of((VariableReference) ast.getChild(1));
+        } else if(ast.getChild(0) instanceof FunctionReference){
+            //this allows to use a function with the contextVariable
+            //we assume that the first parameter of this function is the context parameter
+            FunctionReference ref = (FunctionReference)ast.getChild(0);
+            if(ref.getChildCount() == 0 || !(ref.getChild(0) instanceof  VariableReference))
+                return Optional.absent();
+            return Optional.of((VariableReference) ref.getChild(0));
         } else {
             return Optional.absent();
         }

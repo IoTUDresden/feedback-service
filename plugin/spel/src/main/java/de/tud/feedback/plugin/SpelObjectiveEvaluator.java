@@ -73,6 +73,7 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
     public boolean evaluateSatisfiedRule(Objective objective, Map<String, Object> expressionResult) {
         StandardEvaluationContext context = new StandardEvaluationContext();
         context.setVariables(expressionResult);
+        context.registerFunction("robotReachedPosition", getRobotPositionMethod());
         return parser.parseExpression(objective.getSatisfiedExpression()).getValue(context, Boolean.class);
     }
 
@@ -99,7 +100,7 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
 
     private Method getRobotPositionMethod(){
         try {
-            return getClass().getDeclaredMethod("robotReachedPosition", String.class, double.class, double.class, double.class);
+            return getClass().getDeclaredMethod("robotReachedPosition", new Class[] {String.class, Double.class, Double.class, Double.class});
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("function for evaluation context could not be found", e);
         }
@@ -107,7 +108,7 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
 
     //this is used by the evaluation context via reflection
     @SuppressWarnings("unused")
-    private static boolean robotReachedPosition(String position, double x, double y, double precision){
+    private static boolean robotReachedPosition(String position, Double x, Double y, Double precision){
         if(position == null || position.trim().isEmpty())
             return false;
         position = position.trim();
@@ -117,7 +118,7 @@ public class SpelObjectiveEvaluator implements ObjectiveEvaluator {
         if(parsedPosition == null)
             throw new RuntimeException("Failed to parse Robot Position: can only handle P: n.nn n.nn n.nn O: n.nn n.nn n.nn n.nn");
 
-        return parsedPosition.isInRangeOf(x, y, precision);
+        return parsedPosition.isInRangeOf(x.doubleValue(), y.doubleValue(), precision.doubleValue());
     }
 
 }

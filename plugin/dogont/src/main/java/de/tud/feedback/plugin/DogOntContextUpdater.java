@@ -30,7 +30,7 @@ public class DogOntContextUpdater implements ContextUpdater {
     }
 
     @Override
-//    @LogInvocation
+    @LogInvocation
     @LogTimeSeries(context = "context.#{context.name}")
     public void update(String item, Object state) {
         final String stateName = stateNameMapper.apply(item);

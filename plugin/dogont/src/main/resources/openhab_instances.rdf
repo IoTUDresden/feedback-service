@@ -71,6 +71,16 @@
         </dogont:hasStateValue>
       </vicci:AvailabilityState>
     </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotSimplePositionState rdf:ID="State_proteus_person_simplePosition_steffen">
+        <dogont:hasStateValue>
+          <vicci:RobotSimplePositionStateValue>
+            <dogont:realStateValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
+          </vicci:RobotSimplePositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotSimplePositionState>
+    </dogont:hasState>
   </vicci:Person>
   <dogont:Communication rdf:ID="Thing_tinkerforge_lcd_2">
     <dogont:hasState>
@@ -263,14 +273,6 @@
       </dogont:LevelControlFunctionality>
     </dogont:hasFunctionality>
   </dogont:DimmerSwitch>
-  <vicci:RobotSimplePositionState rdf:ID="State_proteus_turtle_simplePosition_2">
-    <dogont:hasStateValue>
-      <vicci:RobotSimplePositionStateValue>
-        <dogont:realStateValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        >P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
-      </vicci:RobotSimplePositionStateValue>
-    </dogont:hasStateValue>
-  </vicci:RobotSimplePositionState>
   <dogont:MultipleTemperatureSensor rdf:ID="Thing_tinkerforge_irTemp_1">
     <dogont:hasState>
       <dogont:TemperatureState rdf:ID="State_tinkerforge_irTemp_irTemp_1">
@@ -302,13 +304,6 @@
   <dogont:Kitchen rdf:ID="Kitchen_Mueller">
     <rdfs:label>Kueche</rdfs:label>
   </dogont:Kitchen>
-  <vicci:RobotSimplePositionState rdf:ID="State_proteus_turtle_simplePosition_1">
-    <dogont:hasStateValue>
-      <vicci:RobotSimplePositionStateValue>
-        <dogont:realStateValue>P: 5.350000000000000000 12.700000000000000000 0.000000000000000000 O: 0.000000000000000000 0.000000000000000000 0.000000000000000000 1.000000000000000000</dogont:realStateValue>
-      </vicci:RobotSimplePositionStateValue>
-    </dogont:hasStateValue>
-  </vicci:RobotSimplePositionState>
   <dogont:SingleTemperatureSensor rdf:ID="Thing_yahooweather_weather_berlin">
     <dogont:hasState>
       <dogont:TemperatureState rdf:ID="State_yahooweather_weather_temperature_berlin">
@@ -324,14 +319,6 @@
       <dogont:TemperatureMeasurementFunctionality rdf:ID="Function_yahooweather_weather_temperature_berlin"/>
     </dogont:hasFunctionality>
   </dogont:SingleTemperatureSensor>
-  <vicci:RobotSimplePositionState rdf:ID="State_proteus_person_simplePosition_steffen">
-    <dogont:hasStateValue>
-      <vicci:RobotSimplePositionStateValue>
-        <dogont:realStateValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        >P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
-      </vicci:RobotSimplePositionStateValue>
-    </dogont:hasStateValue>
-  </vicci:RobotSimplePositionState>
   <dogont:PressureSensor rdf:ID="Thing_tinkerforge_barometer_1">
     <dogont:hasState>
       <dogont:PressureState rdf:ID="State_tinkerforge_barometer_barometer_1">
@@ -404,6 +391,16 @@
         </dogont:hasStateValue>
       </vicci:AvailabilityState>
     </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotSimplePositionState rdf:ID="State_proteus_turtle_simplePosition_2">
+        <dogont:hasStateValue>
+          <vicci:RobotSimplePositionStateValue>
+            <dogont:realStateValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
+          </vicci:RobotSimplePositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotSimplePositionState>
+    </dogont:hasState>
     <dogont:hasFunctionality>
       <vicci:RobotMovementFunctionality rdf:ID="Function_proteus_turtle_move_2"/>
     </dogont:hasFunctionality>
@@ -422,14 +419,6 @@
       <dogont:Co2MeasurementFunctionality rdf:ID="Function_homematic_co2_co2_1"/>
     </dogont:hasFunctionality>
   </dogont:Co2Sensor>
-  <vicci:RobotSimplePositionState rdf:ID="State_proteus_person_simplePosition_ronny">
-    <dogont:hasStateValue>
-      <vicci:RobotSimplePositionStateValue>
-        <dogont:realStateValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        >P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
-      </vicci:RobotSimplePositionStateValue>
-    </dogont:hasStateValue>
-  </vicci:RobotSimplePositionState>
   <dogont:LivingRoom rdf:ID="LivingRoom_Mueller">
     <rdfs:label>Wohnzimmer</rdfs:label>
   </dogont:LivingRoom>
@@ -438,7 +427,7 @@
       <vicci:RobotPositionState rdf:ID="State_proteus_turtle_currentLocation_1">
         <dogont:hasStateValue>
           <vicci:RobotPositionStateValue>
-            <dogont:realStateValue>P: 0.024841193419852445 0.011871405998056816 0.010200000000000000 O: 0.000000000000000000 0.000000000000000000 0.000617103040447542 0.999999809591900600</dogont:realStateValue>
+            <dogont:realStateValue>P: 2.618284198864472000 -0.247315566055469100 0.010200000000000000 O: 0.000000000000000000 0.000000000000000000 0.906691250472952600 0.421794945815847030</dogont:realStateValue>
           </vicci:RobotPositionStateValue>
         </dogont:hasStateValue>
       </vicci:RobotPositionState>
@@ -460,6 +449,15 @@
           </vicci:AvailabilityStateValue>
         </dogont:hasStateValue>
       </vicci:AvailabilityState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotSimplePositionState rdf:ID="State_proteus_turtle_simplePosition_1">
+        <dogont:hasStateValue>
+          <vicci:RobotSimplePositionStateValue>
+            <dogont:realStateValue>P: 14.700000000000000000 11.049999999999999000 0.000000000000000000 O: 0.000000000000000000 0.000000000000000000 0.000000000000000000 1.000000000000000000</dogont:realStateValue>
+          </vicci:RobotSimplePositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotSimplePositionState>
     </dogont:hasState>
     <dogont:hasFunctionality>
       <vicci:RobotMovementFunctionality rdf:ID="Function_proteus_turtle_move_1"/>
@@ -636,6 +634,16 @@
           </vicci:AvailabilityStateValue>
         </dogont:hasStateValue>
       </vicci:AvailabilityState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotSimplePositionState rdf:ID="State_proteus_person_simplePosition_ronny">
+        <dogont:hasStateValue>
+          <vicci:RobotSimplePositionStateValue>
+            <dogont:realStateValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
+          </vicci:RobotSimplePositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotSimplePositionState>
     </dogont:hasState>
   </vicci:Person>
   <dogont:PressureSensor rdf:ID="Thing_tinkerforge_barometer_4">
