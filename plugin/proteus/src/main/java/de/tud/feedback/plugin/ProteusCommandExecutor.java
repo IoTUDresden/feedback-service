@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.joda.time.DateTime.now;
 
-//TODO command executer factory
-//TODO get the correct command executer for each command (maybe function "supportsCommand(cmd)")
 public class ProteusCommandExecutor implements CommandExecutor{
     private static final Logger LOG = LoggerFactory.getLogger(ProteusCommandExecutor.class);
 
@@ -37,22 +35,6 @@ public class ProteusCommandExecutor implements CommandExecutor{
         connectClient();
         command.setLastSendAt(now());
         client.publishCompensationRequest(createCompensationRequest((ProteusCommand)command));
-
-        //TODO add the required functions to the client
-        //TODO use IP or Id for redeployment?
-        //TODO must be synchronized?
-
-        //wenn distributed, goal muss zu peer kopiert und dort gecheckt werden (zwecks instance id)
-        //fbs trackt den remote process - bei fehler
-        // -> publish error/compensate auf anderen peer anfordern
-        // -> engine stellt neue Session bereit - TODO wie zusammenhang zu alten goal herstellen - workflow herausfinden?
-        // ODER
-        // -> fbs track den process auf super peer
-        // -> falls failed compensate TODO wird nicht von proteus unterstützt - processausführung würde in failed state stehen bleiben
-
-
-        //Compensate:{currentExecutingPeer}:{processInstanceId}:{newPeer}
-
         disconnectClient();
     }
 

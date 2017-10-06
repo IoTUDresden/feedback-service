@@ -32,9 +32,8 @@ public class ProteusPeerController {
             method = RequestMethod.POST,
             consumes="application/json")
     public void superPeerRequesting(@RequestBody  SuperPeerRequest request){
-        //FIXME maybe we can get the correct ip by the servlet request
+        //TODO maybe we can get the correct ip by the servlet request
         proteusMonitorAgentProvider.get().superPeerIsRequesting(request);
-
     }
 
     @RequestMapping(value="/peerDisconnected", method = RequestMethod.POST)

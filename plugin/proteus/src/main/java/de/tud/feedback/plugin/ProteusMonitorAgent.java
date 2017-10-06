@@ -31,7 +31,6 @@ import java.util.List;
  * The monitor runs in a single thread. All operations from other threads should added to the event queue.
  * This will (hopefully) ensure that there are no sync problems.
  * <p>
- * TODO question over questions:
  * - how handle disconnects from peers?
  * -> just marked as disconnected/connected in the repo
  * <p>
@@ -55,6 +54,9 @@ import java.util.List;
  * <p>
  * - polling or event based? (poll client.getConnectedPeers)
  * -> event based is cooler
+ *
+ * NOTE: The {@link ProteusMonitorAgent} creates a dynamic context and thus dont need the context imported by via the
+ * Semantic Layer from OpenHAB.
  */
 public class ProteusMonitorAgent extends ProteusMonitorBase {
     private final NeoProcessRepository processRepository;
@@ -67,6 +69,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     private IProcessEngineClient client;
     private PeerProfile currentSuperPeer;
     private ConnectSettings connectSettings;
+    private boolean firstConnect = true;
 
     public ProteusMonitorAgent(HealingPlugin healingPlugin) {
         processRepository = healingPlugin.getNeoProcessRepository();
@@ -77,7 +80,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
 
     @Override
     protected void initMonitor() {
-        //TODO NP is thrown
+        //TODO NP is thrown, so we delete all, if new superPeer connects
 //        processRepository.deleteAll();
 //        peerRepository.deleteAll();
     }
@@ -87,27 +90,18 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         @Override
         public void onConnect() {
             LOG.debug("proteus monitor connected to proteus");
-            //should we do something?
         }
 
         @Override
         public void onDisconnect() {
             LOG.debug("proteus monitor disconnected from proteus");
-            //should we do something?
         }
     };
 
-    private IMessageReceiver<PeerMetrics> metricsListener = new IMessageReceiver<PeerMetrics>() {
-        @Override
-        public void onMessage(PeerMetrics peerMetrics) {
-            addEvent(new PeerMetricsEvent(peerMetrics));
-        }
-    };
+    private IMessageReceiver<PeerMetrics> metricsListener = (peerMetrics) -> addEvent(new PeerMetricsEvent(peerMetrics));
 
     /**
      * The peer is just marked as disconnected in that case
-     *
-     * @param profile
      */
     public void peerDisconnected(PeerProfile profile) {
         addEvent(new PeerDisconnectedEvent(profile));
@@ -116,8 +110,6 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     /**
      * The peer is added if not exists ({@link #addPeerIfNotPresent(PeerProfile)})
      * and it {@link NeoPeer#isConnected} is set to true.
-     *
-     * @param profile
      */
     public void peerConnected(PeerProfile profile) {
         addEvent(new PeerConnectedEvent(profile));
@@ -130,14 +122,12 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
      * Then we make a new connection to the new super peer and get all peers again.
      * If new requesting super peer and the old super peer are equal (ids are equal) then we do nothing,
      * as the client will indefinitely try to connect to the super peer (default should be something around 3 seconds).
-     *
-     * @param request
      */
     public void superPeerIsRequesting(SuperPeerRequest request) {
         addEvent(new NewSuperPeerEvent(request));
     }
 
-    public ConnectSettings getCurrentConnectionSettings() {
+    ConnectSettings getCurrentConnectionSettings() {
         return connectSettings;
     }
 
@@ -145,13 +135,10 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     ///////////////// EventImplementation
     ////////////////////////////////////////////////////////////////////////
 
-    boolean firstConnect = true;
-
     @Override
     protected void handleNewSuperPeer(NewSuperPeerEvent event) {
         SuperPeerRequest request = event.getRequest();
 
-        //TODO workaround since the run method is not called but we need a clean repo at startup
         if (firstConnect) {
             processRepository.deleteAll();
             peerRepository.deleteAll();
@@ -179,7 +166,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
 
         LOG.info("monitoring new super peer on '{}'", currentSuperPeer.getIp());
 
-        client.getRegisteredPeers().forEach(p -> addPeerIfNotPresent(p));
+        client.getRegisteredPeers().forEach(this::addPeerIfNotPresent);
         registerListeners();
     }
 
@@ -210,7 +197,6 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     /**
      * Updates the state of a process. The process is created and added to the repo if it not exists.
      *
-     * @param event
      */
     @Override
     protected void handleStateChange(StateChangeEvent event) {
@@ -231,7 +217,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         NeoPeer peer = peerRepository.findByPeerId(metrics.peerId);
 
         if (peer == null) {
-            client.getRegisteredPeers().forEach(profile -> handlePeerConnected(profile));
+            client.getRegisteredPeers().forEach(this::handlePeerConnected);
             peer = peerRepository.findByPeerId(metrics.peerId);
         }
 
@@ -277,7 +263,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
 
         NeoPeer peer = peerRepository.findByPeerId(peerId);
         if (peer == null) {
-            client.getRegisteredPeers().forEach(profile -> addPeerIfNotPresent(profile));
+            client.getRegisteredPeers().forEach(this::addPeerIfNotPresent);
             peer = peerRepository.findByPeerId(peerId);
         }
 
@@ -311,8 +297,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
 
     private NeoProcess findRootProcess(IStateChangeMessage message) {
         String id = idFormatter.formatId(message.getPeerId(), message.getProcessInstanceId());
-        NeoProcess process = processRepository.findByProcessId(id);
-        return process;
+        return processRepository.findByProcessId(id);
     }
 
     private boolean isSubProcess(IStateChangeMessage message) {
@@ -325,7 +310,6 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
      * the ip of the new peer are equal but the ids of the peers differ),
      * then all old processes and the old peer are removed from the repo and the new peer is added.
      *
-     * @param peerProfile
      */
     private void addPeerIfNotPresent(PeerProfile peerProfile) {
         if (peerIsAlreadyTracked(peerProfile))
@@ -336,7 +320,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
         peer.setName(peerProfile.getHostName());
         peer.setIp(peerProfile.getIp());
         peer.setSuperPeer(peerProfile.isSuperPeer());
-        findOrCreateDevices(peerProfile).forEach(d -> peer.addDevice(d));
+        findOrCreateDevices(peerProfile).forEach(peer::addDevice);
         peer.setConnected(true);
         peer.setLastHeartbeat(new Date());
         peerRepository.save(peer);
@@ -390,8 +374,7 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     }
 
     private boolean superPeerHasChanged(PeerProfile newRequest) {
-        if (currentSuperPeer == null) return true;
-        return !currentSuperPeer.getPeerId().equals(newRequest.getPeerId());
+        return currentSuperPeer == null || !currentSuperPeer.getPeerId().equals(newRequest.getPeerId());
     }
 
     private void deleteOldPeerDataFor(NeoPeer peer) {
@@ -442,10 +425,10 @@ public class ProteusMonitorAgent extends ProteusMonitorBase {
     }
 
     public static class ConnectSettings {
-        public String ip;
-        public String port;
-        public String realm;
-        public String namespace;
+        String ip;
+        String port;
+        String realm;
+        String namespace;
 
         @Override
         public String toString() {

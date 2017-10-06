@@ -95,6 +95,7 @@ public class SpelMismatchProvider implements MismatchProvider {
         } else if(ast.getChild(0) instanceof FunctionReference){
             //this allows to use a function with the contextVariable
             //we assume that the first parameter of this function is the context parameter
+            //e.g. #functionToCall(#ContextParemeter)
             FunctionReference ref = (FunctionReference)ast.getChild(0);
             if(ref.getChildCount() == 0 || !(ref.getChild(0) instanceof  VariableReference))
                 return Optional.absent();

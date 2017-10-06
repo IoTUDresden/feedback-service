@@ -9,9 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Provider;
 
-/**
- * Interface for controlling process and peer lifecycle.
- */
+
 @Component
 public class HealingPlugin {
 
@@ -36,5 +34,4 @@ public class HealingPlugin {
 
     public NeoDeviceRepository getNeoDeviceRepository() {  return deviceRepository;  }
 
-    //TODO maybe we can define some methods here e.g. update the state of a process or update...
 }

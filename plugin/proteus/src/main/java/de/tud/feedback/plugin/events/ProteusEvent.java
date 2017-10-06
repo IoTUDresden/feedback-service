@@ -5,22 +5,19 @@ import eu.vicci.process.distribution.core.SuperPeerRequest;
 import eu.vicci.process.model.util.messages.core.IStateChangeMessage;
 import eu.vicci.process.model.util.messages.core.PeerMetrics;
 
-//TODO think about using spring events
 public abstract class ProteusEvent {
 
     public static abstract class ProfileEvent extends ProteusEvent{
         private final PeerProfile profile;
 
-        public ProfileEvent(PeerProfile profile) {
+        ProfileEvent(PeerProfile profile) {
             this.profile = profile;
         }
 
         public PeerProfile getProfile() {
             return profile;
         }
-
     }
-
 
     public static class NewSuperPeerEvent extends  ProteusEvent {
         private final SuperPeerRequest request;
@@ -33,7 +30,6 @@ public abstract class ProteusEvent {
             return request;
         }
     }
-
 
     public static class PeerConnectedEvent extends ProfileEvent{
         public PeerConnectedEvent(PeerProfile profile) {

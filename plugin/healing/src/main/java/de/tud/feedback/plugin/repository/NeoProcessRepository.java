@@ -27,30 +27,11 @@ public interface NeoProcessRepository extends GraphRepository<NeoProcess> {
 
     /**
      * finds all processes, which are running on the given peer
-     * @param peerId
-     * @return
      */
     @Query("MATCH (p:NeoProcess)-[r:RUNS_ON]->(n:NeoPeer) WHERE n.peerId = {peerId} RETURN p")
     List<NeoProcess> findByPeerId(@Param("peerId") String peerId);
 
-//    @Query("MATCH (p:NeoProcess)-[r:RUNS_ON]->(n:NeoPeer) WHERE n.peerId = {peerId} DELETE p")
-//    void deleteWithPeer(@Param("peerId") String peerId);
-//
-//    @Query("MATCH (p:NeoProcess)-[r:RUNS_ON]->(n:NeoPeer) " +
-//            "MATCH p-[b:BELONGS_TO]->()" +
-//            "WHERE n.peerId = {peerId} AND b is null" +
-//            "DELETE p")
-//    void deleteSubWithPeerId();
-
     @Query("MATCH (n:NeoProcess) WHERE NOT HAS(n.peer) RETURN n")
     List<NeoProcess> findByPeerIsNull();
 
-//    /**
-//     * Updates the process state with the given id.
-//     * @param id
-//     * @param state
-//     */
-//    @Query("MATCH (p:NeoProcess {processId={0}} )" +
-//            "SET p.state = {1}")
-//    void updateProcessState(String id, String state);
 }

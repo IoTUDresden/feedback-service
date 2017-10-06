@@ -13,13 +13,13 @@ import java.util.concurrent.BlockingQueue;
 public abstract class ProteusMonitorBase implements ProcessMonitorAgent {
     protected static final Logger LOG = LoggerFactory.getLogger(ProteusMonitorAgent.class);
 
-    private BlockingQueue<ProteusEvent> events = new ArrayBlockingQueue<ProteusEvent>(1024,true);
+    private BlockingQueue<ProteusEvent> events = new ArrayBlockingQueue<>(1024,true);
 
     private boolean terminate = false;
+    private Boolean isRunning = false;
 
-    public ProteusMonitorBase() {
-        //FIXME the monitor should be started by the feedback service and not at this point
-        // fbs starts this only if the context is imported
+    ProteusMonitorBase() {
+        // we start the monitor at this point, so no context must be imported.
 
         Thread t = new Thread(this);
         t.setDaemon(true);
@@ -32,15 +32,13 @@ public abstract class ProteusMonitorBase implements ProcessMonitorAgent {
         // not used as we dont use the current available dogont updater
     }
 
-    protected synchronized void addEvent(ProteusEvent event){
+    synchronized void addEvent(ProteusEvent event){
         try {
             events.put(event);
         } catch (InterruptedException e) {
             LOG.error("error while adding new event");
         }
     }
-
-    Boolean isRunning = false;
 
     @Override
     public void run() {
