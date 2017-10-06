@@ -1,0 +1,759 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:base="http://openhab-semantic/0.1/instance"
+    xmlns:instance="http://openhab-semantic/0.1/instance#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:dogont="http://elite.polito.it/ontologies/dogont.owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:vicci="http://openhab-semantic/0.1/dogont-vicci-extension#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://elite.polito.it/ontologies/dogont.owl"/>
+    <owl:imports rdf:resource="dogont-vicci-extension"/>
+    <owl:versionInfo>Created Automatically By OpenHAB SAL</owl:versionInfo>
+  </owl:Ontology>
+  <dogont:LightSensor rdf:ID="Thing_tinkerforge_ambientLight_1">
+    <dogont:hasState>
+      <dogont:LightIntensityState rdf:ID="State_tinkerforge_ambientLight_ambientLight_1">
+        <dogont:hasStateValue>
+          <dogont:BrightnessStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/illuminance/lux"/>
+          </dogont:BrightnessStateValue>
+        </dogont:hasStateValue>
+      </dogont:LightIntensityState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:LightSensingFunctionality rdf:ID="Function_tinkerforge_ambientLight_ambientLight_1"/>
+    </dogont:hasFunctionality>
+  </dogont:LightSensor>
+  <dogont:PresenceSensor rdf:ID="Thing_dummy_current_1">
+    <dogont:hasState>
+      <dogont:PresenceState rdf:ID="State_dummy_current_location_1">
+        <dogont:hasStateValue>
+          <dogont:PresentStateValue>
+            <dogont:realStateValue>unknown</dogont:realStateValue>
+          </dogont:PresentStateValue>
+        </dogont:hasStateValue>
+      </dogont:PresenceState>
+    </dogont:hasState>
+  </dogont:PresenceSensor>
+  <dogont:Tv rdf:ID="Thing_kodi_kodicontrol_3">
+    <dogont:hasFunctionality>
+      <dogont:DisplayFunctionality rdf:ID="Function_kodi_kodicontrol_guiShowNotification_3">
+        <dogont:hasCommand>
+          <dogont:DisplayCommand rdf:ID="DisplayCommand_OpenHab"/>
+        </dogont:hasCommand>
+      </dogont:DisplayFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:SoundFunctionality rdf:ID="Function_kodi_kodicontrol_playerPlayFile_3">
+        <dogont:hasCommand>
+          <dogont:PlayCommand rdf:ID="PlayCommand_OpenHab"/>
+        </dogont:hasCommand>
+      </dogont:SoundFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:SoundFunctionality rdf:ID="Function_kodi_kodicontrol_playerStop_3">
+        <dogont:hasCommand>
+          <dogont:StopPlayingCommand rdf:ID="StopPlayingCommand_OpenHab"/>
+        </dogont:hasCommand>
+      </dogont:SoundFunctionality>
+    </dogont:hasFunctionality>
+  </dogont:Tv>
+  <vicci:Person rdf:ID="Thing_proteus_person_steffen">
+    <dogont:hasState>
+      <vicci:AvailabilityState rdf:ID="State_proteus_person_availability_steffen">
+        <dogont:hasStateValue>
+          <vicci:AvailabilityStateValue>
+            <dogont:realStateValue>unavailable</dogont:realStateValue>
+          </vicci:AvailabilityStateValue>
+        </dogont:hasStateValue>
+      </vicci:AvailabilityState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotSimplePositionState rdf:ID="State_proteus_person_simplePosition_steffen">
+        <dogont:hasStateValue>
+          <vicci:RobotSimplePositionStateValue>
+            <dogont:realStateValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
+          </vicci:RobotSimplePositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotSimplePositionState>
+    </dogont:hasState>
+  </vicci:Person>
+  <dogont:Communication rdf:ID="Thing_tinkerforge_lcd_2">
+    <dogont:hasState>
+      <dogont:DiscreteState rdf:ID="State_tinkerforge_lcd_text_2">
+        <dogont:hasStateValue>
+          <dogont:DiscreteValue>
+            <dogont:realStateValue> </dogont:realStateValue>
+          </dogont:DiscreteValue>
+        </dogont:hasStateValue>
+      </dogont:DiscreteState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <dogont:OnOffState rdf:ID="State_tinkerforge_lcd_backlight_2">
+        <dogont:hasStateValue>
+          <dogont:OffStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </dogont:OffStateValue>
+        </dogont:hasStateValue>
+      </dogont:OnOffState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:DisplayFunctionality rdf:ID="Function_tinkerforge_lcd_text_2">
+        <dogont:hasCommand rdf:resource="#DisplayCommand_OpenHab"/>
+      </dogont:DisplayFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:OnOffFunctionality rdf:ID="Function_tinkerforge_lcd_backlight_2">
+        <dogont:hasCommand>
+          <dogont:OffCommand rdf:ID="OffCommand_OpenHab"/>
+        </dogont:hasCommand>
+        <dogont:hasCommand>
+          <dogont:OnCommand rdf:ID="OnCommand_OpenHab"/>
+        </dogont:hasCommand>
+      </dogont:OnOffFunctionality>
+    </dogont:hasFunctionality>
+  </dogont:Communication>
+  <dogont:LightSensor rdf:ID="Thing_tinkerforge_ambientLight_2">
+    <dogont:hasState>
+      <dogont:LightIntensityState rdf:ID="State_tinkerforge_ambientLight_ambientLight_2">
+        <dogont:hasStateValue>
+          <dogont:BrightnessStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/illuminance/lux"/>
+          </dogont:BrightnessStateValue>
+        </dogont:hasStateValue>
+      </dogont:LightIntensityState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:LightSensingFunctionality rdf:ID="Function_tinkerforge_ambientLight_ambientLight_2"/>
+    </dogont:hasFunctionality>
+  </dogont:LightSensor>
+  <dogont:HumiditySensor rdf:ID="Thing_tinkerforge_humidity_3">
+    <dogont:hasState>
+      <dogont:HumidityMeasurementState rdf:ID="State_tinkerforge_humidity_humidity_3">
+        <dogont:hasStateValue>
+          <dogont:HumidityStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent"/>
+          </dogont:HumidityStateValue>
+        </dogont:hasStateValue>
+      </dogont:HumidityMeasurementState>
+    </dogont:hasState>
+  </dogont:HumiditySensor>
+  <dogont:Lobby rdf:ID="Lobby_Mueller">
+    <rdfs:label>Flur</rdfs:label>
+  </dogont:Lobby>
+  <dogont:DimmerSwitch rdf:ID="Thing_homematic_dimmer_2">
+    <dogont:hasState>
+      <dogont:LevelState rdf:ID="State_homematic_dimmer_dimmer_2">
+        <dogont:hasStateValue>
+          <dogont:LevelStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent"/>
+          </dogont:LevelStateValue>
+        </dogont:hasStateValue>
+      </dogont:LevelState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:LevelControlFunctionality rdf:ID="Function_homematic_dimmer_dimmer_2">
+        <dogont:hasCommand>
+          <dogont:DownCommand rdf:ID="DownCommand_OpenHab"/>
+        </dogont:hasCommand>
+        <dogont:hasCommand rdf:resource="#OffCommand_OpenHab"/>
+        <dogont:hasCommand rdf:resource="#OnCommand_OpenHab"/>
+        <dogont:hasCommand>
+          <dogont:UpCommand rdf:ID="UpCommand_OpenHab"/>
+        </dogont:hasCommand>
+      </dogont:LevelControlFunctionality>
+    </dogont:hasFunctionality>
+  </dogont:DimmerSwitch>
+  <dogont:MovementSensor rdf:ID="Thing_homematic_motionIndicator_1">
+    <dogont:hasState>
+      <dogont:LightIntensityState rdf:ID="State_homematic_motionIndicator_brightness_1">
+        <dogont:hasStateValue>
+          <dogont:BrightnessStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/illuminance/lux"/>
+          </dogont:BrightnessStateValue>
+        </dogont:hasStateValue>
+      </dogont:LightIntensityState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <dogont:MovementState rdf:ID="State_homematic_motionIndicator_motionIndicator_1">
+        <dogont:hasStateValue>
+          <dogont:MovingStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </dogont:MovingStateValue>
+        </dogont:hasStateValue>
+      </dogont:MovementState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:LightSensingFunctionality rdf:ID="Function_homematic_motionIndicator_brightness_1"/>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:MovementNotificationFunctionality rdf:ID="Function_homematic_motionIndicator_motionIndicator_1"/>
+    </dogont:hasFunctionality>
+  </dogont:MovementSensor>
+  <dogont:AccessControlSystem rdf:ID="Thing_libnfcwrapper_idscan_1">
+    <dogont:hasState>
+      <dogont:PresenceState rdf:ID="State_libnfcwrapper_idscan_idscanResultChannel_1">
+        <dogont:hasStateValue>
+          <dogont:AuthenticatedStateValue>
+            <dogont:realStateValue>unknown</dogont:realStateValue>
+          </dogont:AuthenticatedStateValue>
+        </dogont:hasStateValue>
+      </dogont:PresenceState>
+    </dogont:hasState>
+  </dogont:AccessControlSystem>
+  <dogont:Communication rdf:ID="Thing_tinkerforge_lcd_1">
+    <dogont:hasState>
+      <dogont:DiscreteState rdf:ID="State_tinkerforge_lcd_text_1">
+        <dogont:hasStateValue>
+          <dogont:DiscreteValue>
+            <dogont:realStateValue> </dogont:realStateValue>
+          </dogont:DiscreteValue>
+        </dogont:hasStateValue>
+      </dogont:DiscreteState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <dogont:OnOffState rdf:ID="State_tinkerforge_lcd_backlight_1">
+        <dogont:hasStateValue>
+          <dogont:OffStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </dogont:OffStateValue>
+        </dogont:hasStateValue>
+      </dogont:OnOffState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:DisplayFunctionality rdf:ID="Function_tinkerforge_lcd_text_1">
+        <dogont:hasCommand rdf:resource="#DisplayCommand_OpenHab"/>
+      </dogont:DisplayFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:OnOffFunctionality rdf:ID="Function_tinkerforge_lcd_backlight_1">
+        <dogont:hasCommand rdf:resource="#OffCommand_OpenHab"/>
+        <dogont:hasCommand rdf:resource="#OnCommand_OpenHab"/>
+      </dogont:OnOffFunctionality>
+    </dogont:hasFunctionality>
+  </dogont:Communication>
+  <dogont:ToggleCommand rdf:ID="ToggleCommand_OpenHab"/>
+  <dogont:HumiditySensor rdf:ID="Thing_tinkerforge_humidity_4">
+    <dogont:hasState>
+      <dogont:HumidityMeasurementState rdf:ID="State_tinkerforge_humidity_humidity_4">
+        <dogont:hasStateValue>
+          <dogont:HumidityStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent"/>
+          </dogont:HumidityStateValue>
+        </dogont:hasStateValue>
+      </dogont:HumidityMeasurementState>
+    </dogont:hasState>
+  </dogont:HumiditySensor>
+  <dogont:DimmerSwitch rdf:ID="Thing_homematic_dimmer_1">
+    <dogont:hasState>
+      <dogont:LevelState rdf:ID="State_homematic_dimmer_dimmer_1">
+        <dogont:hasStateValue>
+          <dogont:LevelStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent"/>
+          </dogont:LevelStateValue>
+        </dogont:hasStateValue>
+      </dogont:LevelState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:LevelControlFunctionality rdf:ID="Function_homematic_dimmer_dimmer_1">
+        <dogont:hasCommand rdf:resource="#DownCommand_OpenHab"/>
+        <dogont:hasCommand rdf:resource="#OffCommand_OpenHab"/>
+        <dogont:hasCommand rdf:resource="#OnCommand_OpenHab"/>
+        <dogont:hasCommand rdf:resource="#UpCommand_OpenHab"/>
+      </dogont:LevelControlFunctionality>
+    </dogont:hasFunctionality>
+  </dogont:DimmerSwitch>
+  <dogont:MultipleTemperatureSensor rdf:ID="Thing_tinkerforge_irTemp_1">
+    <dogont:hasState>
+      <dogont:TemperatureState rdf:ID="State_tinkerforge_irTemp_irTemp_1">
+        <dogont:hasStateValue>
+          <dogont:TemperatureStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius"/>
+          </dogont:TemperatureStateValue>
+        </dogont:hasStateValue>
+      </dogont:TemperatureState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <dogont:TemperatureState rdf:ID="State_tinkerforge_irTemp_ambTemp_1">
+        <dogont:hasStateValue>
+          <dogont:TemperatureStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius"/>
+          </dogont:TemperatureStateValue>
+        </dogont:hasStateValue>
+      </dogont:TemperatureState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:TemperatureMeasurementFunctionality rdf:ID="Function_tinkerforge_irTemp_irTemp_1"/>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:TemperatureMeasurementFunctionality rdf:ID="Function_tinkerforge_irTemp_ambTemp_1"/>
+    </dogont:hasFunctionality>
+  </dogont:MultipleTemperatureSensor>
+  <dogont:Kitchen rdf:ID="Kitchen_Mueller">
+    <rdfs:label>Kueche</rdfs:label>
+  </dogont:Kitchen>
+  <dogont:SingleTemperatureSensor rdf:ID="Thing_yahooweather_weather_berlin">
+    <dogont:hasState>
+      <dogont:TemperatureState rdf:ID="State_yahooweather_weather_temperature_berlin">
+        <dogont:hasStateValue>
+          <dogont:TemperatureStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius"/>
+          </dogont:TemperatureStateValue>
+        </dogont:hasStateValue>
+      </dogont:TemperatureState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:TemperatureMeasurementFunctionality rdf:ID="Function_yahooweather_weather_temperature_berlin"/>
+    </dogont:hasFunctionality>
+  </dogont:SingleTemperatureSensor>
+  <dogont:PressureSensor rdf:ID="Thing_tinkerforge_barometer_1">
+    <dogont:hasState>
+      <dogont:PressureState rdf:ID="State_tinkerforge_barometer_barometer_1">
+        <dogont:hasStateValue>
+          <dogont:PressureStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/pressure/bar"/>
+          </dogont:PressureStateValue>
+        </dogont:hasStateValue>
+      </dogont:PressureState>
+    </dogont:hasState>
+  </dogont:PressureSensor>
+  <vicci:HealthMonitor rdf:ID="Thing_proteus_healthMonitor_steffen">
+    <dogont:hasState>
+      <vicci:HeartRateMeasurementState rdf:ID="State_proteus_healthMonitor_heartRate_steffen">
+        <dogont:hasStateValue>
+          <vicci:HeartRateStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </vicci:HeartRateStateValue>
+        </dogont:hasStateValue>
+      </vicci:HeartRateMeasurementState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:BloodOxygenSaturationMeasurementState rdf:ID="State_proteus_healthMonitor_oxygenSaturation_steffen">
+        <dogont:hasStateValue>
+          <vicci:BloodOxygenSaturationStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </vicci:BloodOxygenSaturationStateValue>
+        </dogont:hasStateValue>
+      </vicci:BloodOxygenSaturationMeasurementState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:CallHelpState rdf:ID="State_proteus_healthMonitor_emergencyButton_steffen">
+        <dogont:hasStateValue>
+          <dogont:OnStateValue>
+            <dogont:realStateValue>OFF</dogont:realStateValue>
+          </dogont:OnStateValue>
+        </dogont:hasStateValue>
+      </vicci:CallHelpState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <vicci:CallHelpFunctionality rdf:ID="Function_proteus_healthMonitor_emergencyButton_steffen"/>
+    </dogont:hasFunctionality>
+  </vicci:HealthMonitor>
+  <vicci:Robot rdf:ID="Thing_proteus_turtle_2">
+    <dogont:hasState>
+      <vicci:RobotPositionState rdf:ID="State_proteus_turtle_currentLocation_2">
+        <dogont:hasStateValue>
+          <vicci:RobotPositionStateValue>
+            <dogont:realStateValue>P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
+          </vicci:RobotPositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotPositionState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotMovementState rdf:ID="State_proteus_turtle_movement_2">
+        <dogont:hasStateValue>
+          <vicci:RobotMovementStateValue>
+            <dogont:realStateValue>Null</dogont:realStateValue>
+          </vicci:RobotMovementStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotMovementState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:AvailabilityState rdf:ID="State_proteus_turtle_availability_2">
+        <dogont:hasStateValue>
+          <vicci:AvailabilityStateValue>
+            <dogont:realStateValue>available</dogont:realStateValue>
+          </vicci:AvailabilityStateValue>
+        </dogont:hasStateValue>
+      </vicci:AvailabilityState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotSimplePositionState rdf:ID="State_proteus_turtle_simplePosition_2">
+        <dogont:hasStateValue>
+          <vicci:RobotSimplePositionStateValue>
+            <dogont:realStateValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
+          </vicci:RobotSimplePositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotSimplePositionState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <vicci:RobotMovementFunctionality rdf:ID="Function_proteus_turtle_move_2"/>
+    </dogont:hasFunctionality>
+  </vicci:Robot>
+  <dogont:Co2Sensor rdf:ID="Thing_homematic_co2_1">
+    <dogont:hasState>
+      <dogont:Co2MeasurementState rdf:ID="State_homematic_co2_co2_1">
+        <dogont:hasStateValue>
+          <dogont:Co2MeasurementStateValue>
+            <dogont:realStateValue>unknown</dogont:realStateValue>
+          </dogont:Co2MeasurementStateValue>
+        </dogont:hasStateValue>
+      </dogont:Co2MeasurementState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:Co2MeasurementFunctionality rdf:ID="Function_homematic_co2_co2_1"/>
+    </dogont:hasFunctionality>
+  </dogont:Co2Sensor>
+  <dogont:LivingRoom rdf:ID="LivingRoom_Mueller">
+    <rdfs:label>Wohnzimmer</rdfs:label>
+  </dogont:LivingRoom>
+  <vicci:Robot rdf:ID="Thing_proteus_turtle_1">
+    <dogont:hasState>
+      <vicci:RobotPositionState rdf:ID="State_proteus_turtle_currentLocation_1">
+        <dogont:hasStateValue>
+          <vicci:RobotPositionStateValue>
+            <dogont:realStateValue>P: 2.618284198864472000 -0.247315566055469100 0.010200000000000000 O: 0.000000000000000000 0.000000000000000000 0.906691250472952600 0.421794945815847030</dogont:realStateValue>
+          </vicci:RobotPositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotPositionState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotMovementState rdf:ID="State_proteus_turtle_movement_1">
+        <dogont:hasStateValue>
+          <vicci:RobotMovementStateValue>
+            <dogont:realStateValue>Null</dogont:realStateValue>
+          </vicci:RobotMovementStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotMovementState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:AvailabilityState rdf:ID="State_proteus_turtle_availability_1">
+        <dogont:hasStateValue>
+          <vicci:AvailabilityStateValue>
+            <dogont:realStateValue>available</dogont:realStateValue>
+          </vicci:AvailabilityStateValue>
+        </dogont:hasStateValue>
+      </vicci:AvailabilityState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotSimplePositionState rdf:ID="State_proteus_turtle_simplePosition_1">
+        <dogont:hasStateValue>
+          <vicci:RobotSimplePositionStateValue>
+            <dogont:realStateValue>P: 14.700000000000000000 11.049999999999999000 0.000000000000000000 O: 0.000000000000000000 0.000000000000000000 0.000000000000000000 1.000000000000000000</dogont:realStateValue>
+          </vicci:RobotSimplePositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotSimplePositionState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <vicci:RobotMovementFunctionality rdf:ID="Function_proteus_turtle_move_1"/>
+    </dogont:hasFunctionality>
+  </vicci:Robot>
+  <vicci:HealthMonitor rdf:ID="Thing_proteus_healthMonitor_ronny">
+    <dogont:hasState>
+      <vicci:HeartRateMeasurementState rdf:ID="State_proteus_healthMonitor_heartRate_ronny">
+        <dogont:hasStateValue>
+          <vicci:HeartRateStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </vicci:HeartRateStateValue>
+        </dogont:hasStateValue>
+      </vicci:HeartRateMeasurementState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:BloodOxygenSaturationMeasurementState rdf:ID="State_proteus_healthMonitor_oxygenSaturation_ronny">
+        <dogont:hasStateValue>
+          <vicci:BloodOxygenSaturationStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </vicci:BloodOxygenSaturationStateValue>
+        </dogont:hasStateValue>
+      </vicci:BloodOxygenSaturationMeasurementState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:CallHelpState rdf:ID="State_proteus_healthMonitor_emergencyButton_ronny">
+        <dogont:hasStateValue>
+          <dogont:OnStateValue>
+            <dogont:realStateValue>OFF</dogont:realStateValue>
+          </dogont:OnStateValue>
+        </dogont:hasStateValue>
+      </vicci:CallHelpState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <vicci:CallHelpFunctionality rdf:ID="Function_proteus_healthMonitor_emergencyButton_ronny"/>
+    </dogont:hasFunctionality>
+  </vicci:HealthMonitor>
+  <dogont:LightSensor rdf:ID="Thing_tinkerforge_ambientLight_3">
+    <dogont:hasState>
+      <dogont:LightIntensityState rdf:ID="State_tinkerforge_ambientLight_ambientLight_3">
+        <dogont:hasStateValue>
+          <dogont:BrightnessStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/illuminance/lux"/>
+          </dogont:BrightnessStateValue>
+        </dogont:hasStateValue>
+      </dogont:LightIntensityState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:LightSensingFunctionality rdf:ID="Function_tinkerforge_ambientLight_ambientLight_3"/>
+    </dogont:hasFunctionality>
+  </dogont:LightSensor>
+  <dogont:Communication rdf:ID="Thing_tinkerforge_lcd_4">
+    <dogont:hasState>
+      <dogont:DiscreteState rdf:ID="State_tinkerforge_lcd_text_4">
+        <dogont:hasStateValue>
+          <dogont:DiscreteValue>
+            <dogont:realStateValue> </dogont:realStateValue>
+          </dogont:DiscreteValue>
+        </dogont:hasStateValue>
+      </dogont:DiscreteState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <dogont:OnOffState rdf:ID="State_tinkerforge_lcd_backlight_4">
+        <dogont:hasStateValue>
+          <dogont:OffStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </dogont:OffStateValue>
+        </dogont:hasStateValue>
+      </dogont:OnOffState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:DisplayFunctionality rdf:ID="Function_tinkerforge_lcd_text_4">
+        <dogont:hasCommand rdf:resource="#DisplayCommand_OpenHab"/>
+      </dogont:DisplayFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:OnOffFunctionality rdf:ID="Function_tinkerforge_lcd_backlight_4">
+        <dogont:hasCommand rdf:resource="#OffCommand_OpenHab"/>
+        <dogont:hasCommand rdf:resource="#OnCommand_OpenHab"/>
+      </dogont:OnOffFunctionality>
+    </dogont:hasFunctionality>
+  </dogont:Communication>
+  <dogont:DoorActuator rdf:ID="Thing_homematic_keymatic_1">
+    <dogont:hasState>
+      <dogont:OpenCloseState rdf:ID="State_homematic_keymatic_keymatic_1">
+        <dogont:hasStateValue>
+          <dogont:OpenStateValue>
+            <dogont:realStateValue>unknown</dogont:realStateValue>
+          </dogont:OpenStateValue>
+        </dogont:hasStateValue>
+      </dogont:OpenCloseState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:OpenCloseFunctionality rdf:ID="Function_homematic_keymatic_keymatic_1"/>
+    </dogont:hasFunctionality>
+  </dogont:DoorActuator>
+  <dogont:PressureSensor rdf:ID="Thing_tinkerforge_barometer_3">
+    <dogont:hasState>
+      <dogont:PressureState rdf:ID="State_tinkerforge_barometer_barometer_3">
+        <dogont:hasStateValue>
+          <dogont:PressureStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/pressure/bar"/>
+          </dogont:PressureStateValue>
+        </dogont:hasStateValue>
+      </dogont:PressureState>
+    </dogont:hasState>
+  </dogont:PressureSensor>
+  <dogont:AccessControlSystem rdf:ID="Thing_fingerscanner_identify_1">
+    <dogont:hasState>
+      <dogont:State rdf:ID="State_fingerscanner_identify_channelPerson_1">
+        <dogont:hasStateValue>
+          <dogont:AuthenticatedStateValue>
+            <dogont:realStateValue>unknown</dogont:realStateValue>
+          </dogont:AuthenticatedStateValue>
+        </dogont:hasStateValue>
+      </dogont:State>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:QueryFunctionality rdf:ID="Function_fingerscanner_identify_channelPerson_1"/>
+    </dogont:hasFunctionality>
+  </dogont:AccessControlSystem>
+  <dogont:Tv rdf:ID="Thing_kodi_kodicontrol_1">
+    <dogont:hasFunctionality>
+      <dogont:DisplayFunctionality rdf:ID="Function_kodi_kodicontrol_guiShowNotification_1">
+        <dogont:hasCommand rdf:resource="#DisplayCommand_OpenHab"/>
+      </dogont:DisplayFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:SoundFunctionality rdf:ID="Function_kodi_kodicontrol_playerPlayFile_1">
+        <dogont:hasCommand rdf:resource="#PlayCommand_OpenHab"/>
+      </dogont:SoundFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:SoundFunctionality rdf:ID="Function_kodi_kodicontrol_playerStop_1">
+        <dogont:hasCommand rdf:resource="#StopPlayingCommand_OpenHab"/>
+      </dogont:SoundFunctionality>
+    </dogont:hasFunctionality>
+  </dogont:Tv>
+  <dogont:HumiditySensor rdf:ID="Thing_tinkerforge_humidity_1">
+    <dogont:hasState>
+      <dogont:HumidityMeasurementState rdf:ID="State_tinkerforge_humidity_humidity_1">
+        <dogont:hasStateValue>
+          <dogont:HumidityStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/fraction/percent"/>
+          </dogont:HumidityStateValue>
+        </dogont:hasStateValue>
+      </dogont:HumidityMeasurementState>
+    </dogont:hasState>
+  </dogont:HumiditySensor>
+  <dogont:LightSensor rdf:ID="Thing_tinkerforge_ambientLight_4">
+    <dogont:hasState>
+      <dogont:LightIntensityState rdf:ID="State_tinkerforge_ambientLight_ambientLight_4">
+        <dogont:hasStateValue>
+          <dogont:BrightnessStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/illuminance/lux"/>
+          </dogont:BrightnessStateValue>
+        </dogont:hasStateValue>
+      </dogont:LightIntensityState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:LightSensingFunctionality rdf:ID="Function_tinkerforge_ambientLight_ambientLight_4"/>
+    </dogont:hasFunctionality>
+  </dogont:LightSensor>
+  <vicci:Person rdf:ID="Thing_proteus_person_ronny">
+    <dogont:hasState>
+      <vicci:AvailabilityState rdf:ID="State_proteus_person_availability_ronny">
+        <dogont:hasStateValue>
+          <vicci:AvailabilityStateValue>
+            <dogont:realStateValue>unavailable</dogont:realStateValue>
+          </vicci:AvailabilityStateValue>
+        </dogont:hasStateValue>
+      </vicci:AvailabilityState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <vicci:RobotSimplePositionState rdf:ID="State_proteus_person_simplePosition_ronny">
+        <dogont:hasStateValue>
+          <vicci:RobotSimplePositionStateValue>
+            <dogont:realStateValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >P: 0.00 0.00 O: 0.00 0.00</dogont:realStateValue>
+          </vicci:RobotSimplePositionStateValue>
+        </dogont:hasStateValue>
+      </vicci:RobotSimplePositionState>
+    </dogont:hasState>
+  </vicci:Person>
+  <dogont:PressureSensor rdf:ID="Thing_tinkerforge_barometer_4">
+    <dogont:hasState>
+      <dogont:PressureState rdf:ID="State_tinkerforge_barometer_barometer_4">
+        <dogont:hasStateValue>
+          <dogont:PressureStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/pressure/bar"/>
+          </dogont:PressureStateValue>
+        </dogont:hasStateValue>
+      </dogont:PressureState>
+    </dogont:hasState>
+  </dogont:PressureSensor>
+  <dogont:Buzzer rdf:ID="Thing_homematic_gong_1">
+    <dogont:hasState>
+      <dogont:OnOffState rdf:ID="State_homematic_gong_lightGong_1">
+        <dogont:hasStateValue>
+          <dogont:OnStateValue>
+            <dogont:realStateValue>unknown</dogont:realStateValue>
+          </dogont:OnStateValue>
+        </dogont:hasStateValue>
+      </dogont:OnOffState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <dogont:DiscreteState rdf:ID="State_homematic_gong_gong_1">
+        <dogont:hasStateValue>
+          <dogont:OnStateValue>
+            <dogont:realStateValue>unknown</dogont:realStateValue>
+          </dogont:OnStateValue>
+        </dogont:hasStateValue>
+      </dogont:DiscreteState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:AlertNotificationFunctionality rdf:ID="Function_homematic_gong_lightGong_1"/>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:AlertNotificationFunctionality rdf:ID="Function_homematic_gong_gong_1"/>
+    </dogont:hasFunctionality>
+  </dogont:Buzzer>
+  <dogont:SingleTemperatureSensor rdf:ID="Thing_yahooweather_weather_dresden">
+    <dogont:hasState>
+      <dogont:TemperatureState rdf:ID="State_yahooweather_weather_temperature_dresden">
+        <dogont:hasStateValue>
+          <dogont:TemperatureStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+            <dogont:unitOfMeasure rdf:resource="http://purl.oclc.org/NET/muo/ucum/unit/temperature/degree-Celsius"/>
+          </dogont:TemperatureStateValue>
+        </dogont:hasStateValue>
+      </dogont:TemperatureState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <dogont:HumidityMeasurementState rdf:ID="State_yahooweather_weather_humidity_dresden">
+        <dogont:hasStateValue>
+          <dogont:HumidityStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </dogont:HumidityStateValue>
+        </dogont:hasStateValue>
+      </dogont:HumidityMeasurementState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:TemperatureMeasurementFunctionality rdf:ID="Function_yahooweather_weather_temperature_dresden"/>
+    </dogont:hasFunctionality>
+  </dogont:SingleTemperatureSensor>
+  <dogont:Tv rdf:ID="Thing_kodi_kodicontrol_2">
+    <dogont:hasFunctionality>
+      <dogont:DisplayFunctionality rdf:ID="Function_kodi_kodicontrol_guiShowNotification_2">
+        <dogont:hasCommand rdf:resource="#DisplayCommand_OpenHab"/>
+      </dogont:DisplayFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:SoundFunctionality rdf:ID="Function_kodi_kodicontrol_playerPlayFile_2">
+        <dogont:hasCommand rdf:resource="#PlayCommand_OpenHab"/>
+      </dogont:SoundFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:SoundFunctionality rdf:ID="Function_kodi_kodicontrol_playerStop_2">
+        <dogont:hasCommand rdf:resource="#StopPlayingCommand_OpenHab"/>
+      </dogont:SoundFunctionality>
+    </dogont:hasFunctionality>
+  </dogont:Tv>
+  <dogont:Communication rdf:ID="Thing_tinkerforge_lcd_3">
+    <dogont:hasState>
+      <dogont:DiscreteState rdf:ID="State_tinkerforge_lcd_text_3">
+        <dogont:hasStateValue>
+          <dogont:DiscreteValue>
+            <dogont:realStateValue> </dogont:realStateValue>
+          </dogont:DiscreteValue>
+        </dogont:hasStateValue>
+      </dogont:DiscreteState>
+    </dogont:hasState>
+    <dogont:hasState>
+      <dogont:OnOffState rdf:ID="State_tinkerforge_lcd_backlight_3">
+        <dogont:hasStateValue>
+          <dogont:OffStateValue>
+            <dogont:realStateValue>0</dogont:realStateValue>
+          </dogont:OffStateValue>
+        </dogont:hasStateValue>
+      </dogont:OnOffState>
+    </dogont:hasState>
+    <dogont:hasFunctionality>
+      <dogont:DisplayFunctionality rdf:ID="Function_tinkerforge_lcd_text_3">
+        <dogont:hasCommand rdf:resource="#DisplayCommand_OpenHab"/>
+      </dogont:DisplayFunctionality>
+    </dogont:hasFunctionality>
+    <dogont:hasFunctionality>
+      <dogont:OnOffFunctionality rdf:ID="Function_tinkerforge_lcd_backlight_3">
+        <dogont:hasCommand rdf:resource="#OffCommand_OpenHab"/>
+        <dogont:hasCommand rdf:resource="#OnCommand_OpenHab"/>
+      </dogont:OnOffFunctionality>
+    </dogont:hasFunctionality>
+  </dogont:Communication>
+</rdf:RDF>

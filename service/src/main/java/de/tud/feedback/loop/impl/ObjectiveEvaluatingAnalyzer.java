@@ -32,12 +32,10 @@ public class ObjectiveEvaluatingAnalyzer implements Analyzer {
 
         boolean nothingLeft = !workflow.getGoals()
                 .stream()
-                .filter(goal -> goal.getObjectives()
+                .anyMatch(goal -> goal.getObjectives()
                         .stream()
-                        .anyMatch(o -> (o.getState() == State.COMPENSATION) ||
-                                       (o.getState() == State.UNSATISFIED)))
-                .findAny()
-                .isPresent();
+                        .anyMatch(o -> o.getState() == State.COMPENSATION ||
+                                o.getState() == State.UNSATISFIED));
 
         if (allGoalsHaveBeenSatisfied || nothingLeft) {
             workflow.setFinished(true);

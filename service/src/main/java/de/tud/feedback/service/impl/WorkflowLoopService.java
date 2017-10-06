@@ -1,6 +1,7 @@
 package de.tud.feedback.service.impl;
 
 import de.tud.feedback.domain.Context;
+import de.tud.feedback.domain.Goal;
 import de.tud.feedback.domain.Workflow;
 import de.tud.feedback.event.WorkflowUpdateEvent;
 import de.tud.feedback.loop.LoopIteration;
@@ -13,6 +14,7 @@ import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.task.AsyncListenableTaskExecutor;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
@@ -28,7 +30,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkflowLoopService.class);
 
-    private static final int WORKFLOW_SAVE_DEPTH = 3;
+    private static final int WORKFLOW_SAVE_DEPTH = -1;
 
     private final Provider<LoopIteration<Workflow>> loopIterationProvider;
 
@@ -102,7 +104,7 @@ public class WorkflowLoopService implements LoopService, ListenableFutureCallbac
         publisher.publishEvent(WorkflowUpdateEvent.on(workflow));
 
         try {
-            workflowRepository.save(workflow.done());
+            workflowRepository.save(workflow.done(), WORKFLOW_SAVE_DEPTH);
         } catch (ResultProcessingException exception) {
             LOG.warn(format("%s cannot be saved due to %s", workflow, exception.getMessage()));
         }

@@ -7,6 +7,7 @@ import de.tud.feedback.loop.ObjectiveEvaluator;
 import de.tud.feedback.repository.CompensationRepository;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface FeedbackPlugin {
 
@@ -16,7 +17,7 @@ public interface FeedbackPlugin {
 
     ObjectiveEvaluator getObjectiveEvaluator(CypherExecutor executor);
 
-    CompensationRepository getCompensationRepository(CypherExecutor executor);
+    List<CompensationRepository> getCompensationRepositories(CypherExecutor executor);
 
     MismatchProvider getMismatchProvider();
 

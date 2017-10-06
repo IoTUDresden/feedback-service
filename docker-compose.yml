@@ -1,3 +1,4 @@
+
 version: '2'
 
 services:
@@ -37,19 +38,21 @@ services:
     ports:
       - "7474:7474"
 
-  service:
-    image: iotudresden/feedback-service
-    container_name: feedback
-    environment:
-      SPRING_DATA_ELASTICSEARCH_CLUSTER-NODES: elasticsearch:9300
-      METRICS_REPORTER_ELASTICSEARCH_NODES: elasticsearch:9200
-      SERVICE_KNOWLEDGE_NEO4J_URL: http://neo4j:7474
-      SERVER_PORT: 9000
-      OPENHAB_HOST: ${OPENHAB_HOST}
 
-    depends_on:
-      - elasticsearch
-      - neo4j
-
-    ports:
-      - "9000:9000"
+#  service:
+#    image: iotudresden/feedback-service
+#    container_name: feedback
+#    environment:
+#      SPRING_DATA_ELASTICSEARCH_CLUSTER-NODES: elasticsearch:9300
+#      METRICS_REPORTER_ELASTICSEARCH_NODES: elasticsearch:9200
+#      SERVICE_KNOWLEDGE_NEO4J_URL: http://neo4j:7474
+#      SERVER_PORT: 9000
+#      OPENHAB_HOST: ${OPENHAB_HOST}
+#      LOGGING_LEVEL_DE_TUD: DEBUG
+#
+#    depends_on:
+#      - elasticsearch
+#      - neo4j
+#
+#    ports:
+#      - "9000:9000"

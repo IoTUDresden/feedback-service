@@ -1,20 +1,24 @@
 package de.tud.feedback.plugin.proteus;
 
+import de.tud.feedback.plugin.HealingPlugin;
+import de.tud.feedback.plugin.ProteusFeedbackPlugin;
 import de.tud.feedback.plugin.factory.*;
 import de.tud.feedback.plugin.openhab.OpenHabService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
-import java.util.function.Function;
-
 @Configuration
 public class ProteusConfiguration {
 
     Logger log = LoggerFactory.getLogger(ProteusConfiguration.class);
+
+    @Autowired
+    private HealingPlugin healingPlugin;
 
     @Bean
     public RdfContextImporterFactoryBean rdfContextImporterFactoryBean() {
@@ -24,6 +28,11 @@ public class ProteusConfiguration {
     @Bean
     public DogOntCompensationRepositoryFactoryBean dogOntCompensationRepositoryFactoryBean(ResourceLoader loader) {
         return new DogOntCompensationRepositoryFactoryBean().setLoader(loader);
+    }
+
+    @Bean
+    public ProteusCompensationRepositoryFactoryBean proteusCompensationRepositoryFactoryBean(ResourceLoader loader){
+        return new ProteusCompensationRepositoryFactoryBean().setLoader(loader);
     }
 
     @Bean
@@ -56,10 +65,22 @@ public class ProteusConfiguration {
     }
 
     @Bean
+    public ProteusCommandExecuterFactoryBean proteusCommandExecuterFactoryBean(ProteusFeedbackPlugin plugin){
+        return new ProteusCommandExecuterFactoryBean()
+                .setPlugin(plugin);
+    }
+
+
+    @Bean
     public DogOntContextUpdaterFactoryBean dogOntContextUpdaterFactoryBean(
             @Value("${dogOnt.stateNodePrefix:State_}") String stateNodePrefix) {
         return new DogOntContextUpdaterFactoryBean()
                 .setStateNameMapper(s -> stateNodePrefix + s);
+    }
+
+    @Bean
+    public ProteusMonitorAgentFactoryBean proteusMonitorAgentFactoryBean(){
+        return new ProteusMonitorAgentFactoryBean().setHealingPlugin(healingPlugin);
     }
 
 }

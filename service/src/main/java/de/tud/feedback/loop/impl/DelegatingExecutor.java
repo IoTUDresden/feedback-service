@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -18,17 +19,19 @@ public class DelegatingExecutor implements Executor {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegatingExecutor.class);
 
-    private final CommandExecutor commandExecutor;
+    private final java.util.List<CommandExecutor> commandExecutors;
 
     @Autowired
-    public DelegatingExecutor(CommandExecutor commandExecutor) {
-        this.commandExecutor = commandExecutor;
+    public DelegatingExecutor(List<CommandExecutor> commandExecutor) {
+        this.commandExecutors = commandExecutor;
     }
 
     @Override
     public void execute(Command command) {
         try {
-            commandExecutor.execute(command);
+            commandExecutors.stream()
+                    .filter(ex -> ex.supportsCommand(command))
+                    .forEach(ex -> ex.execute(command));
         } catch (RuntimeException exception) {
             LOG.error(format("%s failed. %s", command, exception.getMessage()));
             command.setRepeatable(false);

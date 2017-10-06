@@ -30,6 +30,8 @@ Given an OpenHAB service with semantic binding running on *localhost:8080* execu
 After the context has been created, it will be updated constantly.
 The response includes the location of the new context for further reference.
 
+For importing a Context from Turtle-Format (*.ttl) use the mime Type *text/turtle*
+
 ```
 POST /contexts HTTP/1.1
 Host: localhost:9000
@@ -91,6 +93,11 @@ Content-Type: application/json
     }]
 }
 ```
+
+#### Available Variables/Functions
+* objective: gives the whole objective bean (usage: #objective.created)
+* lastCommandSendBefore(Objective, seconds): returns true if the last command, which was send to reach the objective,
+was send before the given amount of seconds (usage: #lastCommandSendBefore(#objective, 5))
 
 ## IDE-Import
 

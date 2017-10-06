@@ -17,9 +17,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
-import java.security.cert.PKIXRevocationChecker;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.joda.time.DateTime.now;
@@ -32,7 +33,7 @@ public class MismatchCompensatingPlanner implements Planner {
 
     private final CommandRepository commandRepository;
 
-    private final CompensationRepository compensationRepository;
+    private final List<CompensationRepository> compensationRepositories;
 
     private final MismatchProvider mismatchProvider;
 
@@ -41,7 +42,7 @@ public class MismatchCompensatingPlanner implements Planner {
             FeedbackPlugin plugin, CommandRepository commandRepository, SimpleCypherExecutor executor) {
         this.commandRepository = commandRepository;
         mismatchProvider = plugin.getMismatchProvider();
-        compensationRepository = plugin.getCompensationRepository(executor);
+        compensationRepositories = plugin.getCompensationRepositories(executor);
     }
 
     @Override
@@ -50,10 +51,11 @@ public class MismatchCompensatingPlanner implements Planner {
         ContextMismatch mismatch = mismatchWithin(changeRequest);
         Long testNodeId = changeRequest.getResult().getTestNodeId();
         Set<Command> executedCommands = commandRepository.findCommandsExecutedFor(objective);
-        Set<Command> manipulatingCommands = compensationRepository.findCommandsManipulating(testNodeId);
+        Set<Command> manipulatingCommands = findCommandsManipulating(testNodeId);
 
         try {
             Optional<Command> command = manipulatingCommands.stream()
+                    .filter(it -> it.getName() != null)
                     .filter(it -> it.isRepeatable() || !executedCommands.contains(it))
                     .filter(it -> isCompensating(mismatch, it))
                     .findAny();
@@ -76,6 +78,14 @@ public class MismatchCompensatingPlanner implements Planner {
         }
 
         return Optional.empty();
+    }
+
+    private Set<Command> findCommandsManipulating(Long testNodeId){
+        return compensationRepositories.stream()
+                .map(r -> r.findCommandsManipulating(testNodeId))
+                .collect(Collectors.toSet()).stream()
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
     }
 
     private Command prepared(Command compensation, Objective objective) {
